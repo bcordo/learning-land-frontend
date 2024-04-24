@@ -1,0 +1,1 @@
+export const WEBSOCKET_URL:string= "wss://desolate-anchorage-97861-39db3837351f.herokuapp.com/api/v1/user_missions/chat"
