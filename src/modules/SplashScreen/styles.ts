@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 export   const styles = StyleSheet.create({
     container: {
-      backgroundColor: 'orange',
+      backgroundColor: '#F58C39',
       width: '100%',
       height: '100%',
       display: 'flex',
@@ -18,11 +18,10 @@ export   const styles = StyleSheet.create({
       alignItems: 'center',
     },
     onboardingText:{
-      color:'#fff',
-      fontSize:42,
-      fontWeight:'bold',
-      width:"50%",    
-      // margin:0
-
+      color:'#FAFAFA',
+      fontSize:52,  
+      fontWeight:'800',
+      lineHeight: 56, 
+      letterSpacing: -1.04,
     }
   });

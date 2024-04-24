@@ -1,12 +1,8 @@
 import { useFocusEffect } from "@react-navigation/native";
-import type { PropsWithChildren } from "react";
 import React from "react";
-import { Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { styles } from "./styles";
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+import StatusBarComp from "../../components/StatusBar/statusBar";
 
 function SplashScreen({ navigation }): React.JSX.Element {
   useFocusEffect(() => {
@@ -17,10 +13,14 @@ function SplashScreen({ navigation }): React.JSX.Element {
 
   return (
     <View style={styles.container}>
+      <StatusBarComp backgroundColor={"#F58C39"} barStyle={"light-content"} />
       <View style={styles.iconContainer}>
-        <Text>Icon</Text>
+        <Image source={require("../../assets/icons/LandingLogo.png")} />
       </View>
-      <Text style={styles.onboardingText}>Learning Land</Text>
+      <View>
+        <Text style={styles.onboardingText}>Learning</Text>
+        <Text style={styles.onboardingText}>Land </Text>
+      </View>
     </View>
   );
 }

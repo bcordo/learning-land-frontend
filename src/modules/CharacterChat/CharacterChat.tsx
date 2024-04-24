@@ -16,6 +16,7 @@ import { styles } from "./styles";
 import Voice from "@react-native-voice/voice";
 import uuid from "react-native-uuid";
 import { WEBSOCKET_URL } from "../../assets/constant";
+import StatusBarComp from "../../components/StatusBar/statusBar";
 
 const CharacterChat = (): React.JSX.Element => {
   type arrayString = string[];
@@ -121,6 +122,7 @@ const CharacterChat = (): React.JSX.Element => {
 
   return (
     <View style={styles.mainContainer}>
+      <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
       <View style={styles.characterChatContainer}>
         <View>
           <CharacterChatNavbar />
@@ -156,7 +158,7 @@ const CharacterChat = (): React.JSX.Element => {
               ))
             : ""}
           {botCorrection ? (
-            <>
+            <View>
               <FadedDivider
                 style={{ marginVertical: 11 }}
                 color={[
@@ -201,7 +203,7 @@ const CharacterChat = (): React.JSX.Element => {
                   "rgba(255, 255, 255, 0)",
                 ]}
               />
-            </>
+            </View>
           ) : (
             ""
           )}

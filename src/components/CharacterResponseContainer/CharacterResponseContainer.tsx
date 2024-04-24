@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import ProfileContainer from "../ProfileContainer/ProfileContainer";
 import { styles } from "./styles";
+import uuid from "react-native-uuid";
 
 interface CharacterResponseContainerProps {
   commentTexts?: string;
@@ -22,7 +23,7 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
     { icon: require("../../assets/icons/thought.png"), value: "See thoughts" },
     {
       icon: require("../../assets/icons/bookmark.png"),
-      value: "SAdd to core phrases",
+      value: "Add to core phrases",
     },
     { icon: require("../../assets/icons/cycle.png"), value: "Regenerate " },
     {
@@ -50,6 +51,7 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
           <Text style={styles.estherText}>Esther</Text>
         </View>
       </View>
+
       {isTyping ? (
         <ProfileContainer isTyping={isTyping} />
       ) : message ? (
@@ -68,14 +70,25 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
                 <Image
                   source={require("../../assets/icons/dots-horizontal.png")}
                 />
-                {/* <View  style={[styles.menu,{display:openMenu?'flex':'none'}]}>
-      {menuList.map(item => (
-        <View key={item.value} style={styles.menuListItem}> 
-          <Image source={item.icon} />
-          <Text style={styles.menuText}>{item.value}</Text>
-        </View>
-      ))}
-    </View> */}
+                <View
+                  style={[styles.menu, { display: openMenu ? "flex" : "none" }]}
+                >
+                  {menuList.map((item, index) => (
+                    <View
+                      key={uuid.v4().toString()}
+                      style={[
+                        styles.menuListItem,
+                        {
+                          borderBottomWidth:
+                            index !== menuList.length - 1 ? 1 : 0,
+                        },
+                      ]}
+                    >
+                      <Image source={item.icon} />
+                      <Text style={styles.menuText}>{item.value}</Text>
+                    </View>
+                  ))}
+                </View>
               </TouchableOpacity>
             </View>
           </View>

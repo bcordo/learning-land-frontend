@@ -16,7 +16,6 @@ const FadedDividerText: React.FC<FadedDividerTextProps> = ({
   showIcon,
   text,
 }): React.JSX.Element => {
-  console.log(idx, "idx");
   return (
     <Fragment key={idx}>
       <FadedDivider style={{ marginVertical: 11 }} color={color} />

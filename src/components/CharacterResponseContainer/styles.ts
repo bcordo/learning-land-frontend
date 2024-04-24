@@ -18,7 +18,6 @@ export const styles = StyleSheet.create({
     padding: 20,
     marginBottom: 16,
   },
-
   characterResponseText: {
     color: '#171717',
     fontSize: 14,
@@ -59,7 +58,7 @@ export const styles = StyleSheet.create({
   },
   menu: {
     position: 'absolute',
-    bottom: -100,
+    bottom: -205,
     right: 0,
     backgroundColor: '#F1F5F9',
     borderRadius: 10,
@@ -74,18 +73,21 @@ export const styles = StyleSheet.create({
 
     elevation: 5,
     zIndex: 1,
-    // flex: 1,
     width: 220,
   },
   menuContainer: {
     position: 'relative',
-    zIndex: 0,
+   
   },
   menuListItem: {
     padding: 10,
     flexDirection: 'row',
     alignItems: 'center',
+    gap:10,
+    borderColor:'#E5E5E5',
+  
   },
+  
   menuText: {},
   profileIconContainer: {
     flexDirection: 'row',
