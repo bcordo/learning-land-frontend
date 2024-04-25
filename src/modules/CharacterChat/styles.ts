@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal:16,
+    paddingHorizontal: 16,
   },
   pauseIcon: {
     width: 50,
@@ -78,12 +78,12 @@ export const styles = StyleSheet.create({
     width: 18,
     height: 18,
     borderRadius: 50,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
     ...Platform.select({
       ios: {
-        shadowColor: '#3282ce9c',
+        shadowColor: "#3282ce9c",
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.2,
         shadowRadius: 3,
@@ -205,8 +205,44 @@ export const styles = StyleSheet.create({
 
     elevation: 5,
   },
+  startRecordButton: {
+    width: 80,
+    height: 80,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 50,
+    backgroundColor: "#F1F5F9",
+
+    shadowColor: "#3282ce9c",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
+  },
+  startToRecordContainer: {
+    alignItems: "center",
+    gap: 5,
+    paddingTop: 12,
+  },
+  startRecordIcon: {
+    width: 42,
+    height: 42,
+  },
   recordeButton: {
     borderRadius: 50,
+  },
+  startRecordContainer: {
+    gap: 28,
+    justifyContent: "center",
+  },
+  startToRecordTxt: {
+    color: "#525252",
+    fontSize: 14,
+    lineHeight: 20,
   },
   input: {
     width: "75%",
@@ -229,7 +265,7 @@ export const styles = StyleSheet.create({
     color: "#D4D4D4",
     ...Platform.select({
       ios: {
-        shadowColor: '#3282ce9c',
+        shadowColor: "#3282ce9c",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.3,
         shadowRadius: 3,
@@ -239,5 +275,4 @@ export const styles = StyleSheet.create({
       },
     }),
   },
-  
 });
