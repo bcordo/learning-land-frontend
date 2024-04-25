@@ -16,7 +16,7 @@ import { styles } from "./styles";
 import Voice from "@react-native-voice/voice";
 import uuid from "react-native-uuid";
 import { WEBSOCKET_URL } from "../../assets/constant";
-import StatusBarComp from "../../components/StatusBar/statusBar";
+import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 
 const CharacterChat = (): React.JSX.Element => {
   type arrayString = string[];

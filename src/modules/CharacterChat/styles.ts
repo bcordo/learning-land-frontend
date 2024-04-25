@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   mainContainer: {
@@ -78,14 +78,20 @@ export const styles = StyleSheet.create({
     width: 18,
     height: 18,
     borderRadius: 50,
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#3282ce9c',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+      },
+      android: {
+        elevation: 5,
+      },
+    }),
   },
   stepCircleOutlined: {
     width: 19,
@@ -103,7 +109,7 @@ export const styles = StyleSheet.create({
     width: 40,
     height: 4,
     backgroundColor: "#fff",
-    shadowColor: "#000",
+    shadowColor: "#3282ce9c",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 2,
@@ -115,7 +121,7 @@ export const styles = StyleSheet.create({
     width: 20,
     height: 4,
     backgroundColor: "#fff",
-    shadowColor: "#000",
+    shadowColor: "#3282ce9c",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 2,
@@ -127,7 +133,7 @@ export const styles = StyleSheet.create({
     width: 20,
     height: 4,
     backgroundColor: "lightgray",
-    shadowColor: "#000",
+    shadowColor: "#3282ce9c",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 2,
@@ -221,5 +227,17 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     shadowRadius: 4,
     color: "#D4D4D4",
+    ...Platform.select({
+      ios: {
+        shadowColor: '#3282ce9c',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+      },
+      android: {
+        elevation: 5,
+      },
+    }),
   },
+  
 });

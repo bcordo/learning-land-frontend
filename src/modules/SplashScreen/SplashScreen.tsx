@@ -2,7 +2,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import React from "react";
 import { Image, Text, View } from "react-native";
 import { styles } from "./styles";
-import StatusBarComp from "../../components/StatusBar/statusBar";
+import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 
 function SplashScreen({ navigation }): React.JSX.Element {
   useFocusEffect(() => {
