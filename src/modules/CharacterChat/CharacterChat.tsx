@@ -16,19 +16,48 @@ import uuid from "react-native-uuid";
 import { WEBSOCKET_URL } from "../../assets/constant";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 import LottieView from "lottie-react-native";
-import AudioRecorderPlayer, {
-  AudioEncoderAndroidType,
-  AudioSourceAndroidType,
-  AVModeIOSOption,
-  AVEncoderAudioQualityIOSType,
-  AVEncodingOption,
-} from "react-native-audio-recorder-player";
-import RNFS from "react-native-fs";
+import AudioRecorderPlayer from "react-native-audio-recorder-player";
 
 const CharacterChat = (): React.JSX.Element => {
+  const UserMissionState = {
+    INACTIVE: "INACTIVE",
+    ACTIVE: "ACTIVE",
+    FAILED: "FAILED",
+    COMPLETED: "COMPLETED",
+    PAUSED: "PAUSED",
+    ERROR: "ERROR",
+  };
+  const Command = {
+    START: "START",
+    END: "END",
+    PAUSE: "PAUSE",
+    RESUME: "RESUME",
+  };
+  const InteractionType = {
+    COMMAND: "COMMAND",
+    USER_UTTERANCE: "USER_UTTERANCE",
+    CHARACTER_RESPONSE: "CHARACTER_RESPONSE",
+    CHARACTER_RESPONSE_UTTERANCE: "CHARACTER_RESPONSE_UTTERANCE",
+    ASSISTANT_HINT: "ASSISTANT_HINT",
+    ASSISTANT_CORRECTION: "ASSISTANT_CORRECTION",
+    MISSION_STATUS: "MISSION_STATUS",
+    USER_ACTION: "USER_ACTION",
+    ERROR: "ERROR",
+  };
+  const MessageType = {
+    CHUNK: "CHUNK",
+    FULL: "FULL",
+  };
+  const ContentType = {
+    TEXT: "TEXT",
+    AUDIO: "AUDIO",
+    JSON: "JSON",
+    VIDEO: "VIDEO",
+    IMAGE: "IMAGE",
+  };
+
   type arrayString = string[];
   const [inputText, setInputText] = useState<string>("");
-  const [ws, setWs] = useState<WebSocket | null>(null);
   const [boatResponse, setBoatResponse] = useState<string>("");
   const [botHint, setbotHint] = useState<arrayString>([]);
   const [botCorrection, setbotCorrection] = useState<string>("");
@@ -36,9 +65,214 @@ const CharacterChat = (): React.JSX.Element => {
   const [isTyping, setIsTyping] = useState(false);
   const [enableRecording, setEnableRecording] = useState<boolean>(false);
   const [isRecording, setIsRecording] = useState<boolean>(false);
-  const [audioPath, setAudioPath] = useState("");
+  const [socketConnected, setSocketConnected] = useState(false);
 
-  const audioRecorderPlayer = new AudioRecorderPlayer();
+  const [WS, setWS] = React.useState(null);
+
+  const [chatMessages, setChatMessages] = React.useState([]);
+  const [currentUtterance, setCurrentUtterance] = React.useState("");
+
+  const [missionState, setMissionState] = React.useState(
+    UserMissionState.INACTIVE
+  );
+  const [goals, setGoals] = React.useState([]);
+
+  const connectWebSocket = () => {
+    const newWS = new WebSocket(WEBSOCKET_URL);
+    setWS(newWS);
+    newWS.onopen = () => {
+      setSocketConnected(true);
+      console.log("WebSocket connected");
+    };
+    newWS.onmessage = (event) => {
+      // console.log("Received WS message:", event.data);
+      handleServerMessage(event.data);
+    };
+    newWS.onclose = () => {
+      console.log("WebSocket disconnected");
+      setWS(null);
+    };
+  };
+
+  useEffect(() => {
+    if (socketConnected) {
+      sendMessage({
+        message_type: MessageType.FULL,
+        interaction_type: InteractionType.COMMAND,
+        content_type: ContentType.TEXT,
+        data: Command.START,
+      });
+
+      // setChatState("active");
+      setChatMessages([{ type: "state", text: "Mission started" }]);
+    }
+  }, [socketConnected]);
+  console.log(boatResponse, responseMessage, "MESSAGE is");
+
+  const handleServerMessage = (message) => {
+    try {
+      setIsTyping(false);
+      const parsedMessage = JSON.parse(message);
+      // console.log("Parsed message:", parsedMessage);
+
+      switch (parsedMessage.interaction_type) {
+        case InteractionType.USER_UTTERANCE:
+          handleUserUtteranceMessage(parsedMessage);
+          break;
+        case InteractionType.CHARACTER_RESPONSE_UTTERANCE:
+          handleCharacterUtteranceMessage(parsedMessage);
+          break;
+        case InteractionType.CHARACTER_RESPONSE:
+          handleCharacterResponseMessage(parsedMessage);
+          break;
+        case InteractionType.ASSISTANT_HINT:
+          handleHintMessage(parsedMessage);
+          break;
+        case InteractionType.ASSISTANT_CORRECTION:
+          handleCorrectionMessage(parsedMessage);
+          break;
+        case InteractionType.MISSION_STATUS:
+          handleMissionStatusMessage(parsedMessage);
+          break;
+        default:
+          console.log(
+            "Unknown interaction type:",
+            parsedMessage.interaction_type
+          );
+      }
+    } catch (error) {
+      console.error("Error parsing server message:", error);
+    }
+  };
+
+  const handleUserUtteranceMessage = (message) => {
+    if (message.content_type === ContentType.TEXT) {
+      setChatMessages((messages) => [
+        ...messages,
+        {
+          type: "user",
+          text: message.data,
+        },
+      ]);
+    }
+  };
+
+  const handleCharacterUtteranceMessage = (message) => {
+    console.log(message, "messaggeg");
+    if (message.message_type === MessageType.CHUNK) {
+      setResponseMessage(message.data);
+      setCurrentUtterance((utterance) => utterance + message.data);
+    } else if (message.message_type === MessageType.FULL) {
+      setChatMessages((messages) => [
+        ...messages,
+        {
+          type: "character-utterance",
+          text: currentUtterance,
+        },
+      ]);
+      setCurrentUtterance("");
+    }
+  };
+
+  const handleCharacterResponseMessage = (message) => {
+    try {
+      const response = JSON.parse(message.data);
+      setChatMessages((messages) => [
+        ...messages,
+        {
+          type: "character-response",
+          text: response.utterance,
+          action: response.action,
+          emotion: response.emotion,
+          thought: response.thought,
+        },
+      ]);
+    } catch (error) {
+      console.error("Error parsing character response:", error);
+    }
+  };
+
+  const handleHintMessage = (message) => {
+    try {
+      const hint = JSON.parse(message.data);
+      setbotHint([...botHint, hint.utterance]);
+      setChatMessages((messages) => [
+        ...messages,
+        {
+          type: "assistant-hint",
+          text: hint.utterance,
+        },
+      ]);
+    } catch (error) {
+      console.error("Error parsing assistant hint:", error);
+    }
+  };
+
+  const handleCorrectionMessage = (message) => {
+    try {
+      const correction = JSON.parse(message.data);
+      setChatMessages((messages) => [
+        ...messages,
+        {
+          type: "assistant-correction",
+          text: correction.utterance,
+        },
+      ]);
+    } catch (error) {
+      console.error("Error parsing assistant correction:", error);
+    }
+  };
+
+  const handleMissionStatusMessage = (message) => {
+    // console.log("Received mission status message:", message);
+    if (
+      message.content_type === ContentType.JSON ||
+      message.content_type === ContentType.TEXT
+    ) {
+      try {
+        const missionStatusData = JSON.parse(message.data);
+        // console.log("Parsed mission status data:", missionStatusData);
+
+        setMissionState(missionStatusData.mission_state);
+        setGoals(missionStatusData.goals || []); // Ensure goals are updated correctly
+
+        // console.log("Mission state:", missionStatusData.mission_state);
+        // console.log("Goals:", missionStatusData.goals);
+
+        if (missionStatusData.mission_state === UserMissionState.COMPLETED) {
+          setChatState("completed");
+          setChatMessages([
+            { type: "state", text: "Mission completed successfully!" },
+          ]);
+          setChatMessages((messages) => [
+            ...messages,
+            { type: "state", text: "Refresh page to retry" },
+          ]);
+          // setChatMessages((messages) => [...messages, { type: 'state', text: 'Mission completed successfully!!' }]);
+        } else if (
+          missionStatusData.mission_state === UserMissionState.FAILED
+        ) {
+          setChatState("failed");
+          setChatMessages([{ type: "state", text: "Mission failed" }]);
+          setChatMessages((messages) => [
+            ...messages,
+            { type: "state", text: "Refresh page to retry" },
+          ]);
+          // setChatMessages((messages) => [...messages, { type: 'state', text: 'Mission failed' }]);
+        } else if (
+          missionStatusData.mission_state === UserMissionState.ACTIVE
+        ) {
+          setChatState("active");
+        } else if (
+          missionStatusData.mission_state === UserMissionState.PAUSED
+        ) {
+          setChatState("paused");
+        }
+      } catch (error) {
+        console.error("Error parsing mission status:", error);
+      }
+    }
+  };
 
   const scrollViewRef = useRef<ScrollView>();
   useEffect(() => {
@@ -49,77 +283,25 @@ const CharacterChat = (): React.JSX.Element => {
   }, [responseMessage]);
 
   useEffect(() => {
-    if (!ws) return;
-
-    ws.onmessage = (event) => {
-      try {
-        const message = JSON.parse(event.data);
-        if (message.type === "chunk") {
-          if (message?.data === "</END>" || message?.data == "</START>") return;
-          setIsTyping(false);
-
-          setResponseMessage(message.data);
-        } else if (message.type === "full") {
-          if (message.interaction_type === "assistant_hint") {
-            const hint = JSON.parse(message.data);
-            setTimeout(() => {
-              setbotHint([...botHint, hint.utterance]);
-            }, 700);
-          }
-          if (message.interaction_type === "assistant_correction") {
-            const hint = JSON.parse(message.data);
-            setTimeout(
-              () => {
-                setbotCorrection(hint.utterance);
-              },
-              botHint ? 1200 : 700
-            );
-          }
-        }
-      } catch (error) {
-        console.error("Error parsing JSON:", error);
-      }
-    };
-    ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
-
-    return () => {
-      if (ws) ws.close();
-    };
-  }, [ws]);
-
-  useEffect(() => {
     const handleStartChat = () => {
-      const newWs = new WebSocket(WEBSOCKET_URL);
-      setWs(newWs);
+      connectWebSocket();
       setIsTyping(true);
-      newWs.onopen = () =>
-        newWs.send(JSON.stringify({ type: "command", data: "</START>" }));
     };
     handleStartChat();
   }, []);
 
-  const options = {
-    sampleRate: 16000, // Sample rate for audio recording (Hz)
-    channels: 1, // Number of audio channels (1 for mono, 2 for stereo)
-    bitsPerSample: 16, // Number of bits per sample
-    audioSource: 6, // AudioSource: 6 for voice recognition (Android only)
-    waveFile: "test.wav",
+  const sendMessage = (message: any) => {
+    if (WS && WS.readyState === WebSocket.OPEN) {
+      WS.send(JSON.stringify(message));
+      // console.log("Sent WS message:", message);
+    } else {
+      console.error(
+        "WebSocket is not connected. Cannot send message:",
+        message
+      );
+    }
   };
 
-  const generateAudioName = () => {
-    // Come up with a funky way to generate a name here!
-    const timestamp = new Date().getTime();
-
-    // Generate a random string of alphanumeric characters
-    const randomString = Math.random().toString(36).substring(7);
-
-    // Combine timestamp and random string to create a unique name
-    const audioName = `audio_${timestamp}_${randomString}`;
-
-    return audioName;
-  };
   const handleStartRecordAudio = () => {
     setIsRecording(true);
   };
