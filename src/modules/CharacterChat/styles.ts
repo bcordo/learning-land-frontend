@@ -205,6 +205,13 @@ export const styles = StyleSheet.create({
 
     elevation: 5,
   },
+  emptyBtn:{
+    width: 36,
+    height: 36,
+  
+    backgroundColor: "transparent",
+
+  },
   startRecordButton: {
     width: 80,
     height: 80,
@@ -226,7 +233,7 @@ export const styles = StyleSheet.create({
   startToRecordContainer: {
     alignItems: "center",
     gap: 5,
-    paddingTop: 12,
+    paddingTop: 28,
   },
   startRecordIcon: {
     width: 42,
@@ -236,12 +243,12 @@ export const styles = StyleSheet.create({
     borderRadius: 50,
   },
   startRecordContainer: {
-    gap: 28,
+    gap: 22,
     justifyContent: "center",
   },
   startToRecordTxt: {
     color: "#525252",
-    fontSize: 14,
+    fontSize: 12,
     lineHeight: 20,
   },
   input: {
@@ -275,4 +282,5 @@ export const styles = StyleSheet.create({
       },
     }),
   },
+  
 });

@@ -10,6 +10,7 @@ interface CharacterResponseContainerProps {
   isTyping?: boolean;
   profileIconContainerStyle?: object;
   message?: string;
+  thought?: string;
 }
 const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
   commentTexts,
@@ -17,6 +18,7 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
   isTyping,
   profileIconContainerStyle,
   message,
+  thought,
 }): React.JSX.Element => {
   const [openMenu, setOpenMenu] = useState(false);
   const menuList = [
@@ -92,7 +94,7 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
               </TouchableOpacity>
             </View>
           </View>
-          {commentTexts || quoteText ? (
+          {commentTexts || quoteText || thought ? (
             <>
               <View style={styles.divider}></View>
               <Text
@@ -101,7 +103,7 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
                   quoteText ? styles.quotedText : null,
                 ]}
               >
-                {commentTexts || `"${quoteText}"`}
+                {commentTexts || thought || `"${quoteText}"`}
               </Text>
             </>
           ) : (

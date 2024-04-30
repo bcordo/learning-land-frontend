@@ -8,68 +8,50 @@ import {
   View,
 } from "react-native";
 import CharacterResponseContainer from "../../components/CharacterResponseContainer/CharacterResponseContainer";
-import FadedDivider from "../../components/FadedDivider/FadedDivider";
 import FadedDividerText from "../../components/FadedDividerText/FadedDividerText";
 import CharacterChatNavbar from "./CharacterChatNavbar";
 import { styles } from "./styles";
 import uuid from "react-native-uuid";
-import { WEBSOCKET_URL } from "../../assets/constant";
+import {
+  Command,
+  ContentType,
+  InteractionType,
+  MessageType,
+  UserMissionState,
+  WEBSOCKET_URL,
+} from "../../assets/constant";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 import LottieView from "lottie-react-native";
 import AudioRecorderPlayer from "react-native-audio-recorder-player";
+import RNFS from "react-native-fs";
+import { PermissionsAndroid } from "react-native";
+import UserResponseContainer from "../../components/UserResponseContainer/UserResponseContainer";
+import FadedDivider from "../../components/FadedDivider/FadedDivider";
+// import EllipseIcon from "../../assets/icons/EllipseCircle.svg";
+
+const audioRecorderPlayer = new AudioRecorderPlayer();
 
 const CharacterChat = (): React.JSX.Element => {
-  const UserMissionState = {
-    INACTIVE: "INACTIVE",
-    ACTIVE: "ACTIVE",
-    FAILED: "FAILED",
-    COMPLETED: "COMPLETED",
-    PAUSED: "PAUSED",
-    ERROR: "ERROR",
-  };
-  const Command = {
-    START: "START",
-    END: "END",
-    PAUSE: "PAUSE",
-    RESUME: "RESUME",
-  };
-  const InteractionType = {
-    COMMAND: "COMMAND",
-    USER_UTTERANCE: "USER_UTTERANCE",
-    CHARACTER_RESPONSE: "CHARACTER_RESPONSE",
-    CHARACTER_RESPONSE_UTTERANCE: "CHARACTER_RESPONSE_UTTERANCE",
-    ASSISTANT_HINT: "ASSISTANT_HINT",
-    ASSISTANT_CORRECTION: "ASSISTANT_CORRECTION",
-    MISSION_STATUS: "MISSION_STATUS",
-    USER_ACTION: "USER_ACTION",
-    ERROR: "ERROR",
-  };
-  const MessageType = {
-    CHUNK: "CHUNK",
-    FULL: "FULL",
-  };
-  const ContentType = {
-    TEXT: "TEXT",
-    AUDIO: "AUDIO",
-    JSON: "JSON",
-    VIDEO: "VIDEO",
-    IMAGE: "IMAGE",
-  };
+  interface chatMessagesInterface {
+    type: string;
+    text: string;
+    action?: string;
+    emotion?: string;
+    thought?: string;
+  }
 
-  type arrayString = string[];
   const [inputText, setInputText] = useState<string>("");
-  const [boatResponse, setBoatResponse] = useState<string>("");
-  const [botHint, setbotHint] = useState<arrayString>([]);
-  const [botCorrection, setbotCorrection] = useState<string>("");
-  const [responseMessage, setResponseMessage] = useState<string>("");
   const [isTyping, setIsTyping] = useState(false);
   const [enableRecording, setEnableRecording] = useState<boolean>(false);
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [socketConnected, setSocketConnected] = useState(false);
+  const [recordPath, setRecordPath] = useState("");
 
-  const [WS, setWS] = React.useState(null);
+  const [WS, setWS] = React.useState<WebSocket | null>(null);
 
-  const [chatMessages, setChatMessages] = React.useState([]);
+  const [chatMessages, setChatMessages] = React.useState<
+    chatMessagesInterface[]
+  >([]);
   const [currentUtterance, setCurrentUtterance] = React.useState("");
 
   const [missionState, setMissionState] = React.useState(
@@ -82,12 +64,14 @@ const CharacterChat = (): React.JSX.Element => {
     setWS(newWS);
     newWS.onopen = () => {
       setSocketConnected(true);
+
       console.log("WebSocket connected");
     };
     newWS.onmessage = (event) => {
-      // console.log("Received WS message:", event.data);
+      setIsTyping(false);
       handleServerMessage(event.data);
     };
+
     newWS.onclose = () => {
       console.log("WebSocket disconnected");
       setWS(null);
@@ -103,17 +87,13 @@ const CharacterChat = (): React.JSX.Element => {
         data: Command.START,
       });
 
-      // setChatState("active");
       setChatMessages([{ type: "state", text: "Mission started" }]);
     }
   }, [socketConnected]);
-  console.log(boatResponse, responseMessage, "MESSAGE is");
 
-  const handleServerMessage = (message) => {
+  const handleServerMessage = (message: string) => {
     try {
-      setIsTyping(false);
       const parsedMessage = JSON.parse(message);
-      // console.log("Parsed message:", parsedMessage);
 
       switch (parsedMessage.interaction_type) {
         case InteractionType.USER_UTTERANCE:
@@ -145,7 +125,7 @@ const CharacterChat = (): React.JSX.Element => {
     }
   };
 
-  const handleUserUtteranceMessage = (message) => {
+  const handleUserUtteranceMessage = (message: any) => {
     if (message.content_type === ContentType.TEXT) {
       setChatMessages((messages) => [
         ...messages,
@@ -157,11 +137,33 @@ const CharacterChat = (): React.JSX.Element => {
     }
   };
 
-  const handleCharacterUtteranceMessage = (message) => {
-    console.log(message, "messaggeg");
+  const handleCharacterUtteranceMessage = (message: any) => {
     if (message.message_type === MessageType.CHUNK) {
-      setResponseMessage(message.data);
       setCurrentUtterance((utterance) => utterance + message.data);
+
+      setChatMessages((prevMessages) => {
+        if (
+          prevMessages.length > 0 &&
+          prevMessages[prevMessages.length - 1].type === "character-utterance"
+        ) {
+          const lastMessage = prevMessages.pop() || { text: "" };
+          const updatedText = lastMessage.text + " " + message.data;
+
+          return [
+            ...prevMessages,
+            {
+              type: "character-utterance",
+              text: updatedText,
+              thought: message.thought,
+            },
+          ];
+        } else {
+          return [
+            ...prevMessages,
+            { type: "character-utterance", text: message.data },
+          ];
+        }
+      });
     } else if (message.message_type === MessageType.FULL) {
       setChatMessages((messages) => [
         ...messages,
@@ -173,29 +175,55 @@ const CharacterChat = (): React.JSX.Element => {
       setCurrentUtterance("");
     }
   };
-
-  const handleCharacterResponseMessage = (message) => {
+  const handleCharacterResponseMessage = (message: any) => {
     try {
       const response = JSON.parse(message.data);
-      setChatMessages((messages) => [
-        ...messages,
-        {
-          type: "character-response",
-          text: response.utterance,
-          action: response.action,
-          emotion: response.emotion,
-          thought: response.thought,
-        },
-      ]);
+      setChatMessages((prevMessages) => {
+        let lastIndex = -1;
+        for (let i = prevMessages.length - 1; i >= 0; i--) {
+          if (prevMessages[i].type === "character-utterance") {
+            lastIndex = i;
+            break;
+          }
+        }
+
+        if (lastIndex !== -1) {
+          const updatedMessages = [...prevMessages];
+          updatedMessages[lastIndex] = {
+            ...updatedMessages[lastIndex],
+            thought: response.thought,
+          };
+          return [
+            ...updatedMessages,
+            {
+              type: "character-response",
+              text: response.utterance,
+              action: response.action,
+              emotion: response.emotion,
+              thought: response.thought,
+            },
+          ];
+        } else {
+          return [
+            ...prevMessages,
+            {
+              type: "character-response",
+              text: response.utterance,
+              action: response.action,
+              emotion: response.emotion,
+              thought: response.thought,
+            },
+          ];
+        }
+      });
     } catch (error) {
       console.error("Error parsing character response:", error);
     }
   };
 
-  const handleHintMessage = (message) => {
+  const handleHintMessage = (message: any) => {
     try {
       const hint = JSON.parse(message.data);
-      setbotHint([...botHint, hint.utterance]);
       setChatMessages((messages) => [
         ...messages,
         {
@@ -208,7 +236,7 @@ const CharacterChat = (): React.JSX.Element => {
     }
   };
 
-  const handleCorrectionMessage = (message) => {
+  const handleCorrectionMessage = (message: any) => {
     try {
       const correction = JSON.parse(message.data);
       setChatMessages((messages) => [
@@ -223,24 +251,18 @@ const CharacterChat = (): React.JSX.Element => {
     }
   };
 
-  const handleMissionStatusMessage = (message) => {
-    // console.log("Received mission status message:", message);
+  const handleMissionStatusMessage = (message: any) => {
     if (
       message.content_type === ContentType.JSON ||
       message.content_type === ContentType.TEXT
     ) {
       try {
         const missionStatusData = JSON.parse(message.data);
-        // console.log("Parsed mission status data:", missionStatusData);
 
         setMissionState(missionStatusData.mission_state);
-        setGoals(missionStatusData.goals || []); // Ensure goals are updated correctly
-
-        // console.log("Mission state:", missionStatusData.mission_state);
-        // console.log("Goals:", missionStatusData.goals);
+        setGoals(missionStatusData.goals || []);
 
         if (missionStatusData.mission_state === UserMissionState.COMPLETED) {
-          setChatState("completed");
           setChatMessages([
             { type: "state", text: "Mission completed successfully!" },
           ]);
@@ -248,25 +270,20 @@ const CharacterChat = (): React.JSX.Element => {
             ...messages,
             { type: "state", text: "Refresh page to retry" },
           ]);
-          // setChatMessages((messages) => [...messages, { type: 'state', text: 'Mission completed successfully!!' }]);
         } else if (
           missionStatusData.mission_state === UserMissionState.FAILED
         ) {
-          setChatState("failed");
           setChatMessages([{ type: "state", text: "Mission failed" }]);
           setChatMessages((messages) => [
             ...messages,
             { type: "state", text: "Refresh page to retry" },
           ]);
-          // setChatMessages((messages) => [...messages, { type: 'state', text: 'Mission failed' }]);
         } else if (
           missionStatusData.mission_state === UserMissionState.ACTIVE
         ) {
-          setChatState("active");
         } else if (
           missionStatusData.mission_state === UserMissionState.PAUSED
         ) {
-          setChatState("paused");
         }
       } catch (error) {
         console.error("Error parsing mission status:", error);
@@ -274,26 +291,191 @@ const CharacterChat = (): React.JSX.Element => {
     }
   };
 
-  const scrollViewRef = useRef<ScrollView>();
+  const renderChatMessage = (message: any) => {
+    switch (message.type) {
+      case "user-action":
+        return (
+          <></>
+          // <View key={message.id}>
+          //   <Text>Action: {message.text}</Text>
+          // </View>
+        );
+      case "user":
+        return (
+          <UserResponseContainer message={message.text} />
+          // <View key={message.id}>
+          //   <Text>{message.text}</Text>
+          // </View>
+        );
+      case "character-utterance":
+        return (
+          <>
+            <CharacterResponseContainer
+              isTyping={isTyping}
+              message={message.text}
+              thought={message?.thought}
+            />
+          </>
+        );
+      case "character-response":
+        return (
+          <View>
+            {message.action && (
+              <FadedDividerText
+                key={uuid.v4().toString()}
+                idx={uuid.v4()}
+                text={message.action}
+                color={[
+                  "rgba(255, 255, 255, 0)",
+                  "rgba(0, 0, 0, 0.5)",
+                  "rgba(255, 255, 255, 0)",
+                ]}
+                showIcon={false}
+              />
+            )}
+            {/* {message.emotion && <Text>Emotion: {message.emotion}</Text>} */}
+          </View>
+        );
+      case "assistant-hint":
+        return (
+          <FadedDividerText
+            key={uuid.v4().toString()}
+            idx={uuid.v4()}
+            text={message.text}
+            fadedDividerTextColor={styles.fadedDividerTextOrange}
+            color={[
+              "rgba(245, 140, 57, 0)",
+              "#F58C39",
+              "rgba(245, 140, 57, 0)",
+            ]}
+            showIcon={true}
+          />
+        );
+      case "assistant-correction":
+        return (
+          // <View key={message.id}>
+          //   <Text>Assistant Correction: {message.text}</Text>
+          // </View>
+          <>
+            <FadedDivider
+              style={{ marginVertical: 11 }}
+              color={[
+                "rgba(255, 255, 255, 0)",
+                "rgba(0, 0, 0, 0.5)",
+                "rgba(255, 255, 255, 0)",
+              ]}
+            />
+            <View style={styles.trySayingInstedContainer}>
+              <Image source={require("../../assets/icons/gray_stars.png")} />
+              <View>
+                <Text style={styles.trySayingInstedTxt}>{message.text}</Text>
+              </View>
+            </View>
+            <View style={styles.characterChatButtonsBox}>
+              <TouchableOpacity
+                style={styles.characterChatButtons}
+                onPress={() => {}}
+              >
+                <Image
+                  source={require("../../assets/icons/circular_outlined.png")}
+                />
+                <Text style={styles.characterChatButtonTxt}>Explain to me</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.characterChatButtons}
+                onPress={() => {}}
+              >
+                <Image source={require("../../assets/icons/bookmark.png")} />
+                <Text style={styles.characterChatButtonTxt}>
+                  Add to core phrases
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <FadedDivider
+              style={{ marginVertical: 11 }}
+              color={[
+                "rgba(255, 255, 255, 0)",
+                "rgba(0, 0, 0, 0.5)",
+                "rgba(255, 255, 255, 0)",
+              ]}
+            />
+          </>
+        );
+      case "state":
+        return (
+          <></>
+          // <View key={message.id}>
+          //   <Text>{message.text}</Text>
+          // </View>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const scrollViewRef = useRef<ScrollView | null>(null);
   useEffect(() => {
-    setBoatResponse(boatResponse + responseMessage);
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollToEnd({ animated: true });
     }
-  }, [responseMessage]);
+  }, [chatMessages]);
 
   useEffect(() => {
-    const handleStartChat = () => {
-      connectWebSocket();
-      setIsTyping(true);
-    };
-    handleStartChat();
+    connectWebSocket();
   }, []);
 
+  const onStartRecord = async () => {
+    const hasPermission = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+      {
+        title: "Audio Recorder Permission",
+        message: "App needs access to your microphone to record audio.",
+        buttonNeutral: "Ask Me Later",
+        buttonNegative: "Cancel",
+        buttonPositive: "OK",
+      }
+    );
+
+    if (hasPermission === PermissionsAndroid.RESULTS.GRANTED) {
+      const path = `${RNFS.DocumentDirectoryPath}/test.mp3`;
+      setRecordPath(path);
+      const result = await audioRecorderPlayer.startRecorder(path);
+      audioRecorderPlayer.addRecordBackListener((e) => {
+        return;
+      });
+      setIsRecording(true);
+    }
+  };
+
+  const onStopRecord = async (sendAudioViaSocket: boolean) => {
+    const result = await audioRecorderPlayer.stopRecorder();
+    audioRecorderPlayer.removeRecordBackListener();
+    setIsRecording(false);
+    if (sendAudioViaSocket) {
+      sendAudio();
+    }
+  };
+
+  const sendAudio = () => {
+    if (WS) {
+      RNFS.readFile(recordPath, "base64")
+        .then((data) => {
+          sendMessage({
+            message_type: MessageType.FULL,
+            interaction_type: InteractionType.USER_UTTERANCE,
+            content_type: ContentType.AUDIO,
+            data: data,
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  };
   const sendMessage = (message: any) => {
     if (WS && WS.readyState === WebSocket.OPEN) {
+      setIsTyping(true);
       WS.send(JSON.stringify(message));
-      // console.log("Sent WS message:", message);
     } else {
       console.error(
         "WebSocket is not connected. Cannot send message:",
@@ -301,15 +483,6 @@ const CharacterChat = (): React.JSX.Element => {
       );
     }
   };
-
-  const handleStartRecordAudio = () => {
-    setIsRecording(true);
-  };
-  const handleStopRecordAudio = () => {
-    setIsRecording(false);
-    setEnableRecording(false);
-  };
-
   return (
     <>
       <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
@@ -336,84 +509,9 @@ const CharacterChat = (): React.JSX.Element => {
             },
           ]}
         >
-          <View style={[styles.characterChatContainer]}>
-            <CharacterResponseContainer
-              isTyping={isTyping}
-              message={boatResponse}
-            />
-            {botHint.length
-              ? botHint.map((hint) => (
-                  <FadedDividerText
-                    key={uuid.v4().toString()}
-                    idx={uuid.v4()}
-                    text={hint}
-                    fadedDividerTextColor={styles.fadedDividerTextOrange}
-                    color={[
-                      "rgba(245, 140, 57, 0)",
-                      "#F58C39",
-                      "rgba(245, 140, 57, 0)",
-                    ]}
-                    showIcon={true}
-                  />
-                ))
-              : ""}
-            {botCorrection ? (
-              <View>
-                <FadedDivider
-                  style={{ marginVertical: 11 }}
-                  color={[
-                    "rgba(255, 255, 255, 0)",
-                    "rgba(0, 0, 0, 0.5)",
-                    "rgba(255, 255, 255, 0)",
-                  ]}
-                />
-                <View style={styles.trySayingInstedContainer}>
-                  <Image
-                    source={require("../../assets/icons/gray_stars.png")}
-                  />
-                  <View>
-                    <Text style={styles.trySayingInstedTxt}>
-                      {botCorrection}
-                    </Text>
-                  </View>
-                </View>
-                <View style={styles.characterChatButtonsBox}>
-                  <TouchableOpacity
-                    style={styles.characterChatButtons}
-                    onPress={() => {}}
-                  >
-                    <Image
-                      source={require("../../assets/icons/circular_outlined.png")}
-                    />
-                    <Text style={styles.characterChatButtonTxt}>
-                      Explain to me
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.characterChatButtons}
-                    onPress={() => {}}
-                  >
-                    <Image
-                      source={require("../../assets/icons/bookmark.png")}
-                    />
-                    <Text style={styles.characterChatButtonTxt}>
-                      Add to core phrases
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                <FadedDivider
-                  style={{ marginVertical: 11 }}
-                  color={[
-                    "rgba(255, 255, 255, 0)",
-                    "rgba(0, 0, 0, 0.5)",
-                    "rgba(255, 255, 255, 0)",
-                  ]}
-                />
-              </View>
-            ) : (
-              ""
-            )}
-          </View>
+          {chatMessages.map((message, index) => (
+            <View key={index}>{renderChatMessage(message)}</View>
+          ))}
         </ScrollView>
         {enableRecording ? (
           <View style={styles.startRecordContainer}>
@@ -431,6 +529,7 @@ const CharacterChat = (): React.JSX.Element => {
                     style={styles.plusButton}
                     onPress={() => {}}
                   >
+                    {/* <EllipseIcon /> */}
                     <Image
                       source={require("../../assets/icons/EllipseStartRecord.png")}
                     />
@@ -445,26 +544,51 @@ const CharacterChat = (): React.JSX.Element => {
                 { justifyContent: "center", alignItems: "center", gap: 36 },
               ]}
             >
-              <TouchableOpacity style={styles.plusButton} onPress={() => {}}>
-                <Image source={require("../../assets/icons/plus.png")} />
+              <TouchableOpacity
+                style={styles.plusButton}
+                onPress={
+                  isRecording
+                    ? () => {
+                        onStopRecord(false);
+                        setEnableRecording(false);
+                      }
+                    : () => {}
+                }
+              >
+                {isRecording ? (
+                  <Image source={require("../../assets/icons/x.png")} />
+                ) : (
+                  <Image source={require("../../assets/icons/plus.png")} />
+                )}
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.startRecordButton}
-                onPress={handleStartRecordAudio}
+                onPress={isRecording ? () => onStopRecord(true) : onStartRecord}
               >
-                <Image
-                  style={styles.startRecordIcon}
-                  source={require("../../assets/icons/microphone.png")}
-                />
+                {isRecording ? (
+                  <Image
+                    style={styles.startRecordIcon}
+                    source={require("../../assets/icons/arrow-up.png")}
+                  />
+                ) : (
+                  <Image
+                    style={styles.startRecordIcon}
+                    source={require("../../assets/icons/microphone.png")}
+                  />
+                )}
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.plusButton}
-                onPress={() => {
-                  handleStopRecordAudio();
-                }}
-              >
-                <Image source={require("../../assets/icons/keyboard.png")} />
-              </TouchableOpacity>
+              {isRecording ? (
+                <TouchableOpacity style={styles.emptyBtn}></TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  style={styles.plusButton}
+                  onPress={() => {
+                    setEnableRecording(false);
+                  }}
+                >
+                  <Image source={require("../../assets/icons/keyboard.png")} />
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         ) : (

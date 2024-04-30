@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
 
     elevation: 5,
     padding: 20,
-    marginBottom: 16,
+    marginBottom: 20,
   },
   characterResponseText: {
     color: '#171717',
@@ -51,7 +51,8 @@ export const styles = StyleSheet.create({
     fontSize: 12,
   },
   aiTyping: {
-    marginTop: 45,
+    // marginTop: 45,
+    marginTop:12
   },
   text: {
     margin: 10,
@@ -101,4 +102,5 @@ export const styles = StyleSheet.create({
     color: '#737373',
     fontSize: 14,
   },
+ 
 });

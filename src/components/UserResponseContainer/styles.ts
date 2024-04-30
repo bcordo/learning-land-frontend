@@ -3,7 +3,6 @@ import {Platform, StyleSheet} from 'react-native';
 export const styles = StyleSheet.create({
   userResponseContainer: {
     alignItems: 'flex-end',
-    marginBottom: 20,
     marginTop: 16,
   },
   profileAlignmnent: {
@@ -24,7 +23,6 @@ export const styles = StyleSheet.create({
 
     elevation: 5,
     padding: 20,
-    marginBottom: 16,
   },
   userResponseTxt: {
     color: '#171717',
@@ -38,5 +36,17 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 16,
+  },
+  profileIconContainer: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+  },
+  profileIcon: {
+    width: 50,
+    height: 50,
+  },
+  estherText: {
+    color: '#737373',
+    fontSize: 14,
   },
 });
