@@ -582,7 +582,7 @@ const CharacterChat = (): React.JSX.Element => {
                     />
                   </TouchableOpacity>
                   <Text style={styles.startToRecordTxt}>
-                    {sendingAudio ? "Sending audio" : "Tap below Fto record"}
+                    {sendingAudio ? "Sending audio" : "Tap below sto record"}
                   </Text>
                 </>
               )}
