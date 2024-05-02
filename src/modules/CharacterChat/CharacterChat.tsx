@@ -27,7 +27,15 @@ import RNFS from "react-native-fs";
 import { PermissionsAndroid } from "react-native";
 import UserResponseContainer from "../../components/UserResponseContainer/UserResponseContainer";
 import FadedDivider from "../../components/FadedDivider/FadedDivider";
-// import EllipseIcon from "../../assets/icons/EllipseCircle.svg";
+import Microphonesvg from "../../assets/icons/SvgMicrophone.svg";
+import PlusSvg from "../../assets/icons/plus.svg";
+import KeyBoardSvg from "../../assets/icons/keyboard.svg";
+import ArrowUp from "../../assets/icons/arrow-up.svg";
+import XSvg from "../../assets/icons/x.svg";
+import Stars from "../../assets/icons/stars.svg";
+import Bookmark from "../../assets/icons/bookmark.svg";
+import CircleDot from "../../assets/icons/circle-dot.svg";
+import CustomSvgImageComponent from "../../components/CustomComponents/Image";
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 
@@ -41,11 +49,13 @@ const CharacterChat = (): React.JSX.Element => {
   }
 
   const [inputText, setInputText] = useState<string>("");
-  const [isTyping, setIsTyping] = useState(false);
   const [enableRecording, setEnableRecording] = useState<boolean>(false);
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [socketConnected, setSocketConnected] = useState(false);
   const [recordPath, setRecordPath] = useState("");
+  const [sendingAudio, isSendingAudio] = useState<boolean>(false);
+  const [isTyping, setIsTyping] = useState<boolean>(false);
+  const [speakStatus, setSpeakStatus] = useState<string>("Start speaking");
 
   const [WS, setWS] = React.useState<WebSocket | null>(null);
 
@@ -68,7 +78,8 @@ const CharacterChat = (): React.JSX.Element => {
       console.log("WebSocket connected");
     };
     newWS.onmessage = (event) => {
-      setIsTyping(false);
+      isSendingAudio(false);
+      setSpeakStatus("Start speaking");
       handleServerMessage(event.data);
     };
 
@@ -87,7 +98,13 @@ const CharacterChat = (): React.JSX.Element => {
         data: Command.START,
       });
 
-      setChatMessages([{ type: "state", text: "Mission started" }]);
+      setChatMessages([
+        { type: "state", text: "Mission started" },
+        {
+          type: "character-utterance",
+          isTyping: true,
+        },
+      ]);
     }
   }, [socketConnected]);
 
@@ -147,8 +164,12 @@ const CharacterChat = (): React.JSX.Element => {
           prevMessages[prevMessages.length - 1].type === "character-utterance"
         ) {
           const lastMessage = prevMessages.pop() || { text: "" };
-          const updatedText = lastMessage.text + " " + message.data;
-
+          let updatedText = "";
+          if (lastMessage?.text) {
+            updatedText = lastMessage.text + " " + message.data;
+          } else {
+            updatedText = message.data;
+          }
           return [
             ...prevMessages,
             {
@@ -177,44 +198,37 @@ const CharacterChat = (): React.JSX.Element => {
   };
   const handleCharacterResponseMessage = (message: any) => {
     try {
+      // setChatMessages((messages) =>
+      //   messages.filter((message) => !message.isTyping)
+      // );
+      setIsTyping(false);
       const response = JSON.parse(message.data);
       setChatMessages((prevMessages) => {
-        let lastIndex = -1;
-        for (let i = prevMessages.length - 1; i >= 0; i--) {
-          if (prevMessages[i].type === "character-utterance") {
-            lastIndex = i;
-            break;
+        const updatedMessages = prevMessages.filter((message) => {
+          // Remove the typing indicator message
+          if (message.isTyping) {
+            return false;
           }
-        }
 
-        if (lastIndex !== -1) {
-          const updatedMessages = [...prevMessages];
-          updatedMessages[lastIndex] = {
-            ...updatedMessages[lastIndex],
-            thought: response.thought,
-          };
-          return [
-            ...updatedMessages,
-            {
-              type: "character-response",
-              text: response.utterance,
-              action: response.action,
-              emotion: response.emotion,
-              thought: response.thought,
-            },
-          ];
-        } else {
-          return [
-            ...prevMessages,
-            {
-              type: "character-response",
-              text: response.utterance,
-              action: response.action,
-              emotion: response.emotion,
-              thought: response.thought,
-            },
-          ];
-        }
+          // Update the last character-utterance message with the thought received
+          if (message.type === "character-utterance") {
+            message.thought = response.thought;
+
+            return true; // Keep this message
+          }
+
+          return true; // Keep other messages
+        });
+
+        // Add a new character-response message
+        updatedMessages.push({
+          type: "character-response",
+          text: response.utterance,
+          action: response.action,
+          emotion: response.emotion,
+          thought: response.thought,
+        });
+        return updatedMessages;
       });
     } catch (error) {
       console.error("Error parsing character response:", error);
@@ -311,7 +325,7 @@ const CharacterChat = (): React.JSX.Element => {
         return (
           <>
             <CharacterResponseContainer
-              isTyping={isTyping}
+              isTyping={message?.isTyping || isTyping}
               message={message.text}
               thought={message?.thought}
             />
@@ -366,7 +380,11 @@ const CharacterChat = (): React.JSX.Element => {
               ]}
             />
             <View style={styles.trySayingInstedContainer}>
-              <Image source={require("../../assets/icons/gray_stars.png")} />
+              <CustomSvgImageComponent
+                width={18}
+                height={18}
+                Component={Stars}
+              />
               <View>
                 <Text style={styles.trySayingInstedTxt}>{message.text}</Text>
               </View>
@@ -376,8 +394,10 @@ const CharacterChat = (): React.JSX.Element => {
                 style={styles.characterChatButtons}
                 onPress={() => {}}
               >
-                <Image
-                  source={require("../../assets/icons/circular_outlined.png")}
+                <CustomSvgImageComponent
+                  width={18}
+                  height={18}
+                  Component={CircleDot}
                 />
                 <Text style={styles.characterChatButtonTxt}>Explain to me</Text>
               </TouchableOpacity>
@@ -385,7 +405,11 @@ const CharacterChat = (): React.JSX.Element => {
                 style={styles.characterChatButtons}
                 onPress={() => {}}
               >
-                <Image source={require("../../assets/icons/bookmark.png")} />
+                <CustomSvgImageComponent
+                  width={18}
+                  height={18}
+                  Component={Bookmark}
+                />
                 <Text style={styles.characterChatButtonTxt}>
                   Add to core phrases
                 </Text>
@@ -421,10 +445,11 @@ const CharacterChat = (): React.JSX.Element => {
   }, [chatMessages]);
 
   useEffect(() => {
+    setIsTyping(true);
     connectWebSocket();
   }, []);
-
   const onStartRecord = async () => {
+    setSpeakStatus("Listening");
     const hasPermission = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
       {
@@ -458,6 +483,7 @@ const CharacterChat = (): React.JSX.Element => {
 
   const sendAudio = () => {
     if (WS) {
+      setSpeakStatus("Sending audio");
       RNFS.readFile(recordPath, "base64")
         .then((data) => {
           sendMessage({
@@ -474,13 +500,31 @@ const CharacterChat = (): React.JSX.Element => {
   };
   const sendMessage = (message: any) => {
     if (WS && WS.readyState === WebSocket.OPEN) {
-      setIsTyping(true);
+      setChatMessages((messages) => [
+        ...messages,
+        {
+          type: "character-utterance",
+          isTyping: true,
+          text: "",
+        },
+      ]);
+      isSendingAudio(true);
       WS.send(JSON.stringify(message));
     } else {
       console.error(
         "WebSocket is not connected. Cannot send message:",
         message
       );
+    }
+  };
+  const handleInputEnter = () => {
+    if (inputText !== "") {
+      sendMessage({
+        message_type: MessageType.FULL,
+        interaction_type: InteractionType.USER_UTTERANCE,
+        content_type: ContentType.TEXT,
+        data: inputText,
+      });
     }
   };
   return (
@@ -494,7 +538,7 @@ const CharacterChat = (): React.JSX.Element => {
               <Text style={styles.coffeeShopTxt}>
                 The girl in the coffee shop
               </Text>
-              <Text style={styles.missionTxt}>World-1 Mission-1</Text>
+              <Text style={styles.missionTxt}>World 1, Mission 1</Text>
             </View>
           </View>
         </View>
@@ -517,24 +561,29 @@ const CharacterChat = (): React.JSX.Element => {
           <View style={styles.startRecordContainer}>
             <View style={styles.startToRecordContainer}>
               {isRecording ? (
-                <LottieView
-                  style={{ width: 100, height: 48 }}
-                  source={require("../../assets/animations/recording.json")}
-                  autoPlay
-                  loop
-                />
+                <>
+                  <LottieView
+                    style={{ width: 100, height: 48 }}
+                    source={require("../../assets/animations/recording.json")}
+                    autoPlay
+                    loop
+                  />
+                  <Text style={styles.startToRecordTxt}>{speakStatus}</Text>
+                </>
               ) : (
                 <>
                   <TouchableOpacity
-                    style={styles.plusButton}
+                    // style={styles.plusButton}
                     onPress={() => {}}
                   >
-                    {/* <EllipseIcon /> */}
                     <Image
+                      style={styles.EllipseStartRecord}
                       source={require("../../assets/icons/EllipseStartRecord.png")}
                     />
                   </TouchableOpacity>
-                  <Text style={styles.startToRecordTxt}>Tap to record</Text>
+                  <Text style={styles.startToRecordTxt}>
+                    {sendingAudio ? "Sending audio" : "Tap below Fto record"}
+                  </Text>
                 </>
               )}
             </View>
@@ -550,15 +599,22 @@ const CharacterChat = (): React.JSX.Element => {
                   isRecording
                     ? () => {
                         onStopRecord(false);
-                        setEnableRecording(false);
                       }
                     : () => {}
                 }
               >
                 {isRecording ? (
-                  <Image source={require("../../assets/icons/x.png")} />
+                  <CustomSvgImageComponent
+                    width={25}
+                    height={25}
+                    Component={XSvg}
+                  />
                 ) : (
-                  <Image source={require("../../assets/icons/plus.png")} />
+                  <CustomSvgImageComponent
+                    width={25}
+                    height={25}
+                    Component={PlusSvg}
+                  />
                 )}
               </TouchableOpacity>
               <TouchableOpacity
@@ -566,14 +622,23 @@ const CharacterChat = (): React.JSX.Element => {
                 onPress={isRecording ? () => onStopRecord(true) : onStartRecord}
               >
                 {isRecording ? (
-                  <Image
-                    style={styles.startRecordIcon}
-                    source={require("../../assets/icons/arrow-up.png")}
+                  <CustomSvgImageComponent
+                    width={42}
+                    height={42}
+                    Component={ArrowUp}
+                  />
+                ) : sendingAudio ? (
+                  <LottieView
+                    style={{ width: 86, height: 86 }}
+                    source={require("../../assets/animations/loading.json")}
+                    autoPlay
+                    loop
                   />
                 ) : (
-                  <Image
-                    style={styles.startRecordIcon}
-                    source={require("../../assets/icons/microphone.png")}
+                  <CustomSvgImageComponent
+                    width={42}
+                    height={42}
+                    Component={Microphonesvg}
                   />
                 )}
               </TouchableOpacity>
@@ -586,7 +651,11 @@ const CharacterChat = (): React.JSX.Element => {
                     setEnableRecording(false);
                   }}
                 >
-                  <Image source={require("../../assets/icons/keyboard.png")} />
+                  <CustomSvgImageComponent
+                    width={25}
+                    height={25}
+                    Component={KeyBoardSvg}
+                  />
                 </TouchableOpacity>
               )}
             </View>
@@ -594,7 +663,7 @@ const CharacterChat = (): React.JSX.Element => {
         ) : (
           <View style={styles.typeMessageContainer}>
             <TouchableOpacity style={styles.plusButton} onPress={() => {}}>
-              <Image source={require("../../assets/icons/plus.png")} />
+              <PlusSvg width={25} height={25} />
             </TouchableOpacity>
 
             <TextInput
@@ -602,13 +671,14 @@ const CharacterChat = (): React.JSX.Element => {
               placeholder="Message"
               placeholderTextColor="#D4D4D4"
               onChangeText={(text) => setInputText(text)}
+              onSubmitEditing={handleInputEnter}
               value={inputText}
             />
             <TouchableOpacity
               style={[styles.plusButton, styles.recordeButton]}
               onPress={() => setEnableRecording(true)}
             >
-              <Image source={require("../../assets/icons/microphone.png")} />
+              <Microphonesvg width={22} height={22} />
             </TouchableOpacity>
           </View>
         )}

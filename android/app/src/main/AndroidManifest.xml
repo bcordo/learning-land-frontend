@@ -4,7 +4,11 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
+<meta-data android:name="com.facebook.react.module_registry"
+           android:value="com.facebook.react.modules.fresco.FrescoPackage" />
+<meta-data
+    android:name="assetFontDir"
+    android:value="fonts" />
 
 
 

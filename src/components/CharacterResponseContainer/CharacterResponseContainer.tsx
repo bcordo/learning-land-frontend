@@ -3,6 +3,12 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 import ProfileContainer from "../ProfileContainer/ProfileContainer";
 import { styles } from "./styles";
 import uuid from "react-native-uuid";
+import Tts from "react-native-tts";
+import Translate from "../../assets/icons/translate.svg";
+import Speak from "../../assets/icons/speak.svg";
+import Dots from "../../assets/icons/dots-horizontal.svg";
+import CustomSvgImageComponent from "../CustomComponents/Image";
+import { BASE_URL, Language } from "../../assets/constant";
 
 interface CharacterResponseContainerProps {
   commentTexts?: string;
@@ -20,7 +26,8 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
   message,
   thought,
 }): React.JSX.Element => {
-  const [openMenu, setOpenMenu] = useState(false);
+  const [openMenu, setOpenMenu] = useState<boolean>(false);
+  const [translatedText, setTranslatedText] = useState<string>("");
   const menuList = [
     { icon: require("../../assets/icons/thought.png"), value: "See thoughts" },
     {
@@ -37,6 +44,29 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
       value: "Bad response",
     },
   ];
+  const speakText = (text: string) => {
+    Tts.stop();
+    Tts.speak(text);
+  };
+
+  const handleTranslateClick = async (message: string) => {
+    try {
+      const response = await fetch(
+        `${BASE_URL}/api/v1/utils/translate?foreign_text=${encodeURIComponent(
+          message
+        )}&target_lang=${Language.AMERICAN_ENGLISH}`
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      const translation = data.text;
+      setTranslatedText(translation);
+    } catch (error) {
+      console.error("Translation error:", error);
+    }
+  };
+
   return (
     <>
       <View
@@ -61,16 +91,32 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
           <Text style={styles.characterResponseText}>{message}</Text>
           <View style={styles.translateContainer}>
             <View style={styles.translateRightContainer}>
-              <Image source={require("../../assets/icons/speak.png")} />
-              <Image source={require("../../assets/icons/translate.png")} />
+              <TouchableOpacity onPress={() => speakText(message || " ")}>
+                <CustomSvgImageComponent
+                  width={18}
+                  height={18}
+                  Component={Speak}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => handleTranslateClick(message || " ")}
+              >
+                <CustomSvgImageComponent
+                  width={18}
+                  height={18}
+                  Component={Translate}
+                />
+              </TouchableOpacity>
             </View>
             <View>
               <TouchableOpacity
                 onPress={() => setOpenMenu(true)}
                 style={styles.menuContainer}
               >
-                <Image
-                  source={require("../../assets/icons/dots-horizontal.png")}
+                <CustomSvgImageComponent
+                  width={20}
+                  height={20}
+                  Component={Dots}
                 />
                 <View
                   style={[styles.menu, { display: openMenu ? "flex" : "none" }]}
@@ -94,7 +140,7 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
               </TouchableOpacity>
             </View>
           </View>
-          {commentTexts || quoteText || thought ? (
+          {/* {commentTexts || quoteText || thought ? (
             <>
               <View style={styles.divider}></View>
               <Text
@@ -104,6 +150,21 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
                 ]}
               >
                 {commentTexts || thought || `"${quoteText}"`}
+              </Text>
+            </>
+          ) : (
+            ""
+          )} */}
+          {translatedText ? (
+            <>
+              <View style={styles.divider}></View>
+              <Text
+                style={[
+                  styles.translationText,
+                  quoteText ? styles.quotedText : null,
+                ]}
+              >
+                {translatedText}
               </Text>
             </>
           ) : (

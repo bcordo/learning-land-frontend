@@ -24,17 +24,32 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   pauseIcon: {
-    width: 50,
-    height: 50,
+    shadowColor: '#3282ce9c',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    padding: 20,
+    width:25,
+    height:25
   },
+  pauseIconContainer:{
+    alignItems:'center',
+    justifyContent:'center'
+  },
+
+ 
   dropdownTxtContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
   },
   timer: {
-    width: 80,
-    height: 80,
+    width: 55,
+    height: 55,
   },
   pipe: {
     width: 5,
@@ -50,6 +65,8 @@ export const styles = StyleSheet.create({
   orangeText: {
     color: "#F58C39",
     fontSize: 12,
+    fontFamily: 'Montserrat',
+    marginBottom:2
   },
   missionTxtContainer: {
     alignItems: "center",
@@ -57,13 +74,17 @@ export const styles = StyleSheet.create({
   },
   coffeeShopTxt: {
     fontSize: 16,
+    paddingTop:12,
     fontWeight: "500",
     color: "#000",
+    lineHeight:24
   },
 
   missionTxt: {
     fontSize: 14,
     color: "#737373",
+    lineHeight:20,
+    fontFamily: 'Montserrat',
   },
 
   fadedDividerTextOrange: {
@@ -75,64 +96,47 @@ export const styles = StyleSheet.create({
     marginTop: 10,
   },
   stepCircle: {
-    width: 18,
-    height: 18,
-    borderRadius: 50,
-    backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center",
-    ...Platform.select({
-      ios: {
-        shadowColor: "#3282ce9c",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.2,
-        shadowRadius: 3,
-      },
-      android: {
-        elevation: 5,
-      },
-    }),
+    
   },
   stepCircleOutlined: {
-    width: 19,
-    height: 19,
-    borderWidth: 3,
-    borderColor: "lightgray",
+    width: 16,
+    height: 16,
+    borderWidth: 2,
+    borderColor: "#becdd7",
     borderRadius: 50,
 
-    backgroundColor: "#fff",
+    backgroundColor: "transparent",
   },
   stepperContainer: {
     flexDirection: "row",
   },
   stepLine: {
     width: 40,
-    height: 4,
-    backgroundColor: "#fff",
+    height: 2,
+    backgroundColor: "#becdd7",
     shadowColor: "#3282ce9c",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 2,
-    marginTop: 6,
-    marginLeft: 1,
-    marginRight: 1,
+    marginTop:6,
   },
   stepLineHalfFilled: {
     width: 20,
     height: 4,
-    backgroundColor: "#fff",
+    backgroundColor: "#becdd7",
     shadowColor: "#3282ce9c",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 2,
-    marginTop: 6,
+    marginTop: 6.5,
     marginLeft: 1,
     marginRight: 1,
   },
   stepLineHalfOutlined: {
     width: 20,
     height: 4,
-    backgroundColor: "lightgray",
+    backgroundColor: "#becdd7",
     shadowColor: "#3282ce9c",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
@@ -250,6 +254,7 @@ export const styles = StyleSheet.create({
     color: "#525252",
     fontSize: 12,
     lineHeight: 20,
+    fontFamily: 'Montserrat'
   },
   input: {
     width: "75%",
@@ -282,5 +287,9 @@ export const styles = StyleSheet.create({
       },
     }),
   },
+  EllipseStartRecord:{
+    width:36,
+    height:36
+  }
   
 });

@@ -23,5 +23,8 @@ export   const styles = StyleSheet.create({
       fontWeight:'800',
       lineHeight: 56, 
       letterSpacing: -1.04,
+    },
+    logoStyle: {
+      flex:1
     }
   });

@@ -2,6 +2,8 @@ import React, { Fragment } from "react";
 import { Image, Text, View } from "react-native";
 import FadedDivider from "../FadedDivider/FadedDivider";
 import { styles } from "./styles";
+import OrangeStars from "../../assets/icons/orange-stars.svg";
+import CustomSvgImageComponent from "../CustomComponents/Image";
 interface FadedDividerTextProps {
   fadedDividerTextColor?: {};
   color: string[];
@@ -26,7 +28,11 @@ const FadedDividerText: React.FC<FadedDividerTextProps> = ({
         ]}
       >
         {showIcon ? (
-          <Image source={require("../../assets/icons/stars.png")} />
+          <CustomSvgImageComponent
+            width={18}
+            height={18}
+            Component={OrangeStars}
+          />
         ) : (
           ""
         )}

@@ -1,30 +1,37 @@
 import React from "react";
 import { Image, Text, View } from "react-native";
 import { styles } from "./styles";
+import CustomSvgImageComponent from "../../components/CustomComponents/Image";
+import ChevronDown from "../../assets/icons/chevronDown.svg";
 
 const CharacterChatNavbar = (): React.JSX.Element => {
   return (
     <View style={styles.characterNavContainer}>
-      <Image
-        style={styles.pauseIcon}
-        source={require("../../assets/icons/pauseIcon.png")}
-      />
+      <View style={styles.pauseIconContainer}>
+        <Image
+          style={styles.pauseIcon}
+          source={require("../../assets/icons/pauseIcon.png")}
+        />
+      </View>
 
       <View style={styles.dropdownContainer}>
         <View style={styles.dropdownTxtContainer}>
-          <Text style={styles.orangeText}>2 of 3 goals</Text>
-          <Image source={require("../../assets/icons/chevronDown.png")} />
+          <Text style={styles.orangeText}>0 of 3 goals</Text>
+          <CustomSvgImageComponent
+            width={16}
+            height={16}
+            Component={ChevronDown}
+          />
         </View>
         <View style={styles.stepperContainer}>
           <View style={styles.stepCircle}>
-            <Image source={require("../../assets/icons/check.png")} />
+            <View style={styles.stepCircleOutlined}></View>
           </View>
           <View style={styles.stepLine}></View>
           <View style={styles.stepCircle}>
-            <Image source={require("../../assets/icons/check.png")} />
+            <View style={styles.stepCircleOutlined}></View>
           </View>
-          <View style={styles.stepLineHalfFilled}></View>
-          <View style={styles.stepLineHalfOutlined}></View>
+          <View style={styles.stepLine}></View>
           <View style={styles.stepCircleOutlined}></View>
         </View>
       </View>

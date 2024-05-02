@@ -2,6 +2,9 @@ import React from "react";
 import { Image, Text, View } from "react-native";
 import ProfileContainer from "../ProfileContainer/ProfileContainer";
 import { styles } from "./styles";
+import CustomSvgImageComponent from "../CustomComponents/Image";
+import Pencil from "../../assets/icons/pencil.svg";
+import Bookmark from "../../assets/icons/bookmark.svg";
 
 interface UserResponseContainerProps {
   message: string;
@@ -32,8 +35,12 @@ const UserResponseContainer: React.FC<UserResponseContainerProps> = ({
           </Text> */}
         </Text>
         <View style={styles.userResponseIconsContainer}>
-          <Image source={require("../../assets/icons/pencil.png")} />
-          <Image source={require("../../assets/icons/bookmark.png")} />
+          <CustomSvgImageComponent width={18} height={18} Component={Pencil} />
+          <CustomSvgImageComponent
+            width={20}
+            height={20}
+            Component={Bookmark}
+          />
         </View>
       </View>
     </View>
