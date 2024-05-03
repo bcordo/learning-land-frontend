@@ -18,8 +18,12 @@ function SplashScreen({ navigation }): React.JSX.Element {
         <Image source={require("../../assets/icons/LandingLogo.png")} />
       </View>
       <View>
-        <Text style={styles.onboardingText}>Learning</Text>
-        <Text style={styles.onboardingText}>Land </Text>
+        <Text style={[styles.defaultFontFamilyBold, styles.onboardingText]}>
+          Learning
+        </Text>
+        <Text style={[styles.defaultFontFamilyBold, styles.onboardingText]}>
+          Land{" "}
+        </Text>
       </View>
     </View>
   );

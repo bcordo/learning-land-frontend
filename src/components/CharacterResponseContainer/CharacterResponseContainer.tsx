@@ -80,7 +80,10 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
             style={styles.profileIcon}
             source={require("../../assets/icons/profileAvatar.png")}
           />
-          <Text style={styles.estherText}>Esther</Text>
+
+          <Text style={[styles.defaultFontFamily, styles.estherText]}>
+            Esther
+          </Text>
         </View>
       </View>
 
@@ -88,7 +91,11 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
         <ProfileContainer isTyping={isTyping} />
       ) : message ? (
         <View style={styles.characterResponseContainer}>
-          <Text style={styles.characterResponseText}>{message}</Text>
+          <Text
+            style={[styles.defaultFontFamily, styles.characterResponseText]}
+          >
+            {message}
+          </Text>
           <View style={styles.translateContainer}>
             <View style={styles.translateRightContainer}>
               <TouchableOpacity onPress={() => speakText(message || " ")}>
@@ -133,7 +140,7 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
                       ]}
                     >
                       <Image source={item.icon} />
-                      <Text style={styles.menuText}>{item.value}</Text>
+                      <Text style={styles.defaultFontFamily}>{item.value}</Text>
                     </View>
                   ))}
                 </View>
@@ -160,6 +167,7 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
               <View style={styles.divider}></View>
               <Text
                 style={[
+                  styles.defaultFontFamily,
                   styles.translationText,
                   quoteText ? styles.quotedText : null,
                 ]}

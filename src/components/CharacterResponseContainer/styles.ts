@@ -1,6 +1,12 @@
 import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
+  defaultFontFamily:{
+    fontFamily: 'Montserrat-Regular',
+  },
+  defaultFontFamilyBold:{
+    fontFamily: 'Montserrat-Bold',
+  },
   characterResponseContainer: {
     width: '90%',
     backgroundColor: '#F1F5F9',
@@ -22,10 +28,11 @@ export const styles = StyleSheet.create({
     color: '#171717',
     fontSize: 14,
     lineHeight: 20,
+    marginBottom:20
   },
 
   translateContainer: {
-    marginTop: 12,
+   
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -51,7 +58,6 @@ export const styles = StyleSheet.create({
     fontSize: 12,
   },
   aiTyping: {
-    // marginTop: 45,
     marginTop:12
   },
   text: {
@@ -89,7 +95,7 @@ export const styles = StyleSheet.create({
   
   },
   
-  menuText: {},
+
   profileIconContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -101,6 +107,8 @@ export const styles = StyleSheet.create({
   estherText: {
     color: '#737373',
     fontSize: 14,
+    lineHeight:20,
+    letterSpacing:0
   },
  
 });

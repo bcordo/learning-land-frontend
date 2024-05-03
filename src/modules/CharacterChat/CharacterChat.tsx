@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Image,
   ScrollView,
   Text,
   TextInput,
@@ -31,13 +30,19 @@ import Microphonesvg from "../../assets/icons/SvgMicrophone.svg";
 import PlusSvg from "../../assets/icons/plus.svg";
 import KeyBoardSvg from "../../assets/icons/keyboard.svg";
 import ArrowUp from "../../assets/icons/arrow-up.svg";
+import ArrowUpGrey from "../../assets/icons/arrow-up-grey.svg";
 import XSvg from "../../assets/icons/x.svg";
 import Stars from "../../assets/icons/stars.svg";
 import Bookmark from "../../assets/icons/bookmark.svg";
 import CircleDot from "../../assets/icons/circle-dot.svg";
+// import Bar1 from "../../assets/icons/bar1.svg";
+// import Bar2 from "../../assets/icons/bar2.svg";
+// import Bar3 from "../../assets/icons/bar3.svg";
+import XBlack from "../../assets/icons/blackX.svg";
 import CustomSvgImageComponent from "../../components/CustomComponents/Image";
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
+audioRecorderPlayer.setSubscriptionDuration(0.09);
 
 const CharacterChat = (): React.JSX.Element => {
   interface chatMessagesInterface {
@@ -47,6 +52,16 @@ const CharacterChat = (): React.JSX.Element => {
     emotion?: string;
     thought?: string;
   }
+  // const imagesArr = [
+  //   <CustomSvgImageComponent width={25} height={25} Component={Bar1} />,
+  //   <CustomSvgImageComponent width={25} height={30} Component={Bar2} />,
+  //   <CustomSvgImageComponent width={25} height={48} Component={Bar3} />,
+  // ];
+  // const barsImagesArr = [
+  //   <CustomSvgImageComponent width={25} height={25} Component={Bar1} />,
+  //   <CustomSvgImageComponent width={25} height={25} Component={Bar1} />,
+  //   <CustomSvgImageComponent width={25} height={25} Component={Bar1} />,
+  // ];
 
   const [inputText, setInputText] = useState<string>("");
   const [enableRecording, setEnableRecording] = useState<boolean>(false);
@@ -56,7 +71,30 @@ const CharacterChat = (): React.JSX.Element => {
   const [sendingAudio, isSendingAudio] = useState<boolean>(false);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [speakStatus, setSpeakStatus] = useState<string>("Start speaking");
+  const [duration, setDuration] = useState(0);
+  const [invalidRecord, setInvalidRecord] = useState(false);
+  // const [barsImages, setBarsImages] = useState(barsImagesArr);
+  // const [isShuffling, setIsShuffling] = useState(false);
+  const [startSpeaking, setStartSpeaking] = useState(false);
 
+  // const shuffleArray = (array: []) => {
+  //   for (let i = array.length - 1; i > 0; i--) {
+  //     const j = Math.floor(Math.random() * (i + 1));
+  //     [array[i], array[j]] = [array[j], array[i]];
+  //   }
+  //   return array;
+  // };
+
+  // useEffect(() => {
+  //   shufflingInterval = setInterval(() => {
+  //     if (isShuffling) {
+  //       const arr = shuffleArray(barsImages);
+  //       setBarsImages(arr);
+  //     } else {
+  //       clearInterval(shufflingInterval);
+  //     }
+  //   });
+  // }, [isShuffling]);
   const [WS, setWS] = React.useState<WebSocket | null>(null);
 
   const [chatMessages, setChatMessages] = React.useState<
@@ -108,6 +146,19 @@ const CharacterChat = (): React.JSX.Element => {
     }
   }, [socketConnected]);
 
+  useEffect(() => {
+    let timer;
+    if (isRecording) {
+      timer = setInterval(() => {
+        setDuration((prev) => prev + 1);
+      }, 1000); // Update duration every second
+    } else {
+      clearInterval(timer);
+    }
+
+    return () => clearInterval(timer);
+  }, [isRecording]);
+
   const handleServerMessage = (message: string) => {
     try {
       const parsedMessage = JSON.parse(message);
@@ -144,13 +195,23 @@ const CharacterChat = (): React.JSX.Element => {
 
   const handleUserUtteranceMessage = (message: any) => {
     if (message.content_type === ContentType.TEXT) {
-      setChatMessages((messages) => [
-        ...messages,
-        {
+      setChatMessages((prevMessages) => {
+        const updatedMessages = prevMessages.filter((message) => {
+          if (message.isTyping) {
+            return false;
+          }
+
+          return true;
+        });
+
+        updatedMessages.push({
           type: "user",
           text: message.data,
-        },
-      ]);
+        });
+        return updatedMessages;
+      });
+
+      // ]);
     }
   };
 
@@ -198,29 +259,22 @@ const CharacterChat = (): React.JSX.Element => {
   };
   const handleCharacterResponseMessage = (message: any) => {
     try {
-      // setChatMessages((messages) =>
-      //   messages.filter((message) => !message.isTyping)
-      // );
       setIsTyping(false);
       const response = JSON.parse(message.data);
       setChatMessages((prevMessages) => {
         const updatedMessages = prevMessages.filter((message) => {
-          // Remove the typing indicator message
           if (message.isTyping) {
             return false;
           }
-
-          // Update the last character-utterance message with the thought received
           if (message.type === "character-utterance") {
             message.thought = response.thought;
 
-            return true; // Keep this message
+            return true;
           }
 
-          return true; // Keep other messages
+          return true;
         });
 
-        // Add a new character-response message
         updatedMessages.push({
           type: "character-response",
           text: response.utterance,
@@ -386,7 +440,11 @@ const CharacterChat = (): React.JSX.Element => {
                 Component={Stars}
               />
               <View>
-                <Text style={styles.trySayingInstedTxt}>{message.text}</Text>
+                <Text
+                  style={[styles.defaultFontFamily, styles.trySayingInstedTxt]}
+                >
+                  {message.text}
+                </Text>
               </View>
             </View>
             <View style={styles.characterChatButtonsBox}>
@@ -399,7 +457,14 @@ const CharacterChat = (): React.JSX.Element => {
                   height={18}
                   Component={CircleDot}
                 />
-                <Text style={styles.characterChatButtonTxt}>Explain to me</Text>
+                <Text
+                  style={[
+                    styles.defaultFontFamilyBold,
+                    styles.characterChatButtonTxt,
+                  ]}
+                >
+                  Explain to me
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.characterChatButtons}
@@ -410,7 +475,12 @@ const CharacterChat = (): React.JSX.Element => {
                   height={18}
                   Component={Bookmark}
                 />
-                <Text style={styles.characterChatButtonTxt}>
+                <Text
+                  style={[
+                    styles.defaultFontFamilyBold,
+                    styles.characterChatButtonTxt,
+                  ]}
+                >
                   Add to core phrases
                 </Text>
               </TouchableOpacity>
@@ -449,7 +519,10 @@ const CharacterChat = (): React.JSX.Element => {
     connectWebSocket();
   }, []);
   const onStartRecord = async () => {
+    setInvalidRecord(false);
     setSpeakStatus("Listening");
+    // setIsShuffling(true);
+    setDuration(0);
     const hasPermission = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
       {
@@ -465,18 +538,33 @@ const CharacterChat = (): React.JSX.Element => {
       const path = `${RNFS.DocumentDirectoryPath}/test.mp3`;
       setRecordPath(path);
       const result = await audioRecorderPlayer.startRecorder(path);
+
       audioRecorderPlayer.addRecordBackListener((e) => {
         return;
       });
-      setIsRecording(true);
+      // setIsRecording(true);
     }
+  };
+  const handleStartRecord = () => {
+    setStartSpeaking(true);
+    // setBarsImages(barsImagesArr);
+    setSpeakStatus("Start speaking");
+    setIsRecording(true);
+    setTimeout(() => {
+      setStartSpeaking(false);
+      onStartRecord();
+    }, 1000);
   };
 
   const onStopRecord = async (sendAudioViaSocket: boolean) => {
     const result = await audioRecorderPlayer.stopRecorder();
     audioRecorderPlayer.removeRecordBackListener();
-    setIsRecording(false);
-    if (sendAudioViaSocket) {
+    // setIsShuffling(false);
+    if (duration <= 1) {
+      setIsRecording(false);
+      return setInvalidRecord(true);
+    } else if (sendAudioViaSocket) {
+      setIsRecording(false);
       sendAudio();
     }
   };
@@ -525,6 +613,14 @@ const CharacterChat = (): React.JSX.Element => {
         content_type: ContentType.TEXT,
         data: inputText,
       });
+      setChatMessages((messages) => [
+        ...messages,
+        {
+          type: "user",
+          text: inputText,
+        },
+      ]);
+      setInputText("");
     }
   };
   return (
@@ -535,10 +631,14 @@ const CharacterChat = (): React.JSX.Element => {
           <View>
             <CharacterChatNavbar />
             <View style={styles.missionTxtContainer}>
-              <Text style={styles.coffeeShopTxt}>
+              <Text
+                style={[styles.defaultFontFamilyBold, styles.coffeeShopTxt]}
+              >
                 The girl in the coffee shop
               </Text>
-              <Text style={styles.missionTxt}>World 1, Mission 1</Text>
+              <Text style={[styles.defaultFontFamily, styles.missionTxt]}>
+                World 1, Mission 1
+              </Text>
             </View>
           </View>
         </View>
@@ -568,21 +668,46 @@ const CharacterChat = (): React.JSX.Element => {
                     autoPlay
                     loop
                   />
-                  <Text style={styles.startToRecordTxt}>{speakStatus}</Text>
+                  {/* <View style={styles.shufflingImagesArr}>
+                    {barsImages.map((e) => e)}
+                  </View> */}
+                  <Text
+                    style={[styles.defaultFontFamily, styles.startToRecordTxt]}
+                  >
+                    {speakStatus}
+                  </Text>
                 </>
               ) : (
                 <>
-                  <TouchableOpacity
-                    // style={styles.plusButton}
-                    onPress={() => {}}
+                  {invalidRecord ? (
+                    <TouchableOpacity
+                      onPress={() => {
+                        setInvalidRecord(false);
+                      }}
+                      style={styles.blackXContainer}
+                    >
+                      <CustomSvgImageComponent
+                        width={20}
+                        height={20}
+                        Component={XBlack}
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity onPress={() => {}}>
+                      <TouchableOpacity
+                        onPress={() => {}}
+                        style={styles.blackXContainer}
+                      ></TouchableOpacity>
+                    </TouchableOpacity>
+                  )}
+                  <Text
+                    style={[styles.defaultFontFamily, styles.startToRecordTxt]}
                   >
-                    <Image
-                      style={styles.EllipseStartRecord}
-                      source={require("../../assets/icons/EllipseStartRecord.png")}
-                    />
-                  </TouchableOpacity>
-                  <Text style={styles.startToRecordTxt}>
-                    {sendingAudio ? "Sending audio" : "Tap below sto record"}
+                    {sendingAudio
+                      ? "Sending audio"
+                      : invalidRecord
+                      ? "Recordings must be longer that 1 sec"
+                      : "Tap below to record"}
                   </Text>
                 </>
               )}
@@ -599,6 +724,7 @@ const CharacterChat = (): React.JSX.Element => {
                   isRecording
                     ? () => {
                         onStopRecord(false);
+                        setIsRecording(false);
                       }
                     : () => {}
                 }
@@ -619,14 +745,24 @@ const CharacterChat = (): React.JSX.Element => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.startRecordButton}
-                onPress={isRecording ? () => onStopRecord(true) : onStartRecord}
+                onPress={
+                  isRecording ? () => onStopRecord(true) : handleStartRecord
+                }
               >
                 {isRecording ? (
-                  <CustomSvgImageComponent
-                    width={42}
-                    height={42}
-                    Component={ArrowUp}
-                  />
+                  startSpeaking ? (
+                    <CustomSvgImageComponent
+                      width={42}
+                      height={42}
+                      Component={ArrowUpGrey}
+                    />
+                  ) : (
+                    <CustomSvgImageComponent
+                      width={42}
+                      height={42}
+                      Component={ArrowUp}
+                    />
+                  )
                 ) : sendingAudio ? (
                   <LottieView
                     style={{ width: 86, height: 86 }}

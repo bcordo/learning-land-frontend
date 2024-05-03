@@ -1,6 +1,12 @@
 import { Platform, StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
+  defaultFontFamily:{
+    fontFamily: 'Montserrat-Regular',
+  },
+  defaultFontFamilyBold:{
+    fontFamily: 'Montserrat-Bold',
+  },
   mainContainer: {
     width: "100%",
     height: "100%",
@@ -48,8 +54,9 @@ export const styles = StyleSheet.create({
     gap: 6,
   },
   timer: {
-    width: 55,
-    height: 55,
+    width: 50,
+    height: 50,
+    lineHeight:20
   },
   pipe: {
     width: 5,
@@ -65,7 +72,8 @@ export const styles = StyleSheet.create({
   orangeText: {
     color: "#F58C39",
     fontSize: 12,
-    fontFamily: 'Montserrat',
+    fontWeight: '500',
+    fontStyle: 'normal',
     marginBottom:2
   },
   missionTxtContainer: {
@@ -76,21 +84,23 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     paddingTop:12,
     fontWeight: "500",
-    color: "#000",
-    lineHeight:24
+    color: "#000000",
+    lineHeight:24,
+    letterSpacing:0
   },
 
   missionTxt: {
     fontSize: 14,
     color: "#737373",
     lineHeight:20,
-    fontFamily: 'Montserrat',
+    letterSpacing:0
   },
 
   fadedDividerTextOrange: {
     textAlign: "left",
     color: "#F58C39",
-    fontWeight: "600",
+    fontFamily: 'Montserrat-Bold',
+  
   },
   profileIconContainerStyle: {
     marginTop: 10,
@@ -100,8 +110,8 @@ export const styles = StyleSheet.create({
     
   },
   stepCircleOutlined: {
-    width: 16,
-    height: 16,
+    width: 14,
+    height: 14,
     borderWidth: 2,
     borderColor: "#becdd7",
     borderRadius: 50,
@@ -181,7 +191,6 @@ export const styles = StyleSheet.create({
   characterChatButtonTxt: {
     color: "#737373",
     fontSize: 10,
-    fontWeight: "500",
     lineHeight: 20,
   },
   typeMessageContainer: {
@@ -239,6 +248,15 @@ export const styles = StyleSheet.create({
     gap: 5,
     paddingTop: 28,
   },
+  blackXContainer:{
+height:32,
+width:32,
+borderColor:'#525252',
+borderWidth:4,
+borderRadius:50,
+alignItems:'center',
+justifyContent:'center'
+  },
   startRecordIcon: {
     width: 42,
     height: 42,
@@ -254,7 +272,12 @@ export const styles = StyleSheet.create({
     color: "#525252",
     fontSize: 12,
     lineHeight: 20,
-    fontFamily: 'Montserrat'
+  },
+  shufflingImagesArr:{
+    flexDirection:'row',
+    width:110,
+alignItems:"flex-end",
+    justifyContent:"space-between"
   },
   input: {
     width: "75%",

@@ -3,6 +3,7 @@ import { Image, Text, View } from "react-native";
 import { styles } from "./styles";
 import CustomSvgImageComponent from "../../components/CustomComponents/Image";
 import ChevronDown from "../../assets/icons/chevronDown.svg";
+import Timer from "../../assets/icons/timer.svg";
 
 const CharacterChatNavbar = (): React.JSX.Element => {
   return (
@@ -16,7 +17,9 @@ const CharacterChatNavbar = (): React.JSX.Element => {
 
       <View style={styles.dropdownContainer}>
         <View style={styles.dropdownTxtContainer}>
-          <Text style={styles.orangeText}>0 of 3 goals</Text>
+          <Text style={[styles.orangeText, styles.defaultFontFamily]}>
+            0 of 3 goals
+          </Text>
           <CustomSvgImageComponent
             width={16}
             height={16}

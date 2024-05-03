@@ -9,5 +9,12 @@ export const styles = StyleSheet.create({
     color: '#525252',
     fontSize: 12,
     lineHeight: 20,
+    letterSpacing:0
+  },
+  defaultFontFamily:{
+    fontFamily: 'Montserrat-Regular',
+  },
+  defaultFontFamilyBold:{
+    fontFamily: 'Montserrat-Bold',
   },
 });

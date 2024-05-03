@@ -19,11 +19,11 @@ const UserResponseContainer: React.FC<UserResponseContainerProps> = ({
           style={styles.profileIcon}
           source={require("../../assets/icons/profileAvatar.png")}
         />
-        <Text style={styles.estherText}>User</Text>
+        <Text style={[styles.defaultFontFamily, styles.estherText]}>User</Text>
       </View>
       <ProfileContainer profileAlignmnent={styles.profileAlignmnent} />
       <View style={styles.userResponseTxtContainer}>
-        <Text style={styles.userResponseTxt}>
+        <Text style={[styles.defaultFontFamily, styles.userResponseTxt]}>
           {message}
           {/* <Text style={styles.userResponseTxtOranged}>
             This is an incorrect sentence.

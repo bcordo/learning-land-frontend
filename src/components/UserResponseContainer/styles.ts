@@ -1,6 +1,12 @@
-import {Platform, StyleSheet} from 'react-native';
+import { StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
+  defaultFontFamily:{
+    fontFamily: 'Montserrat-Regular',
+  },
+  defaultFontFamilyBold:{
+    fontFamily: 'Montserrat-Bold',
+  },
   userResponseContainer: {
     alignItems: 'flex-end',
     marginTop: 16,
@@ -48,5 +54,6 @@ export const styles = StyleSheet.create({
   estherText: {
     color: '#737373',
     fontSize: 14,
+    lineHeight:20
   },
 });

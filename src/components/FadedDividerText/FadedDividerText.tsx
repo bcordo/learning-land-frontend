@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Image, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import FadedDivider from "../FadedDivider/FadedDivider";
 import { styles } from "./styles";
 import OrangeStars from "../../assets/icons/orange-stars.svg";
@@ -36,7 +36,13 @@ const FadedDividerText: React.FC<FadedDividerTextProps> = ({
         ) : (
           ""
         )}
-        <Text style={[styles.fadedDividerText, fadedDividerTextColor]}>
+        <Text
+          style={[
+            styles.defaultFontFamily,
+            styles.fadedDividerText,
+            fadedDividerTextColor,
+          ]}
+        >
           {text}
         </Text>
       </View>
