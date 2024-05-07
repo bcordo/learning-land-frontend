@@ -1,11 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import CharacterResponseContainer from "../../components/CharacterResponseContainer/CharacterResponseContainer";
 import FadedDividerText from "../../components/FadedDividerText/FadedDividerText";
 import CharacterChatNavbar from "./CharacterChatNavbar";
@@ -20,26 +14,12 @@ import {
   WEBSOCKET_URL,
 } from "../../assets/constant";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
-import LottieView from "lottie-react-native";
 import AudioRecorderPlayer from "react-native-audio-recorder-player";
 import RNFS from "react-native-fs";
 import { PermissionsAndroid } from "react-native";
 import UserResponseContainer from "../../components/UserResponseContainer/UserResponseContainer";
-import FadedDivider from "../../components/FadedDivider/FadedDivider";
-import Microphonesvg from "../../assets/icons/SvgMicrophone.svg";
-import PlusSvg from "../../assets/icons/plus.svg";
-import KeyBoardSvg from "../../assets/icons/keyboard.svg";
-import ArrowUp from "../../assets/icons/arrow-up.svg";
-import ArrowUpGrey from "../../assets/icons/arrow-up-grey.svg";
-import XSvg from "../../assets/icons/x.svg";
-import Stars from "../../assets/icons/stars.svg";
-import Bookmark from "../../assets/icons/bookmark.svg";
-import CircleDot from "../../assets/icons/circle-dot.svg";
-// import Bar1 from "../../assets/icons/bar1.svg";
-// import Bar2 from "../../assets/icons/bar2.svg";
-// import Bar3 from "../../assets/icons/bar3.svg";
-import XBlack from "../../assets/icons/blackX.svg";
-import CustomSvgImageComponent from "../../components/CustomComponents/Image";
+import AssistantCorrection from "../../components/AssistantCorrection/AssistantCorrection";
+import CharacterChatFooter from "../../components/CharacterChatFooter/CharacterChatFooter";
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 audioRecorderPlayer.setSubscriptionDuration(0.09);
@@ -51,17 +31,8 @@ const CharacterChat = (): React.JSX.Element => {
     action?: string;
     emotion?: string;
     thought?: string;
+    isTyping?: boolean;
   }
-  // const imagesArr = [
-  //   <CustomSvgImageComponent width={25} height={25} Component={Bar1} />,
-  //   <CustomSvgImageComponent width={25} height={30} Component={Bar2} />,
-  //   <CustomSvgImageComponent width={25} height={48} Component={Bar3} />,
-  // ];
-  // const barsImagesArr = [
-  //   <CustomSvgImageComponent width={25} height={25} Component={Bar1} />,
-  //   <CustomSvgImageComponent width={25} height={25} Component={Bar1} />,
-  //   <CustomSvgImageComponent width={25} height={25} Component={Bar1} />,
-  // ];
 
   const [inputText, setInputText] = useState<string>("");
   const [enableRecording, setEnableRecording] = useState<boolean>(false);
@@ -69,43 +40,16 @@ const CharacterChat = (): React.JSX.Element => {
   const [socketConnected, setSocketConnected] = useState(false);
   const [recordPath, setRecordPath] = useState("");
   const [sendingAudio, isSendingAudio] = useState<boolean>(false);
-  const [isTyping, setIsTyping] = useState<boolean>(false);
   const [speakStatus, setSpeakStatus] = useState<string>("Start speaking");
   const [duration, setDuration] = useState(0);
   const [invalidRecord, setInvalidRecord] = useState(false);
-  // const [barsImages, setBarsImages] = useState(barsImagesArr);
-  // const [isShuffling, setIsShuffling] = useState(false);
   const [startSpeaking, setStartSpeaking] = useState(false);
-
-  // const shuffleArray = (array: []) => {
-  //   for (let i = array.length - 1; i > 0; i--) {
-  //     const j = Math.floor(Math.random() * (i + 1));
-  //     [array[i], array[j]] = [array[j], array[i]];
-  //   }
-  //   return array;
-  // };
-
-  // useEffect(() => {
-  //   shufflingInterval = setInterval(() => {
-  //     if (isShuffling) {
-  //       const arr = shuffleArray(barsImages);
-  //       setBarsImages(arr);
-  //     } else {
-  //       clearInterval(shufflingInterval);
-  //     }
-  //   });
-  // }, [isShuffling]);
   const [WS, setWS] = React.useState<WebSocket | null>(null);
 
   const [chatMessages, setChatMessages] = React.useState<
     chatMessagesInterface[]
   >([]);
   const [currentUtterance, setCurrentUtterance] = React.useState("");
-
-  const [missionState, setMissionState] = React.useState(
-    UserMissionState.INACTIVE
-  );
-  const [goals, setGoals] = React.useState([]);
 
   const connectWebSocket = () => {
     const newWS = new WebSocket(WEBSOCKET_URL);
@@ -138,20 +82,17 @@ const CharacterChat = (): React.JSX.Element => {
 
       setChatMessages([
         { type: "state", text: "Mission started" },
-        {
-          type: "character-utterance",
-          isTyping: true,
-        },
+        { text: "", type: "character-utterance", isTyping: true },
       ]);
     }
   }, [socketConnected]);
 
   useEffect(() => {
-    let timer;
+    let timer: any;
     if (isRecording) {
       timer = setInterval(() => {
         setDuration((prev) => prev + 1);
-      }, 1000); // Update duration every second
+      }, 1000);
     } else {
       clearInterval(timer);
     }
@@ -210,8 +151,6 @@ const CharacterChat = (): React.JSX.Element => {
         });
         return updatedMessages;
       });
-
-      // ]);
     }
   };
 
@@ -259,7 +198,6 @@ const CharacterChat = (): React.JSX.Element => {
   };
   const handleCharacterResponseMessage = (message: any) => {
     try {
-      setIsTyping(false);
       const response = JSON.parse(message.data);
       setChatMessages((prevMessages) => {
         const updatedMessages = prevMessages.filter((message) => {
@@ -327,9 +265,6 @@ const CharacterChat = (): React.JSX.Element => {
       try {
         const missionStatusData = JSON.parse(message.data);
 
-        setMissionState(missionStatusData.mission_state);
-        setGoals(missionStatusData.goals || []);
-
         if (missionStatusData.mission_state === UserMissionState.COMPLETED) {
           setChatMessages([
             { type: "state", text: "Mission completed successfully!" },
@@ -362,24 +297,14 @@ const CharacterChat = (): React.JSX.Element => {
   const renderChatMessage = (message: any) => {
     switch (message.type) {
       case "user-action":
-        return (
-          <></>
-          // <View key={message.id}>
-          //   <Text>Action: {message.text}</Text>
-          // </View>
-        );
+        return <></>;
       case "user":
-        return (
-          <UserResponseContainer message={message.text} />
-          // <View key={message.id}>
-          //   <Text>{message.text}</Text>
-          // </View>
-        );
+        return <UserResponseContainer message={message.text} />;
       case "character-utterance":
         return (
           <>
             <CharacterResponseContainer
-              isTyping={message?.isTyping || isTyping}
+              isTyping={message?.isTyping}
               message={message.text}
               thought={message?.thought}
             />
@@ -401,7 +326,6 @@ const CharacterChat = (): React.JSX.Element => {
                 showIcon={false}
               />
             )}
-            {/* {message.emotion && <Text>Emotion: {message.emotion}</Text>} */}
           </View>
         );
       case "assistant-hint":
@@ -420,88 +344,9 @@ const CharacterChat = (): React.JSX.Element => {
           />
         );
       case "assistant-correction":
-        return (
-          // <View key={message.id}>
-          //   <Text>Assistant Correction: {message.text}</Text>
-          // </View>
-          <>
-            <FadedDivider
-              style={{ marginVertical: 11 }}
-              color={[
-                "rgba(255, 255, 255, 0)",
-                "rgba(0, 0, 0, 0.5)",
-                "rgba(255, 255, 255, 0)",
-              ]}
-            />
-            <View style={styles.trySayingInstedContainer}>
-              <CustomSvgImageComponent
-                width={18}
-                height={18}
-                Component={Stars}
-              />
-              <View>
-                <Text
-                  style={[styles.defaultFontFamily, styles.trySayingInstedTxt]}
-                >
-                  {message.text}
-                </Text>
-              </View>
-            </View>
-            <View style={styles.characterChatButtonsBox}>
-              <TouchableOpacity
-                style={styles.characterChatButtons}
-                onPress={() => {}}
-              >
-                <CustomSvgImageComponent
-                  width={18}
-                  height={18}
-                  Component={CircleDot}
-                />
-                <Text
-                  style={[
-                    styles.defaultFontFamilyBold,
-                    styles.characterChatButtonTxt,
-                  ]}
-                >
-                  Explain to me
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.characterChatButtons}
-                onPress={() => {}}
-              >
-                <CustomSvgImageComponent
-                  width={18}
-                  height={18}
-                  Component={Bookmark}
-                />
-                <Text
-                  style={[
-                    styles.defaultFontFamilyBold,
-                    styles.characterChatButtonTxt,
-                  ]}
-                >
-                  Add to core phrases
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <FadedDivider
-              style={{ marginVertical: 11 }}
-              color={[
-                "rgba(255, 255, 255, 0)",
-                "rgba(0, 0, 0, 0.5)",
-                "rgba(255, 255, 255, 0)",
-              ]}
-            />
-          </>
-        );
+        return <AssistantCorrection text={message.text} />;
       case "state":
-        return (
-          <></>
-          // <View key={message.id}>
-          //   <Text>{message.text}</Text>
-          // </View>
-        );
+        return <></>;
       default:
         return null;
     }
@@ -515,13 +360,20 @@ const CharacterChat = (): React.JSX.Element => {
   }, [chatMessages]);
 
   useEffect(() => {
-    setIsTyping(true);
+    setChatMessages((messages) => [
+      ...messages,
+      {
+        type: "character-utterance",
+        isTyping: true,
+        text: "",
+      },
+    ]);
+
     connectWebSocket();
   }, []);
   const onStartRecord = async () => {
     setInvalidRecord(false);
     setSpeakStatus("Listening");
-    // setIsShuffling(true);
     setDuration(0);
     const hasPermission = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
@@ -542,12 +394,10 @@ const CharacterChat = (): React.JSX.Element => {
       audioRecorderPlayer.addRecordBackListener((e) => {
         return;
       });
-      // setIsRecording(true);
     }
   };
   const handleStartRecord = () => {
     setStartSpeaking(true);
-    // setBarsImages(barsImagesArr);
     setSpeakStatus("Start speaking");
     setIsRecording(true);
     setTimeout(() => {
@@ -559,7 +409,6 @@ const CharacterChat = (): React.JSX.Element => {
   const onStopRecord = async (sendAudioViaSocket: boolean) => {
     const result = await audioRecorderPlayer.stopRecorder();
     audioRecorderPlayer.removeRecordBackListener();
-    // setIsShuffling(false);
     if (duration <= 1) {
       setIsRecording(false);
       return setInvalidRecord(true);
@@ -588,14 +437,6 @@ const CharacterChat = (): React.JSX.Element => {
   };
   const sendMessage = (message: any) => {
     if (WS && WS.readyState === WebSocket.OPEN) {
-      setChatMessages((messages) => [
-        ...messages,
-        {
-          type: "character-utterance",
-          isTyping: true,
-          text: "",
-        },
-      ]);
       isSendingAudio(true);
       WS.send(JSON.stringify(message));
     } else {
@@ -657,167 +498,22 @@ const CharacterChat = (): React.JSX.Element => {
             <View key={index}>{renderChatMessage(message)}</View>
           ))}
         </ScrollView>
-        {enableRecording ? (
-          <View style={styles.startRecordContainer}>
-            <View style={styles.startToRecordContainer}>
-              {isRecording ? (
-                <>
-                  <LottieView
-                    style={{ width: 100, height: 48 }}
-                    source={require("../../assets/animations/recording.json")}
-                    autoPlay
-                    loop
-                  />
-                  {/* <View style={styles.shufflingImagesArr}>
-                    {barsImages.map((e) => e)}
-                  </View> */}
-                  <Text
-                    style={[styles.defaultFontFamily, styles.startToRecordTxt]}
-                  >
-                    {speakStatus}
-                  </Text>
-                </>
-              ) : (
-                <>
-                  {invalidRecord ? (
-                    <TouchableOpacity
-                      onPress={() => {
-                        setInvalidRecord(false);
-                      }}
-                      style={styles.blackXContainer}
-                    >
-                      <CustomSvgImageComponent
-                        width={20}
-                        height={20}
-                        Component={XBlack}
-                      />
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity onPress={() => {}}>
-                      <TouchableOpacity
-                        onPress={() => {}}
-                        style={styles.blackXContainer}
-                      ></TouchableOpacity>
-                    </TouchableOpacity>
-                  )}
-                  <Text
-                    style={[styles.defaultFontFamily, styles.startToRecordTxt]}
-                  >
-                    {sendingAudio
-                      ? "Sending audio"
-                      : invalidRecord
-                      ? "Recordings must be longer that 1 sec"
-                      : "Tap below to record"}
-                  </Text>
-                </>
-              )}
-            </View>
-            <View
-              style={[
-                styles.typeMessageContainer,
-                { justifyContent: "center", alignItems: "center", gap: 36 },
-              ]}
-            >
-              <TouchableOpacity
-                style={styles.plusButton}
-                onPress={
-                  isRecording
-                    ? () => {
-                        onStopRecord(false);
-                        setIsRecording(false);
-                      }
-                    : () => {}
-                }
-              >
-                {isRecording ? (
-                  <CustomSvgImageComponent
-                    width={25}
-                    height={25}
-                    Component={XSvg}
-                  />
-                ) : (
-                  <CustomSvgImageComponent
-                    width={25}
-                    height={25}
-                    Component={PlusSvg}
-                  />
-                )}
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.startRecordButton}
-                onPress={
-                  isRecording ? () => onStopRecord(true) : handleStartRecord
-                }
-              >
-                {isRecording ? (
-                  startSpeaking ? (
-                    <CustomSvgImageComponent
-                      width={42}
-                      height={42}
-                      Component={ArrowUpGrey}
-                    />
-                  ) : (
-                    <CustomSvgImageComponent
-                      width={42}
-                      height={42}
-                      Component={ArrowUp}
-                    />
-                  )
-                ) : sendingAudio ? (
-                  <LottieView
-                    style={{ width: 86, height: 86 }}
-                    source={require("../../assets/animations/loading.json")}
-                    autoPlay
-                    loop
-                  />
-                ) : (
-                  <CustomSvgImageComponent
-                    width={42}
-                    height={42}
-                    Component={Microphonesvg}
-                  />
-                )}
-              </TouchableOpacity>
-              {isRecording ? (
-                <TouchableOpacity style={styles.emptyBtn}></TouchableOpacity>
-              ) : (
-                <TouchableOpacity
-                  style={styles.plusButton}
-                  onPress={() => {
-                    setEnableRecording(false);
-                  }}
-                >
-                  <CustomSvgImageComponent
-                    width={25}
-                    height={25}
-                    Component={KeyBoardSvg}
-                  />
-                </TouchableOpacity>
-              )}
-            </View>
-          </View>
-        ) : (
-          <View style={styles.typeMessageContainer}>
-            <TouchableOpacity style={styles.plusButton} onPress={() => {}}>
-              <PlusSvg width={25} height={25} />
-            </TouchableOpacity>
-
-            <TextInput
-              style={styles.input}
-              placeholder="Message"
-              placeholderTextColor="#D4D4D4"
-              onChangeText={(text) => setInputText(text)}
-              onSubmitEditing={handleInputEnter}
-              value={inputText}
-            />
-            <TouchableOpacity
-              style={[styles.plusButton, styles.recordeButton]}
-              onPress={() => setEnableRecording(true)}
-            >
-              <Microphonesvg width={22} height={22} />
-            </TouchableOpacity>
-          </View>
-        )}
+        <CharacterChatFooter
+          enableRecording={enableRecording}
+          isRecording={isRecording}
+          speakStatus={speakStatus}
+          invalidRecord={invalidRecord}
+          setInvalidRecord={setInvalidRecord}
+          sendingAudio={sendingAudio}
+          startSpeaking={startSpeaking}
+          setEnableRecording={setEnableRecording}
+          onStopRecord={onStopRecord}
+          setIsRecording={setIsRecording}
+          handleStartRecord={handleStartRecord}
+          setInputText={setInputText}
+          handleInputEnter={handleInputEnter}
+          inputText={inputText}
+        />
       </View>
     </>
   );

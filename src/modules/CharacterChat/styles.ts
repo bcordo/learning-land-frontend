@@ -1,11 +1,11 @@
 import { Platform, StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-  defaultFontFamily:{
-    fontFamily: 'Montserrat-Regular',
+  defaultFontFamily: {
+    fontFamily: "Montserrat-Regular",
   },
-  defaultFontFamilyBold:{
-    fontFamily: 'Montserrat-Bold',
+  defaultFontFamilyBold: {
+    fontFamily: "Montserrat-Bold",
   },
   mainContainer: {
     width: "100%",
@@ -30,7 +30,7 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   pauseIcon: {
-    shadowColor: '#3282ce9c',
+    shadowColor: "#3282ce9c",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -39,24 +39,24 @@ export const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     padding: 20,
-    width:25,
-    height:25
+    width: 25,
+    height: 25,
   },
-  pauseIconContainer:{
-    alignItems:'center',
-    justifyContent:'center'
+  pauseIconContainer: {
+    alignItems: "center",
+    justifyContent: "center",
   },
 
- 
   dropdownTxtContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
+   
   },
   timer: {
     width: 50,
     height: 50,
-    lineHeight:20
+    lineHeight: 20,
   },
   pipe: {
     width: 5,
@@ -68,13 +68,14 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     gap: 5,
     paddingLeft: 20,
+    position: "relative",
   },
   orangeText: {
     color: "#F58C39",
     fontSize: 12,
-    fontWeight: '500',
-    fontStyle: 'normal',
-    marginBottom:2
+    fontWeight: "500",
+    fontStyle: "normal",
+    marginBottom: 2,
   },
   missionTxtContainer: {
     alignItems: "center",
@@ -82,32 +83,30 @@ export const styles = StyleSheet.create({
   },
   coffeeShopTxt: {
     fontSize: 16,
-    paddingTop:12,
+    paddingTop: 12,
     fontWeight: "500",
     color: "#000000",
-    lineHeight:24,
-    letterSpacing:0
+    lineHeight: 24,
+    letterSpacing: 0,
   },
 
   missionTxt: {
     fontSize: 14,
     color: "#737373",
-    lineHeight:20,
-    letterSpacing:0
+    lineHeight: 20,
+    letterSpacing: 0,
   },
 
   fadedDividerTextOrange: {
     textAlign: "left",
     color: "#F58C39",
-    fontFamily: 'Montserrat-Bold',
-  
+    fontFamily: "Montserrat-Bold",
   },
   profileIconContainerStyle: {
     marginTop: 10,
   },
   stepCircle: {
     alignItems: "center",
-    
   },
   stepCircleOutlined: {
     width: 14,
@@ -129,7 +128,7 @@ export const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 2,
-    marginTop:6,
+    marginTop: 6,
   },
   stepLineHalfFilled: {
     width: 20,
@@ -153,166 +152,61 @@ export const styles = StyleSheet.create({
     shadowRadius: 2,
     marginTop: 6,
   },
-  trySayingInstedContainer: {
-    flexDirection: "row",
-    gap: 8,
-    marginBottom: 20,
-  },
-  trySayingInstedTxt: {
-    color: "#737373",
-    fontSize: 12,
-    lineHeight: 20,
-  },
-  trySayingInstedTxtBlue: {
-    color: "#7DDFDE",
-    fontWeight: "500",
-  },
-  trySayingInstedTxtOrange: {
-    color: "#FF8B67",
-    fontWeight: "500",
-  },
-  characterChatButtonsBox: {
-    flexDirection: "row",
-    gap: 10,
-    paddingLeft: 28,
-  },
-  characterChatButtons: {
-    flexDirection: "row",
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 6,
-    borderRadius: 6,
-    borderColor: "#D4D4D4",
-    borderWidth: 1,
-    marginBottom: 10,
-  },
-  characterChatButtonTxt: {
-    color: "#737373",
-    fontSize: 10,
-    lineHeight: 20,
-  },
-  typeMessageContainer: {
-    marginTop: 12,
-    flexDirection: "row",
-    gap: 10,
-    marginBottom: 12,
-    paddingHorizontal: 24,
-  },
-  plusButton: {
-    width: 36,
-    height: 36,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 11,
-    backgroundColor: "#F1F5F9",
 
-    shadowColor: "#3282ce9c",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-
-    elevation: 5,
-  },
-  emptyBtn:{
-    width: 36,
-    height: 36,
-  
-    backgroundColor: "transparent",
-
-  },
-  startRecordButton: {
-    width: 80,
-    height: 80,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 50,
-    backgroundColor: "#F1F5F9",
-
-    shadowColor: "#3282ce9c",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-
-    elevation: 5,
-  },
-  startToRecordContainer: {
-    alignItems: "center",
-    gap: 5,
-    paddingTop: 28,
-  },
-  blackXContainer:{
-height:32,
-width:32,
-borderColor:'#525252',
-borderWidth:4,
-borderRadius:50,
-alignItems:'center',
-justifyContent:'center'
-  },
   startRecordIcon: {
     width: 42,
     height: 42,
   },
-  recordeButton: {
-    borderRadius: 50,
-  },
-  startRecordContainer: {
-    gap: 22,
-    justifyContent: "center",
-  },
-  startToRecordTxt: {
-    color: "#525252",
-    fontSize: 12,
-    lineHeight: 20,
-  },
-  shufflingImagesArr:{
-    flexDirection:'row',
-    width:110,
-alignItems:"flex-end",
-    justifyContent:"space-between"
-  },
-  input: {
-    width: "75%",
-    height: 38,
-    borderRadius: 20,
-    backgroundColor: "#fff",
-    fontSize: 14,
 
-    shadowOffset: {
-      width: 4,
-      height: 8,
-    },
-    shadowOpacity: 0.61,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    shadowRadius: 4,
-    color: "#D4D4D4",
+  shufflingImagesArr: {
+    flexDirection: "row",
+    width: 110,
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+  },
+
+  EllipseStartRecord: {
+    width: 36,
+    height: 36,
+  },
+  goalsDropdownContainer: {
+    position: "absolute",
+    width: 265,
+    backgroundColor: "#F1F5F9",
+    zIndex: 1,
+    top:20  ,
+    borderWidth:1,
+    borderColor:'#D4D4D4',
+    borderRadius:10,
     ...Platform.select({
       ios: {
-        shadowColor: "#3282ce9c",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 3,
+        shadowColor: 'rgba(0, 0, 0, 0.08)',
+        shadowOffset: { width: 10, height: 10 },
+        shadowOpacity: 1,
+        shadowRadius: 15,
       },
       android: {
         elevation: 5,
       },
     }),
   },
-  EllipseStartRecord:{
-    width:36,
-    height:36
+  goalsDropdownContainerIcon:{
+    width:22,
+    height:22,
+    
+  },
+  goalsValue:{
+color:'#404040'
+  },
+  goalsDropdownSubContainer:{
+    padding:10,
+    gap:10,
+    flexDirection:'row',
+    alignItems:'center',
+    borderBottomColor:"#E5E5E5",
+    borderBottomWidth:1
+  },
+  lastGoalsDropdownSubContainer:{
+    borderBottomWidth:0
   }
-  
 });

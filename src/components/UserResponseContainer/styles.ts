@@ -16,6 +16,7 @@ export const styles = StyleSheet.create({
   },
   userResponseTxtContainer: {
     width: '90%',
+    marginBottom:6,
     backgroundColor: '#F1F5F9',
     borderRadius: 20,
     justifyContent: 'center',
