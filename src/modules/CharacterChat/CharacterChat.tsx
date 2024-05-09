@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { SafeAreaView, ScrollView, Text, View } from "react-native";
 import CharacterResponseContainer from "../../components/CharacterResponseContainer/CharacterResponseContainer";
 import FadedDividerText from "../../components/FadedDividerText/FadedDividerText";
 import CharacterChatNavbar from "./CharacterChatNavbar";
@@ -14,13 +14,18 @@ import {
   WEBSOCKET_URL,
 } from "../../assets/constant";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
-import AudioRecorderPlayer from "react-native-audio-recorder-player";
+import AudioRecorderPlayer, {
+  AVEncoderAudioQualityIOSType,
+  AVEncodingOption,
+  AVModeIOSOption,
+  AudioEncoderAndroidType,
+  AudioSourceAndroidType,
+} from "react-native-audio-recorder-player";
 import RNFS from "react-native-fs";
 import { PermissionsAndroid } from "react-native";
 import UserResponseContainer from "../../components/UserResponseContainer/UserResponseContainer";
 import AssistantCorrection from "../../components/AssistantCorrection/AssistantCorrection";
 import CharacterChatFooter from "../../components/CharacterChatFooter/CharacterChatFooter";
-
 const audioRecorderPlayer = new AudioRecorderPlayer();
 audioRecorderPlayer.setSubscriptionDuration(0.09);
 
@@ -79,11 +84,6 @@ const CharacterChat = (): React.JSX.Element => {
         content_type: ContentType.TEXT,
         data: Command.START,
       });
-
-      setChatMessages([
-        { type: "state", text: "Mission started" },
-        { text: "", type: "character-utterance", isTyping: true },
-      ]);
     }
   }, [socketConnected]);
 
@@ -100,7 +100,7 @@ const CharacterChat = (): React.JSX.Element => {
     return () => clearInterval(timer);
   }, [isRecording]);
 
-  const handleServerMessage = (message: string) => {
+  const handleServerMessage = async (message: string) => {
     try {
       const parsedMessage = JSON.parse(message);
 
@@ -108,12 +108,17 @@ const CharacterChat = (): React.JSX.Element => {
         case InteractionType.USER_UTTERANCE:
           handleUserUtteranceMessage(parsedMessage);
           break;
-        case InteractionType.CHARACTER_RESPONSE_UTTERANCE:
-          handleCharacterUtteranceMessage(parsedMessage);
+        case InteractionType.CHARACTER_UTTERANCE:
+        case InteractionType.CHARACTER_ACTION:
+        case InteractionType.CHARACTER_NARRATION:
+        case InteractionType.CHARACTER_EMOTION:
+        case InteractionType.CHARACTER_THOUGHT:
+        case InteractionType.CHARACTER_UPDATED_LOCATION:
+        case InteractionType.CHARACTER_UPDATED_TIME:
+        case InteractionType.COMMAND:
+          await handleCharacterResponseMessage(parsedMessage);
           break;
-        case InteractionType.CHARACTER_RESPONSE:
-          handleCharacterResponseMessage(parsedMessage);
-          break;
+
         case InteractionType.ASSISTANT_HINT:
           handleHintMessage(parsedMessage);
           break;
@@ -138,10 +143,6 @@ const CharacterChat = (): React.JSX.Element => {
     if (message.content_type === ContentType.TEXT) {
       setChatMessages((prevMessages) => {
         const updatedMessages = prevMessages.filter((message) => {
-          if (message.isTyping) {
-            return false;
-          }
-
           return true;
         });
 
@@ -154,76 +155,57 @@ const CharacterChat = (): React.JSX.Element => {
     }
   };
 
-  const handleCharacterUtteranceMessage = (message: any) => {
-    if (message.message_type === MessageType.CHUNK) {
-      setCurrentUtterance((utterance) => utterance + message.data);
-
-      setChatMessages((prevMessages) => {
-        if (
-          prevMessages.length > 0 &&
-          prevMessages[prevMessages.length - 1].type === "character-utterance"
-        ) {
-          const lastMessage = prevMessages.pop() || { text: "" };
-          let updatedText = "";
-          if (lastMessage?.text) {
-            updatedText = lastMessage.text + " " + message.data;
-          } else {
-            updatedText = message.data;
-          }
-          return [
-            ...prevMessages,
-            {
-              type: "character-utterance",
-              text: updatedText,
-              thought: message.thought,
-            },
-          ];
-        } else {
-          return [
-            ...prevMessages,
-            { type: "character-utterance", text: message.data },
-          ];
-        }
-      });
-    } else if (message.message_type === MessageType.FULL) {
-      setChatMessages((messages) => [
-        ...messages,
-        {
-          type: "character-utterance",
-          text: currentUtterance,
-        },
-      ]);
-      setCurrentUtterance("");
-    }
-  };
   const handleCharacterResponseMessage = (message: any) => {
-    try {
-      const response = JSON.parse(message.data);
-      setChatMessages((prevMessages) => {
-        const updatedMessages = prevMessages.filter((message) => {
-          if (message.isTyping) {
-            return false;
-          }
-          if (message.type === "character-utterance") {
-            message.thought = response.thought;
+    if (message.message_type === MessageType.CHUNK) {
+      if (message.content_type === ContentType.TEXT) {
+        const interactionTypes = [
+          InteractionType.CHARACTER_UTTERANCE,
+          InteractionType.CHARACTER_ACTION,
+          InteractionType.CHARACTER_NARRATION,
+          InteractionType.CHARACTER_EMOTION,
+          InteractionType.CHARACTER_THOUGHT,
+          InteractionType.CHARACTER_UPDATED_LOCATION,
+          InteractionType.CHARACTER_UPDATED_TIME,
+        ];
 
-            return true;
-          }
-
-          return true;
-        });
-
-        updatedMessages.push({
-          type: "character-response",
-          text: response.utterance,
-          action: response.action,
-          emotion: response.emotion,
-          thought: response.thought,
-        });
-        return updatedMessages;
-      });
-    } catch (error) {
-      console.error("Error parsing character response:", error);
+        if (interactionTypes.includes(message.interaction_type)) {
+          setChatMessages((messages) => {
+            const updatedMessages = messages.filter(
+              (message) => !message?.isTyping
+            );
+            const lastMessage = updatedMessages[updatedMessages.length - 1];
+            if (lastMessage && lastMessage.type === message.interaction_type) {
+              return [
+                ...updatedMessages.slice(0, -1),
+                {
+                  ...lastMessage,
+                  text: lastMessage.text + message.data,
+                },
+              ];
+            } else {
+              return [
+                ...updatedMessages,
+                {
+                  type: message.interaction_type,
+                  text: message.data,
+                },
+              ];
+            }
+          });
+        }
+      }
+    } else if (message.message_type === MessageType.FULL) {
+      if (message.content_type === ContentType.TEXT) {
+        setChatMessages((messages) => [
+          ...messages,
+          {
+            type: "character-utterance",
+            text: message.data,
+          },
+        ]);
+      } else if (message.content_type === ContentType.AUDIO) {
+        console.log("Received full audio message:", message.data);
+      }
     }
   };
 
@@ -300,7 +282,7 @@ const CharacterChat = (): React.JSX.Element => {
         return <></>;
       case "user":
         return <UserResponseContainer message={message.text} />;
-      case "character-utterance":
+      case "CHARACTER_UTTERANCE":
         return (
           <>
             <CharacterResponseContainer
@@ -310,14 +292,32 @@ const CharacterChat = (): React.JSX.Element => {
             />
           </>
         );
-      case "character-response":
+      case "CHARACTER_ACTION":
         return (
           <View>
-            {message.action && (
+            {message.text && (
               <FadedDividerText
                 key={uuid.v4().toString()}
                 idx={uuid.v4()}
-                text={message.action}
+                text={message.text}
+                color={[
+                  "rgba(255, 255, 255, 0)",
+                  "rgba(0, 0, 0, 0.5)",
+                  "rgba(255, 255, 255, 0)",
+                ]}
+                showIcon={false}
+              />
+            )}
+          </View>
+        );
+      case "CHARACTER_NARRATION":
+        return (
+          <View>
+            {message.text && (
+              <FadedDividerText
+                key={uuid.v4().toString()}
+                idx={uuid.v4()}
+                text={message.text}
                 color={[
                   "rgba(255, 255, 255, 0)",
                   "rgba(0, 0, 0, 0.5)",
@@ -363,7 +363,7 @@ const CharacterChat = (): React.JSX.Element => {
     setChatMessages((messages) => [
       ...messages,
       {
-        type: "character-utterance",
+        type: InteractionType.CHARACTER_UTTERANCE,
         isTyping: true,
         text: "",
       },
@@ -375,26 +375,21 @@ const CharacterChat = (): React.JSX.Element => {
     setInvalidRecord(false);
     setSpeakStatus("Listening");
     setDuration(0);
-    const hasPermission = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-      {
-        title: "Audio Recorder Permission",
-        message: "App needs access to your microphone to record audio.",
-        buttonNeutral: "Ask Me Later",
-        buttonNegative: "Cancel",
-        buttonPositive: "OK",
-      }
-    );
+    const path = `${RNFS.DocumentDirectoryPath}/test.aac`;
 
-    if (hasPermission === PermissionsAndroid.RESULTS.GRANTED) {
-      const path = `${RNFS.DocumentDirectoryPath}/test.mp3`;
-      setRecordPath(path);
-      const result = await audioRecorderPlayer.startRecorder(path);
+    setRecordPath(path);
 
-      audioRecorderPlayer.addRecordBackListener((e) => {
-        return;
-      });
+    try {
+      const result = await audioRecorderPlayer.startRecorder();
+      console.log("Recording started successfully");
+    } catch (error) {
+      console.error("Error starting recording:", error);
     }
+
+    audioRecorderPlayer.addRecordBackListener((e) => {
+      return;
+    });
+    // }
   };
   const handleStartRecord = () => {
     setStartSpeaking(true);
@@ -408,20 +403,20 @@ const CharacterChat = (): React.JSX.Element => {
 
   const onStopRecord = async (sendAudioViaSocket: boolean) => {
     const result = await audioRecorderPlayer.stopRecorder();
-    audioRecorderPlayer.removeRecordBackListener();
+
     if (duration <= 1) {
       setIsRecording(false);
       return setInvalidRecord(true);
     } else if (sendAudioViaSocket) {
       setIsRecording(false);
-      sendAudio();
+      sendAudio(result);
     }
   };
 
-  const sendAudio = () => {
+  const sendAudio = (result: any) => {
     if (WS) {
       setSpeakStatus("Sending audio");
-      RNFS.readFile(recordPath, "base64")
+      RNFS.readFile(result, "base64")
         .then((data) => {
           sendMessage({
             message_type: MessageType.FULL,
@@ -449,10 +444,10 @@ const CharacterChat = (): React.JSX.Element => {
   const handleInputEnter = () => {
     if (inputText !== "") {
       sendMessage({
-        message_type: MessageType.FULL,
-        interaction_type: InteractionType.USER_UTTERANCE,
         content_type: ContentType.TEXT,
         data: inputText,
+        interaction_type: InteractionType.USER_UTTERANCE,
+        message_type: MessageType.FULL,
       });
       setChatMessages((messages) => [
         ...messages,
@@ -467,7 +462,7 @@ const CharacterChat = (): React.JSX.Element => {
   return (
     <>
       <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
-      <View style={styles.mainContainer}>
+      <SafeAreaView style={styles.mainContainer}>
         <View style={styles.characterChatContainer}>
           <View>
             <CharacterChatNavbar />
@@ -514,7 +509,7 @@ const CharacterChat = (): React.JSX.Element => {
           handleInputEnter={handleInputEnter}
           inputText={inputText}
         />
-      </View>
+      </SafeAreaView>
     </>
   );
 };

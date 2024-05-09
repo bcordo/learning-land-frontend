@@ -20,7 +20,10 @@ const FadedDividerText: React.FC<FadedDividerTextProps> = ({
 }): React.JSX.Element => {
   return (
     <Fragment key={idx}>
-      <FadedDivider style={{ marginVertical: 11 }} color={color} />
+      <FadedDivider
+        style={{ marginVertical: 11, width: "100%" }}
+        color={color}
+      />
       <View
         style={[
           styles.fadedDividerTextContainer,
@@ -46,7 +49,10 @@ const FadedDividerText: React.FC<FadedDividerTextProps> = ({
           {text}
         </Text>
       </View>
-      <FadedDivider style={{ marginVertical: 11 }} color={color} />
+      <FadedDivider
+        style={{ marginVertical: 11, width: "100%" }}
+        color={color}
+      />
     </Fragment>
   );
 };

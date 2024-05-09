@@ -11,6 +11,7 @@ export const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     flex: 1,
+    // marginTop:24,
     backgroundColor: "#F1F5F9",
   },
   characterChatContainer: {
@@ -26,8 +27,10 @@ export const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-end",
     paddingHorizontal: 16,
+    // paddingTop:24,
+    paddingBottom:24
   },
   pauseIcon: {
     shadowColor: "#3282ce9c",
@@ -50,6 +53,7 @@ export const styles = StyleSheet.create({
   dropdownTxtContainer: {
     flexDirection: "row",
     alignItems: "center",
+    textAlign:'center',
     gap: 6,
    
   },
@@ -67,7 +71,6 @@ export const styles = StyleSheet.create({
   dropdownContainer: {
     alignItems: "center",
     gap: 5,
-    paddingLeft: 20,
     position: "relative",
   },
   orangeText: {
@@ -83,7 +86,6 @@ export const styles = StyleSheet.create({
   },
   coffeeShopTxt: {
     fontSize: 16,
-    paddingTop: 12,
     fontWeight: "500",
     color: "#000000",
     lineHeight: 24,
@@ -94,6 +96,7 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: "#737373",
     lineHeight: 20,
+    paddingBottom:22,
     letterSpacing: 0,
   },
 
@@ -112,7 +115,7 @@ export const styles = StyleSheet.create({
     width: 14,
     height: 14,
     borderWidth: 2,
-    borderColor: "#becdd7",
+    borderColor: "#d6e2ed",
     borderRadius: 50,
 
     backgroundColor: "transparent",
@@ -121,13 +124,9 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
   },
   stepLine: {
-    width: 40,
+    width: 45,
     height: 2,
-    backgroundColor: "#becdd7",
-    shadowColor: "#3282ce9c",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
+    backgroundColor: "#d6e2ed",
     marginTop: 6,
   },
   stepLineHalfFilled: {

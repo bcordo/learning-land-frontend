@@ -9,6 +9,7 @@ export const styles = StyleSheet.create({
   },
   characterResponseContainer: {
     width: '90%',
+    marginLeft:2,
     backgroundColor: '#F1F5F9',
     borderRadius: 20,
     justifyContent: 'center',
@@ -101,8 +102,8 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   profileIcon: {
-    width: 50,
-    height: 50,
+    width: 29,
+    height: 29,
   },
   estherText: {
     color: '#737373',

@@ -24,6 +24,14 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	 <key>NSMicrophoneUsageDescription</key>
+<string>We need access to your microphone to record audio.</string>
+
+
+<key>NSDocumentsFolderUsageDescription</key>
+<string>Learning land would like to access files in your Documents folder.</string>
+<key>NSDownloadsFolderUsageDescription</key>
+<string>Learning land would like to access your Downloads folder.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>

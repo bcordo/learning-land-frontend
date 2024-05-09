@@ -49,8 +49,8 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   profileIcon: {
-    width: 50,
-    height: 50,
+    width: 29,
+    height: 29,
   },
   estherText: {
     color: '#737373',

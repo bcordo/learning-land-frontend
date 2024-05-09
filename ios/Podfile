@@ -26,6 +26,8 @@ if linkage != nil
 end
 
 target 'LanguageLand' do
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
+
   config = use_native_modules!
 
   use_react_native!(

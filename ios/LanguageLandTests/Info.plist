@@ -21,6 +21,16 @@
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>CFBundleDisplayName</key>
-<string>Learning Land</string>
+    <string>Learning&#x2007;Land</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>Need microphone access to record audio</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Need photo library access to save recordings</string>
+<key>NSPhotoLibraryAddUsageDescription</key>
+<string>Allow this app to save photos to your photo library.</string>
+
+<key>NSCameraUsageDescription</key>
+<string>Allow this app to access the camera.</string>
+
 </dict>
 </plist>

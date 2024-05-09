@@ -4,6 +4,7 @@ export const styles = StyleSheet.create({
   fadedDividerTextContainer: {
     flexDirection: 'row',
     gap: 12,
+    width: "95%"
   },
   fadedDividerText: {
     color: '#525252',

@@ -25,7 +25,7 @@ const AssistantCorrection: React.FC<assistantCorrectionProps> = ({
       />
       <View style={styles.trySayingInstedContainer}>
         <CustomSvgImageComponent width={18} height={18} Component={Stars} />
-        <View>
+        <View style={{ width: "92%" }}>
           <Text style={[styles.defaultFontFamily, styles.trySayingInstedTxt]}>
             {text}
           </Text>

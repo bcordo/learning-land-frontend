@@ -92,71 +92,64 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
       {isTyping ? (
         <ProfileContainer isTyping={isTyping} />
       ) : message ? (
-        <View style={styles.shadowTopLeft}>
-          <View style={styles.shadowBottomRight}>
-            <View style={styles.characterResponseContainer}>
-              <Text
-                style={[styles.defaultFontFamily, styles.characterResponseText]}
+        // <View style={styles.shadowTopLeft}>
+        //   <View style={styles.shadowBottomRight}>
+        <View style={styles.characterResponseContainer}>
+          <Text
+            style={[styles.defaultFontFamily, styles.characterResponseText]}
+          >
+            {message}
+          </Text>
+          <View style={styles.translateContainer}>
+            <View style={styles.translateRightContainer}>
+              <TouchableOpacity onPress={() => speakText(message)}>
+                <CustomSvgImageComponent
+                  width={18}
+                  height={18}
+                  Component={Speak}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleTranslateClick(message)}>
+                <CustomSvgImageComponent
+                  width={18}
+                  height={18}
+                  Component={Translate}
+                />
+              </TouchableOpacity>
+            </View>
+            <View>
+              <TouchableOpacity
+                onPress={() => setOpenMenu(true)}
+                style={styles.menuContainer}
               >
-                {message}
-              </Text>
-              <View style={styles.translateContainer}>
-                <View style={styles.translateRightContainer}>
-                  <TouchableOpacity onPress={() => speakText(message)}>
-                    <CustomSvgImageComponent
-                      width={18}
-                      height={18}
-                      Component={Speak}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => handleTranslateClick(message)}
-                  >
-                    <CustomSvgImageComponent
-                      width={18}
-                      height={18}
-                      Component={Translate}
-                    />
-                  </TouchableOpacity>
-                </View>
-                <View>
-                  <TouchableOpacity
-                    onPress={() => setOpenMenu(true)}
-                    style={styles.menuContainer}
-                  >
-                    <CustomSvgImageComponent
-                      width={20}
-                      height={20}
-                      Component={Dots}
-                    />
+                <CustomSvgImageComponent
+                  width={20}
+                  height={20}
+                  Component={Dots}
+                />
+                <View
+                  style={[styles.menu, { display: openMenu ? "flex" : "none" }]}
+                >
+                  {menuList.map((item, index) => (
                     <View
+                      key={uuid.v4().toString()}
                       style={[
-                        styles.menu,
-                        { display: openMenu ? "flex" : "none" },
+                        styles.menuListItem,
+                        {
+                          borderBottomWidth:
+                            index !== menuList.length - 1 ? 1 : 0,
+                        },
                       ]}
                     >
-                      {menuList.map((item, index) => (
-                        <View
-                          key={uuid.v4().toString()}
-                          style={[
-                            styles.menuListItem,
-                            {
-                              borderBottomWidth:
-                                index !== menuList.length - 1 ? 1 : 0,
-                            },
-                          ]}
-                        >
-                          <Image source={item.icon} />
-                          <Text style={styles.defaultFontFamily}>
-                            {item.value}
-                          </Text>
-                        </View>
-                      ))}
+                      <Image source={item.icon} />
+                      <Text style={styles.defaultFontFamily}>{item.value}</Text>
                     </View>
-                  </TouchableOpacity>
+                  ))}
                 </View>
-              </View>
-              {/* {commentTexts || quoteText || thought ? (
+              </TouchableOpacity>
+            </View>
+          </View>
+          {/* {commentTexts || quoteText || thought ? (
             <>
               <View style={styles.divider}></View>
               <Text
@@ -171,26 +164,26 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
           ) : (
             ""
           )} */}
-              {translatedText ? (
-                <>
-                  <View style={styles.divider}></View>
-                  <Text
-                    style={[
-                      styles.defaultFontFamily,
-                      styles.translationText,
-                      quoteText ? styles.quotedText : null,
-                    ]}
-                  >
-                    {translatedText}
-                  </Text>
-                </>
-              ) : (
-                ""
-              )}
-            </View>
-          </View>
+          {translatedText ? (
+            <>
+              <View style={styles.divider}></View>
+              <Text
+                style={[
+                  styles.defaultFontFamily,
+                  styles.translationText,
+                  quoteText ? styles.quotedText : null,
+                ]}
+              >
+                {translatedText}
+              </Text>
+            </>
+          ) : (
+            ""
+          )}
         </View>
       ) : (
+        //   </View>
+        // </View>
         ""
       )}
     </>
