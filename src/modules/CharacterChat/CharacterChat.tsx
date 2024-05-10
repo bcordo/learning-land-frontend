@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { SafeAreaView, ScrollView, Text, View } from "react-native";
+import { Platform, SafeAreaView, ScrollView, Text, View } from "react-native";
 import CharacterResponseContainer from "../../components/CharacterResponseContainer/CharacterResponseContainer";
 import FadedDividerText from "../../components/FadedDividerText/FadedDividerText";
 import CharacterChatNavbar from "./CharacterChatNavbar";
@@ -13,19 +13,13 @@ import {
   UserMissionState,
   WEBSOCKET_URL,
 } from "../../assets/constant";
-import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
-import AudioRecorderPlayer, {
-  AVEncoderAudioQualityIOSType,
-  AVEncodingOption,
-  AVModeIOSOption,
-  AudioEncoderAndroidType,
-  AudioSourceAndroidType,
-} from "react-native-audio-recorder-player";
 import RNFS from "react-native-fs";
-import { PermissionsAndroid } from "react-native";
+import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
+import AudioRecorderPlayer from "react-native-audio-recorder-player";
 import UserResponseContainer from "../../components/UserResponseContainer/UserResponseContainer";
 import AssistantCorrection from "../../components/AssistantCorrection/AssistantCorrection";
 import CharacterChatFooter from "../../components/CharacterChatFooter/CharacterChatFooter";
+
 const audioRecorderPlayer = new AudioRecorderPlayer();
 audioRecorderPlayer.setSubscriptionDuration(0.09);
 
@@ -54,7 +48,6 @@ const CharacterChat = (): React.JSX.Element => {
   const [chatMessages, setChatMessages] = React.useState<
     chatMessagesInterface[]
   >([]);
-  const [currentUtterance, setCurrentUtterance] = React.useState("");
 
   const connectWebSocket = () => {
     const newWS = new WebSocket(WEBSOCKET_URL);
@@ -375,12 +368,12 @@ const CharacterChat = (): React.JSX.Element => {
     setInvalidRecord(false);
     setSpeakStatus("Listening");
     setDuration(0);
-    const path = `${RNFS.DocumentDirectoryPath}/test.aac`;
+    const path = `${RNFS.DocumentDirectoryPath}/test.mp4`;
 
     setRecordPath(path);
 
     try {
-      const result = await audioRecorderPlayer.startRecorder();
+      const result = await audioRecorderPlayer.startRecorder(path);
       console.log("Recording started successfully");
     } catch (error) {
       console.error("Error starting recording:", error);
@@ -416,8 +409,10 @@ const CharacterChat = (): React.JSX.Element => {
   const sendAudio = (result: any) => {
     if (WS) {
       setSpeakStatus("Sending audio");
+
       RNFS.readFile(result, "base64")
         .then((data) => {
+          console.log(data, "DATA");
           sendMessage({
             message_type: MessageType.FULL,
             interaction_type: InteractionType.USER_UTTERANCE,
@@ -430,10 +425,15 @@ const CharacterChat = (): React.JSX.Element => {
         });
     }
   };
+
   const sendMessage = (message: any) => {
     if (WS && WS.readyState === WebSocket.OPEN) {
       isSendingAudio(true);
-      WS.send(JSON.stringify(message));
+      try {
+        WS.send(JSON.stringify(message));
+      } catch (err) {
+        console.log(err, "Error");
+      }
     } else {
       console.error(
         "WebSocket is not connected. Cannot send message:",

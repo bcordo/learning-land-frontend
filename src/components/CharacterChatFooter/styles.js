@@ -100,7 +100,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     shadowRadius: 4,
-    color: "#D4D4D4",
+    color: "#000",
     ...Platform.select({
       ios: {
         shadowColor: "#3282ce9c",
