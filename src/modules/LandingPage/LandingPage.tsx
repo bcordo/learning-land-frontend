@@ -17,19 +17,12 @@ const LandingPagge = (): React.JSX.Element => {
         </View>
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.getStarted}
-          onPress={() => {
-            // Handle button press
-          }}
-        >
+        <TouchableOpacity style={styles.getStarted} onPress={() => {}}>
           <Text style={styles.getStartedButtonText}>GET STARTED</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.alreadyHaveAnAccount}
-          onPress={() => {
-            // Handle button press
-          }}
+          onPress={() => {}}
         >
           <Text style={styles.alreadyHaveAccountButtonText}>
             I ALREADY HAVE AN ACCOUNT

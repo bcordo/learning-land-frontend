@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import ProfileContainer from "../ProfileContainer/ProfileContainer";
 import { styles } from "./styles";
@@ -9,25 +9,32 @@ import Speak from "../../assets/icons/speak.svg";
 import Dots from "../../assets/icons/dots-horizontal.svg";
 import CustomSvgImageComponent from "../CustomComponents/Image";
 import { BASE_URL, Language } from "../../assets/constant";
+import LinearGradient from "react-native-linear-gradient";
+import { createShimmerPlaceholder } from "react-native-shimmer-placeholder";
 
 interface CharacterResponseContainerProps {
-  commentTexts?: string;
   quoteText?: string;
   isTyping?: boolean;
   profileIconContainerStyle?: object;
   message?: string;
-  thought?: string;
 }
 const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
-  commentTexts,
   quoteText,
   isTyping,
   profileIconContainerStyle,
   message,
-  thought,
 }): React.JSX.Element => {
   const [openMenu, setOpenMenu] = useState<boolean>(false);
+  const [isTranslateEnabled, setIsTranslateEnabled] = useState<boolean>(false);
   const [translatedText, setTranslatedText] = useState<string>("");
+
+  const ShimmerPlaceHolder = createShimmerPlaceholder(LinearGradient);
+
+  useEffect(() => {
+    if (!translatedText) return;
+    setIsTranslateEnabled(false);
+  }, [translatedText, isTranslateEnabled]);
+
   const menuList = [
     { icon: require("../../assets/icons/thought.png"), value: "See thoughts" },
     {
@@ -53,6 +60,8 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
 
   const handleTranslateClick = async (message: string) => {
     try {
+      setIsTranslateEnabled(true);
+
       const response = await fetch(
         `${BASE_URL}/api/v1/utils/translate?foreign_text=${encodeURIComponent(
           message
@@ -92,8 +101,6 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
       {isTyping ? (
         <ProfileContainer isTyping={isTyping} />
       ) : message ? (
-        // <View style={styles.shadowTopLeft}>
-        //   <View style={styles.shadowBottomRight}>
         <View style={styles.characterResponseContainer}>
           <Text
             style={[styles.defaultFontFamily, styles.characterResponseText]}
@@ -149,41 +156,45 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
               </TouchableOpacity>
             </View>
           </View>
-          {/* {commentTexts || quoteText || thought ? (
+
+          {isTranslateEnabled || translatedText ? (
             <>
               <View style={styles.divider}></View>
-              <Text
-                style={[
-                  styles.translationText,
-                  quoteText ? styles.quotedText : null,
-                ]}
-              >
-                {commentTexts || thought || `"${quoteText}"`}
-              </Text>
-            </>
-          ) : (
-            ""
-          )} */}
-          {translatedText ? (
-            <>
-              <View style={styles.divider}></View>
-              <Text
-                style={[
-                  styles.defaultFontFamily,
-                  styles.translationText,
-                  quoteText ? styles.quotedText : null,
-                ]}
-              >
-                {translatedText}
-              </Text>
+              {translatedText ? (
+                <Text
+                  style={[
+                    styles.defaultFontFamily,
+                    styles.translationText,
+                    quoteText ? styles.quotedText : null,
+                  ]}
+                >
+                  {translatedText}
+                </Text>
+              ) : (
+                <>
+                  <ShimmerPlaceHolder
+                    style={{
+                      width: "80%",
+                      height: 10,
+                      backgroundColor: "#9e9e9e",
+                    }}
+                  ></ShimmerPlaceHolder>
+                  <ShimmerPlaceHolder
+                    style={{
+                      width: "50%",
+                      height: 10,
+                      backgroundColor: "#9e9e9e",
+                      marginTop: 6,
+                    }}
+                  ></ShimmerPlaceHolder>
+                </>
+              )}
             </>
           ) : (
             ""
           )}
         </View>
       ) : (
-        //   </View>
-        // </View>
         ""
       )}
     </>

@@ -1,17 +1,48 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
 import CustomSvgImageComponent from "../../components/CustomComponents/Image";
 import ChevronDown from "../../assets/icons/chevronDown.svg";
 
-const CharacterChatNavbar = (): React.JSX.Element => {
+import { AnimatedCircularProgress } from "react-native-circular-progress";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  updatePauseTimmer,
+  updateTime,
+} from "../../../redux/slices/timmerSlice";
+
+const CharacterChatNavbar = ({ navigation }): React.JSX.Element => {
   const [id, setId] = useState<string>("1");
   const [showGoals, setShowGoals] = useState<boolean>(false);
+
+  const dispatch = useDispatch();
+
   const data = [
     { id: "1", value: "Order", subVal: "Order a coffee with oat milk" },
     { id: "2", value: "Get her number", subVal: "Get her telephone number" },
     { id: "3", value: "Setup date", subVal: "Setup a date to meet her later" },
   ];
+
+  const { totalSeconds, minutes, seconds, pauseTimmer } = useSelector(
+    (state) => state.timmerSlice
+  );
+
+  useEffect(() => {
+    if (pauseTimmer) return;
+    const interval = setInterval(() => {
+      if (totalSeconds >= 0) {
+        dispatch(
+          updateTime({
+            minutes: Math.floor(totalSeconds / 60),
+            seconds: totalSeconds % 60,
+            totalSeconds: totalSeconds - 1,
+          })
+        );
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [totalSeconds, pauseTimmer]);
 
   const renderItem = ({ item }) => (
     <View
@@ -44,10 +75,17 @@ const CharacterChatNavbar = (): React.JSX.Element => {
   return (
     <View style={styles.characterNavContainer}>
       <View style={styles.pauseIconContainer}>
-        <Image
-          style={styles.pauseIcon}
-          source={require("../../assets/icons/pauseIcon.png")}
-        />
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("TimerPausedScreen");
+            dispatch(updatePauseTimmer(true));
+          }}
+        >
+          <Image
+            style={styles.pauseIcon}
+            source={require("../../assets/icons/pauseIcon.png")}
+          />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.dropdownContainer}>
@@ -85,10 +123,28 @@ const CharacterChatNavbar = (): React.JSX.Element => {
           <View style={styles.stepCircleOutlined}></View>
         </View>
       </View>
-      <Image
-        style={styles.timer}
-        source={require("../../assets/icons/timer.png")}
-      />
+      <View style={styles.wrapper}>
+        <AnimatedCircularProgress
+          size={40}
+          width={2}
+          fill={(5 * 60 - totalSeconds) * (100 / (5 * 60))}
+          tintColor="#7DDFDE"
+          backgroundColor="#F1F5F9"
+          lineCap="round"
+          rotation={0}
+        >
+          {(fill) => (
+            <View style={styles.wrapper2}>
+              <View style={styles.wrapper3}>
+                <Text style={[styles.defaultFontFamilyBold, styles.timer]}>
+                  {minutes < 10 ? `0${minutes}` : minutes}:
+                  {seconds < 10 ? `0${seconds}` : seconds}
+                </Text>
+              </View>
+            </View>
+          )}
+        </AnimatedCircularProgress>
+      </View>
     </View>
   );
 };

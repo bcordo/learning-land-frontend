@@ -1,5 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Platform, SafeAreaView, ScrollView, Text, View } from "react-native";
+import {
+  Dimensions,
+  Keyboard,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import CharacterResponseContainer from "../../components/CharacterResponseContainer/CharacterResponseContainer";
 import FadedDividerText from "../../components/FadedDividerText/FadedDividerText";
 import CharacterChatNavbar from "./CharacterChatNavbar";
@@ -23,7 +31,7 @@ import CharacterChatFooter from "../../components/CharacterChatFooter/CharacterC
 const audioRecorderPlayer = new AudioRecorderPlayer();
 audioRecorderPlayer.setSubscriptionDuration(0.09);
 
-const CharacterChat = (): React.JSX.Element => {
+const CharacterChat = ({ navigation }): React.JSX.Element => {
   interface chatMessagesInterface {
     type: string;
     text: string;
@@ -44,10 +52,38 @@ const CharacterChat = (): React.JSX.Element => {
   const [invalidRecord, setInvalidRecord] = useState(false);
   const [startSpeaking, setStartSpeaking] = useState(false);
   const [WS, setWS] = React.useState<WebSocket | null>(null);
+  const [screenHeight, setScreenHeight] = useState(
+    Dimensions.get("window").height
+  );
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const [chatMessages, setChatMessages] = React.useState<
     chatMessagesInterface[]
   >([]);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      (event) => {
+        setKeyboardHeight(event.endCoordinates.height);
+        setScreenHeight(
+          Dimensions.get("window").height - event.endCoordinates.height
+        );
+      }
+    );
+
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setKeyboardHeight(0);
+        setScreenHeight(Dimensions.get("window").height);
+      }
+    );
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   const connectWebSocket = () => {
     const newWS = new WebSocket(WEBSOCKET_URL);
@@ -281,7 +317,6 @@ const CharacterChat = (): React.JSX.Element => {
             <CharacterResponseContainer
               isTyping={message?.isTyping}
               message={message.text}
-              thought={message?.thought}
             />
           </>
         );
@@ -350,7 +385,7 @@ const CharacterChat = (): React.JSX.Element => {
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollToEnd({ animated: true });
     }
-  }, [chatMessages]);
+  }, [chatMessages, screenHeight, enableRecording]);
 
   useEffect(() => {
     setChatMessages((messages) => [
@@ -412,7 +447,6 @@ const CharacterChat = (): React.JSX.Element => {
 
       RNFS.readFile(result, "base64")
         .then((data) => {
-          console.log(data, "DATA");
           sendMessage({
             message_type: MessageType.FULL,
             interaction_type: InteractionType.USER_UTTERANCE,
@@ -465,30 +499,28 @@ const CharacterChat = (): React.JSX.Element => {
       <SafeAreaView style={styles.mainContainer}>
         <View style={styles.characterChatContainer}>
           <View>
-            <CharacterChatNavbar />
-            <View style={styles.missionTxtContainer}>
-              <Text
-                style={[styles.defaultFontFamilyBold, styles.coffeeShopTxt]}
-              >
-                The girl in the coffee shop
-              </Text>
-              <Text style={[styles.defaultFontFamily, styles.missionTxt]}>
-                World 1, Mission 1
-              </Text>
-            </View>
+            <CharacterChatNavbar navigation={navigation} />
           </View>
         </View>
-
         <ScrollView
           ref={scrollViewRef}
           style={[
             styles.characterChatContainerHeight,
             {
-              height: enableRecording ? "40%" : "60%",
+              height: enableRecording ? "40%" : screenHeight,
               minHeight: enableRecording ? "40%" : "60%",
             },
           ]}
         >
+          <View style={styles.missionTxtContainer}>
+            <Text style={[styles.defaultFontFamilyBold, styles.coffeeShopTxt]}>
+              The girl in the coffee shop
+            </Text>
+            <Text style={[styles.defaultFontFamily, styles.missionTxt]}>
+              World 1, Mission 1
+            </Text>
+          </View>
+
           {chatMessages.map((message, index) => (
             <View key={index}>{renderChatMessage(message)}</View>
           ))}

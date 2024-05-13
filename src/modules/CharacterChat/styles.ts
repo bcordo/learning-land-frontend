@@ -11,7 +11,6 @@ export const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     flex: 1,
-    // marginTop:24,
     backgroundColor: "#F1F5F9",
   },
   characterChatContainer: {
@@ -29,7 +28,7 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "flex-end",
     paddingHorizontal: 16,
-    // paddingTop:24,
+  paddingTop:10,  
     paddingBottom:24
   },
   pauseIcon: {
@@ -56,11 +55,6 @@ export const styles = StyleSheet.create({
     textAlign:'center',
     gap: 6,
    
-  },
-  timer: {
-    width: 50,
-    height: 50,
-    lineHeight: 20,
   },
   pipe: {
     width: 5,
@@ -101,7 +95,6 @@ export const styles = StyleSheet.create({
   },
 
   fadedDividerTextOrange: {
-    textAlign: "left",
     color: "#F58C39",
     fontFamily: "Montserrat-Bold",
   },
@@ -207,5 +200,58 @@ color:'#404040'
   },
   lastGoalsDropdownSubContainer:{
     borderBottomWidth:0
-  }
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+  },
+
+  timer: {
+    fontSize: 8,
+    fontWeight: "bold",
+    color: "#737373",
+  },
+  wrapper: {
+    width: 40,
+    height: 40,
+    backgroundColor: "#F1F5F9",
+    borderRadius: 20,
+    justifyContent: "center",
+    shadowColor: "#3282ce9c",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
+  },
+  wrapper2: {
+    width: 37,
+    height: 37,
+    backgroundColor: "#F1F5F9",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 100,
+  },
+  wrapper3: {
+    width: 27,
+    height: 27,
+    backgroundColor: "#F1F5F9",
+    borderRadius: 100,
+    justifyContent: "center",
+    shadowColor: "#3282ce9c",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
+    alignItems: "center",
+  },
 });

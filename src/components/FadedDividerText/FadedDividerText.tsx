@@ -27,7 +27,7 @@ const FadedDividerText: React.FC<FadedDividerTextProps> = ({
       <View
         style={[
           styles.fadedDividerTextContainer,
-          { justifyContent: showIcon ? "flex-start" : "center" },
+          // { justifyContent: showIcon ? "flex-start" : "center" },
         ]}
       >
         {showIcon ? (
@@ -44,6 +44,7 @@ const FadedDividerText: React.FC<FadedDividerTextProps> = ({
             styles.defaultFontFamily,
             styles.fadedDividerText,
             fadedDividerTextColor,
+            { marginHorizontal: showIcon ? 10 : 24 },
           ]}
         >
           {text}

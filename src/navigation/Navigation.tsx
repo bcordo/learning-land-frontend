@@ -4,6 +4,7 @@ import React from "react";
 import CharacterChat from "../modules/CharacterChat/CharacterChat";
 import LandingPage from "../modules/LandingPage/LandingPage";
 import SplashScreen from "../modules/SplashScreen/SplashScreen";
+import TimerPaused from "../modules/TimerPaused/TimerPaused";
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +25,11 @@ const Navigation = (): React.JSX.Element => {
         <Stack.Screen
           name="CharacterChat"
           component={CharacterChat}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="TimerPausedScreen"
+          component={TimerPaused}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
