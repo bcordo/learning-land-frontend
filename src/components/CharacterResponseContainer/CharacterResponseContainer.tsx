@@ -61,7 +61,6 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
   const handleTranslateClick = async (message: string) => {
     try {
       setIsTranslateEnabled(true);
-
       const response = await fetch(
         `${BASE_URL}/api/v1/utils/translate?foreign_text=${encodeURIComponent(
           message

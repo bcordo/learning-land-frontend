@@ -18,8 +18,7 @@ export const styles = StyleSheet.create({
     margin: 0,
   },
   characterChatContainerHeight: {
-    height: "60%",
-    minHeight: "60%",
+  
     paddingHorizontal: 24,
   },
   characterNavContainer: {
@@ -27,7 +26,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-end",
-    paddingHorizontal: 16,
+    paddingHorizontal: 24,
   paddingTop:10,  
     paddingBottom:24
   },
@@ -254,4 +253,8 @@ color:'#404040'
     elevation: 5,
     alignItems: "center",
   },
+  contentContainer:{
+    justifyContent:'space-between',
+    
+  }
 });

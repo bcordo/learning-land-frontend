@@ -1,36 +1,36 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
-    defaultFontFamily: {
-        fontFamily: "Montserrat-Regular",
-      },
-      defaultFontFamilyBold: {
-        fontFamily: "Montserrat-Bold",
-      },
+  defaultFontFamily: {
+    fontFamily: "Montserrat-Regular",
+  },
+  defaultFontFamilyBold: {
+    fontFamily: "Montserrat-Bold",
+  },
   container: {
     width: "100%",
-    height:"100%",
+    height: "100%",
     // alignItems: "center",
     marginTop: 32,
-    backgroundColor: '#F1F5F9',
-    paddingHorizontal:25
+    backgroundColor: "#F1F5F9",
+    paddingHorizontal: 25,
   },
   timerPausedTxt: {
     color: "#525252",
     fontSize: 32,
     lineHeight: 40,
     letterSpacing: -0.64,
-    marginTop:16,
-    height:63
+    marginTop: 16,
+    height: 63,
   },
-  buttonBox:{
-  width:67,
-  height:67,
-  alignItems:'center',
-  justifyContent:"center",
-    backgroundColor: '#F1F5F9',
+  buttonBox: {
+    width: 67,
+    height: 67,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#F1F5F9",
     borderRadius: 11,
-    shadowColor: '#3282ce9c',
+    shadowColor: "#3282ce9c",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -40,33 +40,87 @@ export const styles = StyleSheet.create({
 
     elevation: 5,
   },
-  buttonContainer:{
-flexDirection:'row',
-gap:30,
-marginTop:20
+  buttonContainer: {
+    flexDirection: "row",
+    gap: 30,
+    marginTop: 20,
   },
-  optionBox:{
+  optionBox: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  optionContainer: {
+    width: "100%",
+    borderBottomWidth: 1,
+    borderColor: "#E5E5E5",
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 17,
+    paddingVertical: 15,
+  },
+  optionSubTitle: {
+    color: "#525252",
+    fontSize: 12,
+    lineHeight: 20,
+  },
+  optionTitle: {
+    color: "#525252",
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  timerContainer: {
+    alignItems: "center",
+    marginBottom: 57,
+  },
+  dropdownButtonStyle: {
+    width:100,
     flexDirection:'row',
-    paddingHorizontal:17,
-    paddingVertical:15,
-    width:'100%',
-    borderBottomWidth:1,
-    borderColor:'#E5E5E5',
+    gap:4,
     alignItems:'center',
-    gap:12
+    justifyContent:'flex-end'
   },
-  optionSubTitle:{
-    color:'#525252',
-    fontSize:12,
-    lineHeight:20
+  dropdownButtonStyle2: {
+    width:50,
+    height:24,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:'#D9F5F5',
+    borderRadius: 24,
   },
-  optionTitle:{
-    color:'#525252',
-    fontSize:14,
-    lineHeight:20
+  dropdownButtonTxtStyle: {
+   
+    color:'#7DDFDE',
+    fontSize:11,
+  
   },
-  timerContainer:{
-    alignItems:'center',
-    marginBottom:57
-  }
+  dropdownButtonArrowStyle: {
+    fontSize: 28,
+  },
+  dropdownButtonIconStyle: {
+    fontSize: 28,
+    marginRight: 8,
+  },
+  dropdownMenuStyle: {
+    borderRadius: 8,
+  },
+  dropdownItemStyle: {
+    width: '100%',
+    flexDirection: 'row',
+    paddingHorizontal: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  dropdownItemTxtStyle: {
+    flex: 1,
+    fontSize: 18,
+    fontWeight: '500',
+    color: '#151E26',
+  },
+  dropdownItemIconStyle: {
+    fontSize: 28,
+    marginRight: 8,
+  },
+  
 });
