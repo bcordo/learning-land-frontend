@@ -10,10 +10,10 @@ import {
   updatePauseTimmer,
   updateTime,
 } from "../../../redux/slices/timmerSlice";
+import SelectDropdown from "react-native-select-dropdown";
 
 const CharacterChatNavbar = ({ navigation }): React.JSX.Element => {
   const [id, setId] = useState<string>("1");
-  const [showGoals, setShowGoals] = useState<boolean>(false);
 
   const dispatch = useDispatch();
 
@@ -44,7 +44,7 @@ const CharacterChatNavbar = ({ navigation }): React.JSX.Element => {
     return () => clearInterval(interval);
   }, [totalSeconds, pauseTimmer]);
 
-  const renderItem = ({ item }) => (
+  const renderItem = (item) => (
     <View
       style={[
         styles.goalsDropdownSubContainer,
@@ -89,28 +89,30 @@ const CharacterChatNavbar = ({ navigation }): React.JSX.Element => {
       </View>
 
       <View style={styles.dropdownContainer}>
-        <TouchableOpacity
-          style={styles.dropdownTxtContainer}
-          onPress={() => setShowGoals((prev) => !prev)}
-        >
-          <Text style={[styles.orangeText, styles.defaultFontFamily]}>
-            0 of 3 goals
-          </Text>
-          <CustomSvgImageComponent
-            width={16}
-            height={16}
-            Component={ChevronDown}
-          />
-        </TouchableOpacity>
-        {showGoals ? (
-          <View style={styles.goalsDropdownContainer}>
-            <FlatList
-              data={data}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.id}
-            />
-          </View>
-        ) : null}
+        <SelectDropdown
+          data={data}
+          onSelect={(selectedItem, index) => {
+            console.log(selectedItem, index);
+          }}
+          renderButton={(selectedItem, isOpened) => {
+            return (
+              <View style={styles.dropdownTxtContainer}>
+                <Text style={[styles.orangeText, styles.defaultFontFamily]}>
+                  0 of 3 goals
+                </Text>
+                <CustomSvgImageComponent
+                  width={16}
+                  height={16}
+                  Component={ChevronDown}
+                />
+              </View>
+            );
+          }}
+          renderItem={renderItem}
+          showsVerticalScrollIndicator={false}
+          dropdownStyle={styles.dropdownMenuStyle}
+        />
+
         <View style={styles.stepperContainer}>
           <View style={styles.stepCircle}>
             <View style={styles.stepCircleOutlined}></View>

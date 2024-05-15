@@ -24,7 +24,7 @@ export const styles = StyleSheet.create({
   characterNavContainer: {
     width: "100%",
     flexDirection: "row",
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
     alignItems: "flex-end",
     paddingHorizontal: 24,
   paddingTop:10,  
@@ -50,9 +50,9 @@ export const styles = StyleSheet.create({
 
   dropdownTxtContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    textAlign:'center',
     gap: 6,
+    justifyContent:'center',
+    width:265
    
   },
   pipe: {
@@ -62,15 +62,13 @@ export const styles = StyleSheet.create({
     borderRadius: 10,
   },
   dropdownContainer: {
-    alignItems: "center",
     gap: 5,
-    position: "relative",
+    width:'80%',
+    alignItems:'center'
   },
   orangeText: {
     color: "#F58C39",
     fontSize: 12,
-    fontWeight: "500",
-    fontStyle: "normal",
     marginBottom: 2,
   },
   missionTxtContainer: {
@@ -114,6 +112,7 @@ export const styles = StyleSheet.create({
   },
   stepperContainer: {
     flexDirection: "row",
+    justifyContent:'center'
   },
   stepLine: {
     width: 45,
@@ -160,27 +159,7 @@ export const styles = StyleSheet.create({
     width: 36,
     height: 36,
   },
-  goalsDropdownContainer: {
-    position: "absolute",
-    width: 265,
-    backgroundColor: "#F1F5F9",
-    zIndex: 1,
-    top:20  ,
-    borderWidth:1,
-    borderColor:'#D4D4D4',
-    borderRadius:10,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'rgba(0, 0, 0, 0.08)',
-        shadowOffset: { width: 10, height: 10 },
-        shadowOpacity: 1,
-        shadowRadius: 15,
-      },
-      android: {
-        elevation: 5,
-      },
-    }),
-  },
+  
   goalsDropdownContainerIcon:{
     width:22,
     height:22,
@@ -256,5 +235,23 @@ color:'#404040'
   contentContainer:{
     justifyContent:'space-between',
     
-  }
+  },
+  dropdownMenuStyle:{
+    borderWidth:1,
+    borderColor:'#D4D4D4',
+    backgroundColor: "#F1F5F9",
+    borderRadius:10,
+    ...Platform.select({
+      ios: {
+        shadowColor: 'rgba(0, 0, 0, 0.08)',
+        shadowOffset: { width: 10, height: 10 },
+        shadowOpacity: 1,
+        shadowRadius: 15,
+      },
+      android: {
+        elevation: 5,
+      },
+    }),
+  },
+ 
 });

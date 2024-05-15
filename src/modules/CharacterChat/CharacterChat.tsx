@@ -502,7 +502,7 @@ const CharacterChat = ({ navigation }): React.JSX.Element => {
             <CharacterChatNavbar navigation={navigation} />
           </View>
         </View>
-        <ScrollView
+        {/* <ScrollView
           ref={scrollViewRef}
           style={[
             styles.characterChatContainerHeight,
@@ -540,7 +540,7 @@ const CharacterChat = ({ navigation }): React.JSX.Element => {
           setInputText={setInputText}
           handleInputEnter={handleInputEnter}
           inputText={inputText}
-        />
+        /> */}
       </SafeAreaView>
     </>
   );
