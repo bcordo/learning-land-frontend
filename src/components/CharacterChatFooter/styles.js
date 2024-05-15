@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
         justifyContent:'center'
           },
           typeMessageContainer: {
-            marginTop: 12,
+            paddingTop: 12,
             flexDirection: "row",
             gap: 10,
             marginBottom: 12,

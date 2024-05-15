@@ -18,7 +18,6 @@ export const styles = StyleSheet.create({
     margin: 0,
   },
   characterChatContainerHeight: {
-  
     paddingHorizontal: 24,
   },
   characterNavContainer: {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
 import CustomSvgImageComponent from "../../components/CustomComponents/Image";
 import ChevronDown from "../../assets/icons/chevronDown.svg";
@@ -10,7 +10,7 @@ import {
   updatePauseTimmer,
   updateTime,
 } from "../../../redux/slices/timmerSlice";
-import SelectDropdown from "react-native-select-dropdown";
+import CustomDropdown from "../../components/CustomDropdown/CustomDropdown";
 
 const CharacterChatNavbar = ({ navigation }): React.JSX.Element => {
   const [id, setId] = useState<string>("1");
@@ -89,11 +89,8 @@ const CharacterChatNavbar = ({ navigation }): React.JSX.Element => {
       </View>
 
       <View style={styles.dropdownContainer}>
-        <SelectDropdown
-          data={data}
-          onSelect={(selectedItem, index) => {
-            console.log(selectedItem, index);
-          }}
+        <CustomDropdown
+          list={data}
           renderButton={(selectedItem, isOpened) => {
             return (
               <View style={styles.dropdownTxtContainer}>
@@ -109,7 +106,6 @@ const CharacterChatNavbar = ({ navigation }): React.JSX.Element => {
             );
           }}
           renderItem={renderItem}
-          showsVerticalScrollIndicator={false}
           dropdownStyle={styles.dropdownMenuStyle}
         />
 

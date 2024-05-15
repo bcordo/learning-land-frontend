@@ -382,9 +382,11 @@ const CharacterChat = ({ navigation }): React.JSX.Element => {
 
   const scrollViewRef = useRef<ScrollView | null>(null);
   useEffect(() => {
-    if (scrollViewRef.current) {
-      scrollViewRef.current.scrollToEnd({ animated: true });
-    }
+    setTimeout(() => {
+      if (scrollViewRef.current) {
+        scrollViewRef.current.scrollToEnd({ animated: true });
+      }
+    }, 500);
   }, [chatMessages, screenHeight, enableRecording]);
 
   useEffect(() => {
@@ -477,12 +479,6 @@ const CharacterChat = ({ navigation }): React.JSX.Element => {
   };
   const handleInputEnter = () => {
     if (inputText !== "") {
-      sendMessage({
-        content_type: ContentType.TEXT,
-        data: inputText,
-        interaction_type: InteractionType.USER_UTTERANCE,
-        message_type: MessageType.FULL,
-      });
       setChatMessages((messages) => [
         ...messages,
         {
@@ -490,6 +486,12 @@ const CharacterChat = ({ navigation }): React.JSX.Element => {
           text: inputText,
         },
       ]);
+      sendMessage({
+        content_type: ContentType.TEXT,
+        data: inputText,
+        interaction_type: InteractionType.USER_UTTERANCE,
+        message_type: MessageType.FULL,
+      });
       setInputText("");
     }
   };
@@ -502,13 +504,14 @@ const CharacterChat = ({ navigation }): React.JSX.Element => {
             <CharacterChatNavbar navigation={navigation} />
           </View>
         </View>
-        {/* <ScrollView
+        <ScrollView
           ref={scrollViewRef}
           style={[
             styles.characterChatContainerHeight,
             {
-              height: enableRecording ? "40%" : screenHeight,
-              minHeight: enableRecording ? "40%" : "60%",
+              // height: enableRecording ? ÷"40%" : screenHeight,
+              // minHeight: enableRecording ? "40%" : "60%",
+              maxHeight: screenHeight,
             },
           ]}
         >
@@ -520,10 +523,11 @@ const CharacterChat = ({ navigation }): React.JSX.Element => {
               World 1, Mission 1
             </Text>
           </View>
-
-          {chatMessages.map((message, index) => (
-            <View key={index}>{renderChatMessage(message)}</View>
-          ))}
+          <View>
+            {chatMessages.map((message, index) => (
+              <View key={index}>{renderChatMessage(message)}</View>
+            ))}
+          </View>
         </ScrollView>
         <CharacterChatFooter
           enableRecording={enableRecording}
@@ -540,7 +544,7 @@ const CharacterChat = ({ navigation }): React.JSX.Element => {
           setInputText={setInputText}
           handleInputEnter={handleInputEnter}
           inputText={inputText}
-        /> */}
+        />
       </SafeAreaView>
     </>
   );

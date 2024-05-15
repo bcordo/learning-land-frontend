@@ -111,5 +111,13 @@ export const styles = StyleSheet.create({
     lineHeight:20,
     letterSpacing:0
   },
- 
+  dropdownMenuStyle:{
+borderRadius:10,
+borderWidth:1,
+borderColor:'#D4D4D4'
+  },
+  dropdownTxtContainer:{
+    width:190,
+    alignItems:'flex-end',
+  }
 });

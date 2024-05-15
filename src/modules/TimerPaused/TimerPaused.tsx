@@ -1,5 +1,11 @@
-import React, { useState } from "react";
-import { FlatList, Switch, Text, TouchableOpacity, View } from "react-native";
+import React from "react";
+import {
+  FlatList,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomSvgImageComponent from "../../components/CustomComponents/Image";
@@ -15,8 +21,8 @@ import LightBlubIcon from "../../assets/icons/light-bulb.svg";
 import SpeakIcon from "../../assets/icons/speak-black.svg";
 import Right from "../../assets/icons/Right.svg";
 import TranslateIcon from "../../assets/icons/translate-black.svg";
-import SelectDropdown from "react-native-select-dropdown";
 import CustomSwitch from "../../components/CustomSwitch/CustomSwitch";
+import CustomDropdown from "../../components/CustomDropdown/CustomDropdown";
 
 const TimerPaused = ({ navigation }): React.JSX.Element => {
   const dispatch = useDispatch();
@@ -65,8 +71,32 @@ const TimerPaused = ({ navigation }): React.JSX.Element => {
     { title: "Medium", isSelected: false },
     { title: "Hard", isSelected: false },
   ];
-
-  const renderItem = ({ item }) => {
+  const renderDropdownItem = (
+    item: {},
+    index: number | undefined,
+    isSelected: boolean | undefined
+  ) => {
+    return (
+      <View
+        style={{
+          ...styles.dropdownItemStyle,
+          ...(isSelected && { backgroundColor: "#D2D9DF" }),
+        }}
+      >
+        <Text style={styles.dropdownItemTxtStyle}>{item.title}</Text>
+      </View>
+    );
+  };
+  const renderItem = ({
+    item,
+  }: {
+    item: {
+      icon: any;
+      title: string;
+      subTitle: string;
+      type: string;
+    };
+  }) => {
     return (
       <View style={styles.optionContainer}>
         <View style={styles.optionBox}>
@@ -96,12 +126,8 @@ const TimerPaused = ({ navigation }): React.JSX.Element => {
           />
         ) : null}
         {item.type === "select" ? (
-          <SelectDropdown
-            defaultValue={"Easy"}
-            data={dropdownList}
-            onSelect={(selectedItem, index) => {
-              console.log(selectedItem, index);
-            }}
+          <CustomDropdown
+            list={dropdownList}
             renderButton={(selectedItem, isOpened) => {
               return (
                 <View style={styles.dropdownButtonStyle}>
@@ -118,19 +144,7 @@ const TimerPaused = ({ navigation }): React.JSX.Element => {
                 </View>
               );
             }}
-            renderItem={(item, index, isSelected) => {
-              return (
-                <View
-                  style={{
-                    ...styles.dropdownItemStyle,
-                    ...(isSelected && { backgroundColor: "#D2D9DF" }),
-                  }}
-                >
-                  <Text style={styles.dropdownItemTxtStyle}>{item.title}</Text>
-                </View>
-              );
-            }}
-            showsVerticalScrollIndicator={false}
+            renderItem={renderDropdownItem}
             dropdownStyle={styles.dropdownMenuStyle}
           />
         ) : null}
@@ -138,7 +152,7 @@ const TimerPaused = ({ navigation }): React.JSX.Element => {
     );
   };
   return (
-    <View>
+    <>
       <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
       <SafeAreaView style={styles.container}>
         <View style={styles.timerContainer}>
@@ -169,11 +183,11 @@ const TimerPaused = ({ navigation }): React.JSX.Element => {
             </TouchableOpacity>
           </View>
         </View>
-        <View>
+        <ScrollView style={{ paddingBottom: 200 }}>
           <FlatList data={optionsList} renderItem={renderItem} />
-        </View>
+        </ScrollView>
       </SafeAreaView>
-    </View>
+    </>
   );
 };
 export default TimerPaused;

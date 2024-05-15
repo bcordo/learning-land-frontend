@@ -11,6 +11,7 @@ import CustomSvgImageComponent from "../CustomComponents/Image";
 import { BASE_URL, Language } from "../../assets/constant";
 import LinearGradient from "react-native-linear-gradient";
 import { createShimmerPlaceholder } from "react-native-shimmer-placeholder";
+import CustomDropdown from "../CustomDropdown/CustomDropdown";
 
 interface CharacterResponseContainerProps {
   quoteText?: string;
@@ -77,6 +78,23 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
     }
   };
 
+  const renderItem = (item, i) => {
+    return (
+      <View
+        key={uuid.v4().toString()}
+        style={[
+          styles.menuListItem,
+          {
+            borderBottomWidth: i !== menuList.length - 1 ? 1 : 0,
+          },
+        ]}
+      >
+        <Image source={item.icon} />
+        <Text style={styles.defaultFontFamily}>{item.value}</Text>
+      </View>
+    );
+  };
+
   return (
     <>
       <View
@@ -123,37 +141,23 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
                 />
               </TouchableOpacity>
             </View>
-            <View>
-              <TouchableOpacity
-                onPress={() => setOpenMenu(true)}
-                style={styles.menuContainer}
-              >
-                <CustomSvgImageComponent
-                  width={20}
-                  height={20}
-                  Component={Dots}
-                />
-                <View
-                  style={[styles.menu, { display: openMenu ? "flex" : "none" }]}
-                >
-                  {menuList.map((item, index) => (
-                    <View
-                      key={uuid.v4().toString()}
-                      style={[
-                        styles.menuListItem,
-                        {
-                          borderBottomWidth:
-                            index !== menuList.length - 1 ? 1 : 0,
-                        },
-                      ]}
-                    >
-                      <Image source={item.icon} />
-                      <Text style={styles.defaultFontFamily}>{item.value}</Text>
-                    </View>
-                  ))}
-                </View>
-              </TouchableOpacity>
-            </View>
+
+            <CustomDropdown
+              list={menuList}
+              renderButton={(selectedItem, isOpened) => {
+                return (
+                  <View style={styles.dropdownTxtContainer}>
+                    <CustomSvgImageComponent
+                      width={20}
+                      height={20}
+                      Component={Dots}
+                    />
+                  </View>
+                );
+              }}
+              renderItem={renderItem}
+              dropdownStyle={styles.dropdownMenuStyle}
+            />
           </View>
 
           {isTranslateEnabled || translatedText ? (

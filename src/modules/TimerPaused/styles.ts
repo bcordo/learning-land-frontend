@@ -10,8 +10,7 @@ export const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: "100%",
-    // alignItems: "center",
-    marginTop: 32,
+    paddingTop: 32,
     backgroundColor: "#F1F5F9",
     paddingHorizontal: 25,
   },
