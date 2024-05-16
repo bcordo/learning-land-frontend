@@ -24,6 +24,7 @@ interface characterChatFooterProps {
   handleStartRecord: Function;
   setInputText: Function;
   handleInputEnter: Function;
+  openDrawer: Function;
   inputText: string;
 }
 
@@ -42,6 +43,7 @@ const CharacterChatFooter: React.FC<characterChatFooterProps> = ({
   setInputText,
   handleInputEnter,
   inputText,
+  openDrawer,
 }): React.JSX.Element => {
   return (
     <>
@@ -185,7 +187,7 @@ const CharacterChatFooter: React.FC<characterChatFooterProps> = ({
         </View>
       ) : (
         <View style={styles.typeMessageContainer}>
-          <TouchableOpacity style={styles.plusButton} onPress={() => {}}>
+          <TouchableOpacity style={styles.plusButton} onPress={openDrawer}>
             <PlusSvg width={25} height={25} />
           </TouchableOpacity>
 

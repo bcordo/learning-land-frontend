@@ -5,6 +5,8 @@ import CharacterChat from "../modules/CharacterChat/CharacterChat";
 import LandingPage from "../modules/LandingPage/LandingPage";
 import SplashScreen from "../modules/SplashScreen/SplashScreen";
 import TimerPaused from "../modules/TimerPaused/TimerPaused";
+import MissionStart from "../modules/MissionStart/MissionStart";
+import HelpfulPharasesListContainer from "../components/HelpfulPharasesListContainer/HelpfulPharasesListContainer";
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +32,16 @@ const Navigation = (): React.JSX.Element => {
         <Stack.Screen
           name="TimerPausedScreen"
           component={TimerPaused}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="MissionStart"
+          component={MissionStart}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="HelpfulPharases"
+          component={HelpfulPharasesListContainer}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

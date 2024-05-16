@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   Keyboard,
-  Platform,
   SafeAreaView,
   ScrollView,
   Text,
@@ -22,16 +21,29 @@ import {
   WEBSOCKET_URL,
 } from "../../assets/constant";
 import RNFS from "react-native-fs";
-import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
-import AudioRecorderPlayer from "react-native-audio-recorder-player";
+import AudioRecorderPlayer, {
+  AVEncoderAudioQualityIOSType,
+  AVEncodingOption,
+  AudioEncoderAndroidType,
+  AudioSourceAndroidType,
+} from "react-native-audio-recorder-player";
 import UserResponseContainer from "../../components/UserResponseContainer/UserResponseContainer";
 import AssistantCorrection from "../../components/AssistantCorrection/AssistantCorrection";
 import CharacterChatFooter from "../../components/CharacterChatFooter/CharacterChatFooter";
+import Drawer from "react-native-drawer";
+import AddAction from "../../components/AddAction/AddAction";
+import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 audioRecorderPlayer.setSubscriptionDuration(0.09);
 
-const CharacterChat = ({ navigation }): React.JSX.Element => {
+interface CharacterChatProps {
+  navigation: any;
+}
+
+const CharacterChat: React.FC<CharacterChatProps> = ({
+  navigation,
+}): React.JSX.Element => {
   interface chatMessagesInterface {
     type: string;
     text: string;
@@ -60,6 +72,15 @@ const CharacterChat = ({ navigation }): React.JSX.Element => {
   const [chatMessages, setChatMessages] = React.useState<
     chatMessagesInterface[]
   >([]);
+
+  const drawerRef = useRef<any>(null);
+
+  const openDrawer = () => {
+    drawerRef.current.open();
+  };
+  const closeDrawer = () => {
+    drawerRef.current.close();
+  };
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -321,6 +342,7 @@ const CharacterChat = ({ navigation }): React.JSX.Element => {
           </>
         );
       case "CHARACTER_ACTION":
+      case InteractionType.USER_ACTION:
         return (
           <View>
             {message.text && (
@@ -405,13 +427,25 @@ const CharacterChat = ({ navigation }): React.JSX.Element => {
     setInvalidRecord(false);
     setSpeakStatus("Listening");
     setDuration(0);
-    const path = `${RNFS.DocumentDirectoryPath}/test.mp4`;
+    const path = `${RNFS.DocumentDirectoryPath}.aac`;
 
     setRecordPath(path);
 
+    const audioSet = {
+      AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
+      AudioSourceAndroid: AudioSourceAndroidType.MIC,
+      AVEncoderAudioQualityKeyIOS: AVEncoderAudioQualityIOSType.high,
+      AVNumberOfChannelsKeyIOS: 2,
+      AVFormatIDKeyIOS: AVEncodingOption.aac,
+    };
+
     try {
-      const result = await audioRecorderPlayer.startRecorder(path);
-      console.log("Recording started successfully");
+      const result = await audioRecorderPlayer.startRecorder(
+        undefined,
+        audioSet
+      );
+
+      console.log(result, "Recording started successfully");
     } catch (error) {
       console.error("Error starting recording:", error);
     }
@@ -449,6 +483,7 @@ const CharacterChat = ({ navigation }): React.JSX.Element => {
 
       RNFS.readFile(result, "base64")
         .then((data) => {
+          console.log(data, "BASE 64 Audio File");
           sendMessage({
             message_type: MessageType.FULL,
             interaction_type: InteractionType.USER_UTTERANCE,
@@ -462,11 +497,11 @@ const CharacterChat = ({ navigation }): React.JSX.Element => {
     }
   };
 
-  const sendMessage = (message: any) => {
+  const sendMessage = async (message: any) => {
     if (WS && WS.readyState === WebSocket.OPEN) {
       isSendingAudio(true);
       try {
-        WS.send(JSON.stringify(message));
+        await WS.send(JSON.stringify(message));
       } catch (err) {
         console.log(err, "Error");
       }
@@ -496,9 +531,24 @@ const CharacterChat = ({ navigation }): React.JSX.Element => {
     }
   };
   return (
-    <>
+    <Drawer
+      ref={drawerRef}
+      width={"100%"}
+      type="overlay"
+      content={
+        <AddAction
+          closeDrawer={closeDrawer}
+          sendMessage={sendMessage}
+          setChatMessages={setChatMessages}
+        />
+      }
+      closedDrawerOffset={-3}
+      tweenHandler={(ratio) => ({
+        main: { opacity: (2 - ratio) / 2 },
+      })}
+    >
       <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
-      <SafeAreaView style={styles.mainContainer}>
+      <SafeAreaView style={[styles.mainContainer, { flex: 1 }]}>
         <View style={styles.characterChatContainer}>
           <View>
             <CharacterChatNavbar navigation={navigation} />
@@ -509,8 +559,6 @@ const CharacterChat = ({ navigation }): React.JSX.Element => {
           style={[
             styles.characterChatContainerHeight,
             {
-              // height: enableRecording ? ÷"40%" : screenHeight,
-              // minHeight: enableRecording ? "40%" : "60%",
               maxHeight: screenHeight,
             },
           ]}
@@ -544,9 +592,10 @@ const CharacterChat = ({ navigation }): React.JSX.Element => {
           setInputText={setInputText}
           handleInputEnter={handleInputEnter}
           inputText={inputText}
+          openDrawer={openDrawer}
         />
       </SafeAreaView>
-    </>
+    </Drawer>
   );
 };
 export default CharacterChat;

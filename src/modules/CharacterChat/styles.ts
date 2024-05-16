@@ -23,7 +23,6 @@ export const styles = StyleSheet.create({
   characterNavContainer: {
     width: "100%",
     flexDirection: "row",
-    // justifyContent: "space-between",
     alignItems: "flex-end",
     paddingHorizontal: 24,
   paddingTop:10,  

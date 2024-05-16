@@ -4,10 +4,16 @@ import { Image, Text, View } from "react-native";
 import { styles } from "./styles";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 
-function SplashScreen({ navigation }): React.JSX.Element {
+interface SplashScreenProps {
+  navigation: any;
+}
+
+const SplashScreen: React.FC<SplashScreenProps> = ({
+  navigation,
+}): React.JSX.Element => {
   useFocusEffect(() => {
     setTimeout(() => {
-      navigation.navigate("CharacterChat");
+      navigation.navigate("Landing");
     }, 2000);
   });
 
@@ -27,6 +33,6 @@ function SplashScreen({ navigation }): React.JSX.Element {
       </View>
     </View>
   );
-}
+};
 
 export default SplashScreen;

@@ -1,57 +1,66 @@
 import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
+  defaultFontFamily: {
+    fontFamily: "Montserrat-Regular",
+  },
+  defaultFontFamilyBold: {
+    fontFamily: "Montserrat-Bold",
+  },
   container: {
     width: '100%',
     height: '100%',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal:24
   },
   textContainer: {
-    width: '50%',
-    height: '50%',
     justifyContent: 'flex-end',
-    gap: 12,
   },
   buttonContainer: {
-    width: '90%',
-    gap: 6,
+    width: '100%',
+    gap: 10,
     marginBottom: 16,
   },
   learningLandText: {
-    color: 'orange',
-    fontSize: 42,
-    fontWeight: 'bold',
+    color: '#F58C39',
+    fontSize: 52,
+    lineHeight:56,letterSpacing:-1.04
   },
   iconContainer: {
     alignItems: 'center',
+    marginTop:75,
   },
   getStarted: {
-    backgroundColor: 'orange',
+    backgroundColor: '#F58C39',
     width: '100%',
-    height: 42,
-    borderRadius: 10,
+    padding: 20,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
   getStartedButtonText: {
-    color: '#fff',
-    fontWeight: '500',
+    color: '#FAFAFA',
+    fontSize:18,
+    lineHeight:28,
   },
   alreadyHaveAccountButtonText: {
-    color: 'orange',
-    fontWeight: '500',
+    color: '#F58C39',
+    fontSize:16,
+    lineHeight:24,
   },
   alreadyHaveAnAccount: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: '100%',
-    height: 42,
+    width: '100%',paddingVertical:10,
     borderWidth: 1,
-    borderColor: 'orange',
+    borderColor: '#F58C39',
     borderRadius: 20,
   },
   blackText: {
-    color: '#000',
+    color: '#171717',
+    fontSize:18,
+    lineHeight:24,
+    letterSpacing:-0.36
   },
 });

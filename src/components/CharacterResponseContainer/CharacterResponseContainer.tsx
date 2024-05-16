@@ -9,9 +9,8 @@ import Speak from "../../assets/icons/speak.svg";
 import Dots from "../../assets/icons/dots-horizontal.svg";
 import CustomSvgImageComponent from "../CustomComponents/Image";
 import { BASE_URL, Language } from "../../assets/constant";
-import LinearGradient from "react-native-linear-gradient";
-import { createShimmerPlaceholder } from "react-native-shimmer-placeholder";
 import CustomDropdown from "../CustomDropdown/CustomDropdown";
+import CustomShimmer from "../CustomShimmer/CustomShimmer";
 
 interface CharacterResponseContainerProps {
   quoteText?: string;
@@ -25,11 +24,8 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
   profileIconContainerStyle,
   message,
 }): React.JSX.Element => {
-  const [openMenu, setOpenMenu] = useState<boolean>(false);
   const [isTranslateEnabled, setIsTranslateEnabled] = useState<boolean>(false);
   const [translatedText, setTranslatedText] = useState<string>("");
-
-  const ShimmerPlaceHolder = createShimmerPlaceholder(LinearGradient);
 
   useEffect(() => {
     if (!translatedText) return;
@@ -56,7 +52,7 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
     Tts.stop();
     Tts.speak(text)
       .then(() => console.log("Text spoken successfully"))
-      .catch((error) => console.error("Error occurred:", error));
+      .catch((error: any) => console.error("Error occurred:", error));
   };
 
   const handleTranslateClick = async (message: string) => {
@@ -175,21 +171,21 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
                 </Text>
               ) : (
                 <>
-                  <ShimmerPlaceHolder
-                    style={{
+                  <CustomShimmer
+                    styleProps={{
                       width: "80%",
                       height: 10,
                       backgroundColor: "#9e9e9e",
                     }}
-                  ></ShimmerPlaceHolder>
-                  <ShimmerPlaceHolder
-                    style={{
+                  />
+                  <CustomShimmer
+                    styleProps={{
                       width: "50%",
                       height: 10,
                       backgroundColor: "#9e9e9e",
                       marginTop: 6,
                     }}
-                  ></ShimmerPlaceHolder>
+                  />
                 </>
               )}
             </>

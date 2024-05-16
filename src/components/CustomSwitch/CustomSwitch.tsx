@@ -7,14 +7,12 @@ interface CustomSwitchProps {
     true: string;
   };
   thumbColor: string;
-  ios_backgroundColor: string;
   style: { transform: [{ scaleX: number }, { scaleY: number }] };
 }
 
 const CustomSwitch: React.FC<CustomSwitchProps> = ({
   trackColor,
   thumbColor,
-  ios_backgroundColor,
   style,
 }): React.JSX.Element => {
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
@@ -26,7 +24,6 @@ const CustomSwitch: React.FC<CustomSwitchProps> = ({
     <Switch
       trackColor={trackColor}
       thumbColor={thumbColor}
-      ios_backgroundColor={ios_backgroundColor}
       onValueChange={toggleSwitch}
       value={isEnabled}
       style={style}

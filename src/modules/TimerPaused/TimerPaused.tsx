@@ -119,9 +119,8 @@ const TimerPaused = ({ navigation }): React.JSX.Element => {
         </View>
         {item.type === "switch" ? (
           <CustomSwitch
-            trackColor={{ false: "#F58C39", true: "#F58C39" }}
+            trackColor={{ false: "lightgray", true: "#F58C39" }}
             thumbColor={"#fff"}
-            ios_backgroundColor={"#F58C39"}
             style={{ transform: [{ scaleX: 0.7 }, { scaleY: 0.7 }] }}
           />
         ) : null}
