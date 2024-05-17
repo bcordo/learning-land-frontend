@@ -8,6 +8,7 @@ export const styles = StyleSheet.create({
         fontFamily: "Montserrat-Bold",
       },
       helpfulPharasesListItem: {
+        
         flexDirection: "row",
         gap: 20,
         marginHorizontal:2,
@@ -40,6 +41,18 @@ export const styles = StyleSheet.create({
         lineHeight: 20,
       },
       goalsListTextContainer:{
-        width:'75%'
+        width:'72%'
+      },
+      dividerTop:{
+        width:'100%',
+        borderTopWidth:1,
+        borderTopColor:'#D4D4D4',
+        marginTop:2,
+        paddingTop:2
+      },
+      tickContainer:{
+        flexDirection:'row',
+        alignItems:'center',
+        gap:5
       }
 })

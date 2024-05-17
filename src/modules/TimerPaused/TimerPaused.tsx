@@ -24,10 +24,23 @@ import TranslateIcon from "../../assets/icons/translate-black.svg";
 import CustomSwitch from "../../components/CustomSwitch/CustomSwitch";
 import CustomDropdown from "../../components/CustomDropdown/CustomDropdown";
 
-const TimerPaused = ({ navigation }): React.JSX.Element => {
+interface TimerPausedProps {
+  navigation: any;
+}
+
+const TimerPaused: React.FC<TimerPausedProps> = ({
+  navigation,
+}): React.JSX.Element => {
   const dispatch = useDispatch();
 
-  const optionsList = [
+  interface ListItem {
+    icon: any;
+    title: string;
+    subTitle?: string;
+    type?: string;
+  }
+
+  const optionsList: ListItem[] = [
     { icon: SettingsIcon, title: "Settings" },
     {
       icon: TranslateIcon,
@@ -72,7 +85,7 @@ const TimerPaused = ({ navigation }): React.JSX.Element => {
     { title: "Hard", isSelected: false },
   ];
   const renderDropdownItem = (
-    item: {},
+    item: { title?: string },
     index: number | undefined,
     isSelected: boolean | undefined
   ) => {
@@ -87,16 +100,7 @@ const TimerPaused = ({ navigation }): React.JSX.Element => {
       </View>
     );
   };
-  const renderItem = ({
-    item,
-  }: {
-    item: {
-      icon: any;
-      title: string;
-      subTitle: string;
-      type: string;
-    };
-  }) => {
+  const renderItem = ({ item }: { item: ListItem }) => {
     return (
       <View style={styles.optionContainer}>
         <View style={styles.optionBox}>
@@ -160,7 +164,12 @@ const TimerPaused = ({ navigation }): React.JSX.Element => {
             Timer Paused
           </Text>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.buttonBox} onPress={() => {}}>
+            <TouchableOpacity
+              style={styles.buttonBox}
+              onPress={() => {
+                navigation.navigate("MissionEnd");
+              }}
+            >
               <CustomSvgImageComponent
                 width={27}
                 height={27}

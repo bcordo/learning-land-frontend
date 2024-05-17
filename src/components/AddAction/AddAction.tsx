@@ -100,7 +100,7 @@ const AddAction: React.FC<AddActionProps> = ({
       content_type: ContentType.TEXT,
       data: selectedAction,
     });
-    setChatMessages((messages) => [
+    setChatMessages((messages: any) => [
       ...messages,
       {
         type: InteractionType.USER_ACTION,

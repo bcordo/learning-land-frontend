@@ -1,13 +1,8 @@
 import React from "react";
-import {
-  Image,
-  SafeAreaView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, SafeAreaView, Text, View } from "react-native";
 import { styles } from "./styles";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
+import CustomButtom from "../../components/CustomButtom/CustomButtom";
 
 interface LandingPageProps {
   navigation: any;
@@ -53,32 +48,24 @@ const LandingPage: React.FC<LandingPageProps> = ({
             </View>
           </View>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.getStarted}
+            <CustomButtom
+              textStyle={[
+                styles.getStartedButtonText,
+                styles.defaultFontFamilyBold,
+              ]}
+              buttonStyle={styles.getStarted}
               onPress={() => navigation.navigate("MissionStart")}
-            >
-              <Text
-                style={[
-                  styles.getStartedButtonText,
-                  styles.defaultFontFamilyBold,
-                ]}
-              >
-                GET STARTED
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.alreadyHaveAnAccount}
+              buttonTxt={"GET STARTED"}
+            />
+            <CustomButtom
+              textStyle={[
+                styles.alreadyHaveAccountButtonText,
+                styles.defaultFontFamilyBold,
+              ]}
+              buttonStyle={styles.alreadyHaveAnAccount}
               onPress={() => {}}
-            >
-              <Text
-                style={[
-                  styles.alreadyHaveAccountButtonText,
-                  styles.defaultFontFamilyBold,
-                ]}
-              >
-                I ALREADY HAVE AN ACCOUNT
-              </Text>
-            </TouchableOpacity>
+              buttonTxt={"I ALREADY HAVE AN ACCOUNT"}
+            />
           </View>
         </View>
       </SafeAreaView>

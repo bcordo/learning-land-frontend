@@ -543,12 +543,12 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
         />
       }
       closedDrawerOffset={-3}
-      tweenHandler={(ratio) => ({
+      tweenHandler={(ratio: any) => ({
         main: { opacity: (2 - ratio) / 2 },
       })}
     >
       <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
-      <SafeAreaView style={[styles.mainContainer, { flex: 1 }]}>
+      <SafeAreaView style={[styles.mainContainer]}>
         <View style={styles.characterChatContainer}>
           <View>
             <CharacterChatNavbar navigation={navigation} />

@@ -187,7 +187,10 @@ const CharacterChatFooter: React.FC<characterChatFooterProps> = ({
         </View>
       ) : (
         <View style={styles.typeMessageContainer}>
-          <TouchableOpacity style={styles.plusButton} onPress={openDrawer}>
+          <TouchableOpacity
+            style={styles.plusButton}
+            onPress={() => openDrawer()}
+          >
             <PlusSvg width={25} height={25} />
           </TouchableOpacity>
 
@@ -201,9 +204,23 @@ const CharacterChatFooter: React.FC<characterChatFooterProps> = ({
           />
           <TouchableOpacity
             style={[styles.plusButton, styles.recordeButton]}
-            onPress={() => setEnableRecording(true)}
+            onPress={() =>
+              inputText ? handleInputEnter() : setEnableRecording(true)
+            }
           >
-            <Microphonesvg width={22} height={22} />
+            {inputText ? (
+              <CustomSvgImageComponent
+                width={20}
+                height={20}
+                Component={ArrowUp}
+              />
+            ) : (
+              <CustomSvgImageComponent
+                width={22}
+                height={22}
+                Component={Microphonesvg}
+              />
+            )}
           </TouchableOpacity>
         </View>
       )}

@@ -7,6 +7,7 @@ import SplashScreen from "../modules/SplashScreen/SplashScreen";
 import TimerPaused from "../modules/TimerPaused/TimerPaused";
 import MissionStart from "../modules/MissionStart/MissionStart";
 import HelpfulPharasesListContainer from "../components/HelpfulPharasesListContainer/HelpfulPharasesListContainer";
+import MissionEnd from "../modules/MissionEnd/MissionEnd";
 
 const Stack = createNativeStackNavigator();
 
@@ -42,6 +43,11 @@ const Navigation = (): React.JSX.Element => {
         <Stack.Screen
           name="HelpfulPharases"
           component={HelpfulPharasesListContainer}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="MissionEnd"
+          component={MissionEnd}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
