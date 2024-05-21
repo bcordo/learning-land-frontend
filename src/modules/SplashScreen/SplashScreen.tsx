@@ -13,7 +13,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({
 }): React.JSX.Element => {
   useFocusEffect(() => {
     setTimeout(() => {
-      navigation.navigate("HomeTab");
+      navigation.navigate("Landing");
     }, 2000);
   });
 
