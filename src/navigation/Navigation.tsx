@@ -8,6 +8,7 @@ import TimerPaused from "../modules/TimerPaused/TimerPaused";
 import MissionStart from "../modules/MissionStart/MissionStart";
 import HelpfulPharasesListContainer from "../components/HelpfulPharasesListContainer/HelpfulPharasesListContainer";
 import MissionEnd from "../modules/MissionEnd/MissionEnd";
+import HomeTab from "../modules/HomeTab/HomeTab";
 
 const Stack = createNativeStackNavigator();
 
@@ -48,6 +49,11 @@ const Navigation = (): React.JSX.Element => {
         <Stack.Screen
           name="MissionEnd"
           component={MissionEnd}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="HomeTab"
+          component={HomeTab}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

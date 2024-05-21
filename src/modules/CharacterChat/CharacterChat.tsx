@@ -16,7 +16,9 @@ import {
   Command,
   ContentType,
   InteractionType,
+  LIGHT_BLACK_FADED_COLOR,
   MessageType,
+  ORANGE_FADED_COLOR,
   UserMissionState,
   WEBSOCKET_URL,
 } from "../../assets/constant";
@@ -57,23 +59,22 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
   const [enableRecording, setEnableRecording] = useState<boolean>(false);
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [socketConnected, setSocketConnected] = useState(false);
-  const [recordPath, setRecordPath] = useState("");
   const [sendingAudio, isSendingAudio] = useState<boolean>(false);
   const [speakStatus, setSpeakStatus] = useState<string>("Start speaking");
   const [duration, setDuration] = useState(0);
   const [invalidRecord, setInvalidRecord] = useState(false);
   const [startSpeaking, setStartSpeaking] = useState(false);
   const [WS, setWS] = React.useState<WebSocket | null>(null);
-  const [screenHeight, setScreenHeight] = useState(
+  const [screenHeight, setScreenHeight] = useState<number>(
     Dimensions.get("window").height
   );
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const [chatMessages, setChatMessages] = React.useState<
     chatMessagesInterface[]
   >([]);
 
   const drawerRef = useRef<any>(null);
+  const scrollViewRef = useRef<ScrollView | null>(null);
 
   const openDrawer = () => {
     drawerRef.current.open();
@@ -83,10 +84,20 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
   };
 
   useEffect(() => {
+    setChatMessages((messages) => [
+      ...messages,
+      {
+        type: InteractionType.CHARACTER_UTTERANCE,
+        isTyping: true,
+        text: "",
+      },
+    ]);
+
+    connectWebSocket();
+
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
       (event) => {
-        setKeyboardHeight(event.endCoordinates.height);
         setScreenHeight(
           Dimensions.get("window").height - event.endCoordinates.height
         );
@@ -96,7 +107,6 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
     const keyboardDidHideListener = Keyboard.addListener(
       "keyboardDidHide",
       () => {
-        setKeyboardHeight(0);
         setScreenHeight(Dimensions.get("window").height);
       }
     );
@@ -106,25 +116,13 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
     };
   }, []);
 
-  const connectWebSocket = () => {
-    const newWS = new WebSocket(WEBSOCKET_URL);
-    setWS(newWS);
-    newWS.onopen = () => {
-      setSocketConnected(true);
-
-      console.log("WebSocket connected");
-    };
-    newWS.onmessage = (event) => {
-      isSendingAudio(false);
-      setSpeakStatus("Start speaking");
-      handleServerMessage(event.data);
-    };
-
-    newWS.onclose = () => {
-      console.log("WebSocket disconnected");
-      setWS(null);
-    };
-  };
+  useEffect(() => {
+    setTimeout(() => {
+      if (scrollViewRef.current) {
+        scrollViewRef.current.scrollToEnd({ animated: true });
+      }
+    }, 0);
+  }, [chatMessages, screenHeight, enableRecording]);
 
   useEffect(() => {
     if (socketConnected) {
@@ -150,9 +148,30 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
     return () => clearInterval(timer);
   }, [isRecording]);
 
+  const connectWebSocket = () => {
+    const newWS = new WebSocket(WEBSOCKET_URL);
+    setWS(newWS);
+    newWS.onopen = () => {
+      setSocketConnected(true);
+
+      console.log("WebSocket connected");
+    };
+    newWS.onmessage = (event) => {
+      isSendingAudio(false);
+      setSpeakStatus("Start speaking");
+      handleServerMessage(event.data);
+    };
+
+    newWS.onclose = () => {
+      console.log("WebSocket disconnected");
+      setWS(null);
+    };
+  };
+
   const handleServerMessage = async (message: string) => {
     try {
       const parsedMessage = JSON.parse(message);
+      console.log(message, "ok new one");
 
       switch (parsedMessage.interaction_type) {
         case InteractionType.USER_UTTERANCE:
@@ -166,6 +185,7 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
         case InteractionType.CHARACTER_UPDATED_LOCATION:
         case InteractionType.CHARACTER_UPDATED_TIME:
         case InteractionType.COMMAND:
+          console.log(message, "ok new one11");
           await handleCharacterResponseMessage(parsedMessage);
           break;
 
@@ -350,11 +370,7 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
                 key={uuid.v4().toString()}
                 idx={uuid.v4()}
                 text={message.text}
-                color={[
-                  "rgba(255, 255, 255, 0)",
-                  "rgba(0, 0, 0, 0.5)",
-                  "rgba(255, 255, 255, 0)",
-                ]}
+                color={LIGHT_BLACK_FADED_COLOR}
                 showIcon={false}
               />
             )}
@@ -368,11 +384,7 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
                 key={uuid.v4().toString()}
                 idx={uuid.v4()}
                 text={message.text}
-                color={[
-                  "rgba(255, 255, 255, 0)",
-                  "rgba(0, 0, 0, 0.5)",
-                  "rgba(255, 255, 255, 0)",
-                ]}
+                color={LIGHT_BLACK_FADED_COLOR}
                 showIcon={false}
               />
             )}
@@ -385,11 +397,7 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
             idx={uuid.v4()}
             text={message.text}
             fadedDividerTextColor={styles.fadedDividerTextOrange}
-            color={[
-              "rgba(245, 140, 57, 0)",
-              "#F58C39",
-              "rgba(245, 140, 57, 0)",
-            ]}
+            color={ORANGE_FADED_COLOR}
             showIcon={true}
           />
         );
@@ -402,34 +410,10 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
     }
   };
 
-  const scrollViewRef = useRef<ScrollView | null>(null);
-  useEffect(() => {
-    setTimeout(() => {
-      if (scrollViewRef.current) {
-        scrollViewRef.current.scrollToEnd({ animated: true });
-      }
-    }, 500);
-  }, [chatMessages, screenHeight, enableRecording]);
-
-  useEffect(() => {
-    setChatMessages((messages) => [
-      ...messages,
-      {
-        type: InteractionType.CHARACTER_UTTERANCE,
-        isTyping: true,
-        text: "",
-      },
-    ]);
-
-    connectWebSocket();
-  }, []);
   const onStartRecord = async () => {
     setInvalidRecord(false);
     setSpeakStatus("Listening");
     setDuration(0);
-    const path = `${RNFS.DocumentDirectoryPath}.aac`;
-
-    setRecordPath(path);
 
     const audioSet = {
       AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
@@ -453,7 +437,6 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
     audioRecorderPlayer.addRecordBackListener((e) => {
       return;
     });
-    // }
   };
   const handleStartRecord = () => {
     setStartSpeaking(true);

@@ -78,4 +78,13 @@ export const UserMissionState = {
 
   export const BASE_URL =`https://desolate-anchorage-97861-39db3837351f.herokuapp.com`
 
-  
+  export const LIGHT_BLACK_FADED_COLOR=[
+    "rgba(255, 255, 255, 0)",
+    "rgba(0, 0, 0, 0.5)",
+    "rgba(255, 255, 255, 0)",
+  ]
+  export const ORANGE_FADED_COLOR=[
+    "rgba(245, 140, 57, 0)",
+    "#F58C39",
+    "rgba(245, 140, 57, 0)",
+  ]

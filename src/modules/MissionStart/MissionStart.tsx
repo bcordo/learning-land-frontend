@@ -22,6 +22,7 @@ import FadedDivider from "../../components/FadedDivider/FadedDivider";
 import HelphulPharasesComp from "../../components/HelphulPharasesComp/HelphulPharasesComp";
 import { useLazyGetAllMissionsQuery } from "../../../redux/services/missions";
 import CustomGoalListComponent from "../../components/CustomGaolListComp/CustomGaolListComp";
+import { LIGHT_BLACK_FADED_COLOR } from "../../assets/constant";
 
 interface MissionStartProps {
   navigation: any;
@@ -164,25 +165,13 @@ const MissionStart: React.FC<MissionStartProps> = ({
             {allMissions?.length ? (
               <>
                 <View style={styles.dividerContainer}>
-                  <FadedDivider
-                    color={[
-                      "rgba(255, 255, 255, 0)",
-                      "rgba(0, 0, 0, 0.5)",
-                      "rgba(255, 255, 255, 0)",
-                    ]}
-                  />
+                  <FadedDivider color={LIGHT_BLACK_FADED_COLOR} />
                   <View style={styles.dividerTxtContainer}>
                     <Text style={[styles.dividerTxt, styles.defaultFontFamily]}>
                       {allMissions[0]?.public_summary}
                     </Text>
                   </View>
-                  <FadedDivider
-                    color={[
-                      "rgba(255, 255, 255, 0)",
-                      "rgba(0, 0, 0, 0.5)",
-                      "rgba(255, 255, 255, 0)",
-                    ]}
-                  />
+                  <FadedDivider color={LIGHT_BLACK_FADED_COLOR} />
                 </View>
 
                 <View style={styles.goalsContainer}>

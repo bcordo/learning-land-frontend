@@ -6,6 +6,7 @@ import CustomSvgImageComponent from "../CustomComponents/Image";
 import Stars from "../../assets/icons/stars.svg";
 import Bookmark from "../../assets/icons/bookmark.svg";
 import CircleDot from "../../assets/icons/circle-dot.svg";
+import { LIGHT_BLACK_FADED_COLOR } from "../../assets/constant";
 
 interface assistantCorrectionProps {
   text: string;
@@ -17,11 +18,7 @@ const AssistantCorrection: React.FC<assistantCorrectionProps> = ({
     <>
       <FadedDivider
         style={{ marginVertical: 11 }}
-        color={[
-          "rgba(255, 255, 255, 0)",
-          "rgba(0, 0, 0, 0.5)",
-          "rgba(255, 255, 255, 0)",
-        ]}
+        color={LIGHT_BLACK_FADED_COLOR}
       />
       <View style={styles.trySayingInstedContainer}>
         <CustomSvgImageComponent width={18} height={18} Component={Stars} />
@@ -71,11 +68,7 @@ const AssistantCorrection: React.FC<assistantCorrectionProps> = ({
       </View>
       <FadedDivider
         style={{ marginVertical: 11 }}
-        color={[
-          "rgba(255, 255, 255, 0)",
-          "rgba(0, 0, 0, 0.5)",
-          "rgba(255, 255, 255, 0)",
-        ]}
+        color={LIGHT_BLACK_FADED_COLOR}
       />
     </>
   );
