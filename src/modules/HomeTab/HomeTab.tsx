@@ -24,10 +24,13 @@ import GlobeIcon from "../../assets/icons/globe-alt-orange.svg";
 import UsersIcon from "../../assets/icons/user-group.svg";
 import UserIcon from "../../assets/icons/user.svg";
 import Tooltip from "react-native-walkthrough-tooltip";
+import Navigation from "../../navigation/Navigation";
 
-interface HomeTabProps {}
+interface HomeTabProps {
+  navigation: any;
+}
 
-const Container = ({ item, toolTipVisible, setToolTipVisible }) => (
+const Container = ({ item, toolTipVisible, setToolTipVisible, navigation }) => (
   <>
     {item.currentltActive ? (
       <View style={[styles.missionListContainer, { height: 110 }]}>
@@ -82,7 +85,10 @@ const Container = ({ item, toolTipVisible, setToolTipVisible }) => (
               onClose={() => setToolTipVisible(false)}
             >
               <TouchableOpacity
-                onPress={() => setToolTipVisible(true)}
+                onPress={() => {
+                  navigation.navigate("MissionStart");
+                  // setToolTipVisible(true);
+                }}
                 style={styles.circularBarRoundBox}
               >
                 <CustomSvgImageComponent
@@ -184,14 +190,17 @@ const list = [
     icon: GiftIcon,
   },
 ];
-const HomeTab: React.FC<HomeTabProps> = (): React.JSX.Element => {
+const HomeTab: React.FC<HomeTabProps> = ({ navigation }): React.JSX.Element => {
   const [toolTipVisible, setToolTipVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState("home");
+  console.log(selectedItem, "selectedItem");
   const renderItem = ({ item }) => {
     return (
       <Container
         item={item}
         toolTipVisible={toolTipVisible}
         setToolTipVisible={setToolTipVisible}
+        navigation={navigation}
       />
     );
   };
@@ -243,10 +252,11 @@ const HomeTab: React.FC<HomeTabProps> = (): React.JSX.Element => {
           <View style={styles.missionDetailsFixedFooterContainer}>
             {footerList.map((e, index) => {
               return (
-                <View
+                <TouchableOpacity
+                  onPress={() => setSelectedItem(e.label)}
                   style={[
                     styles.missionDetailsFixedFooterList,
-                    { borderTopWidth: index === 0 ? 1 : 0 },
+                    { borderTopWidth: selectedItem === e.label ? 2 : 0 },
                   ]}
                 >
                   <CustomSvgImageComponent
@@ -258,12 +268,14 @@ const HomeTab: React.FC<HomeTabProps> = (): React.JSX.Element => {
                     style={[
                       styles.defaultFontFamily,
                       styles.missionDetailsFixedFooterTxt,
-                      { color: index === 0 ? "#F58C39" : "#171717" },
+                      {
+                        color: selectedItem === e.label ? "#F58C39" : "#171717",
+                      },
                     ]}
                   >
-                    Home
+                    {e?.label}
                   </Text>
-                </View>
+                </TouchableOpacity>
               );
             })}
           </View>

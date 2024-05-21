@@ -8,7 +8,7 @@ const translateApi = createApi({
     getTranslatedText: builder.query({
       query: ({ foreign_text, source_lang, target_lang }) => `/api/v1/utils/translate?foreign_text=${foreign_text}&source_lang=${source_lang}&target_lang=${target_lang}`
     }),
-  }),
+  }), 
 });
 
 export const { useLazyGetTranslatedTextQuery } = translateApi;

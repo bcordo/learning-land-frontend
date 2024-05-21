@@ -23,6 +23,7 @@ import HelphulPharasesComp from "../../components/HelphulPharasesComp/HelphulPha
 import { useLazyGetAllMissionsQuery } from "../../../redux/services/missions";
 import CustomGoalListComponent from "../../components/CustomGaolListComp/CustomGaolListComp";
 import { LIGHT_BLACK_FADED_COLOR } from "../../assets/constant";
+import CustomShimmer from "../../components/CustomShimmer/CustomShimmer";
 
 interface MissionStartProps {
   navigation: any;
@@ -31,7 +32,8 @@ interface MissionStartProps {
 const MissionStart: React.FC<MissionStartProps> = ({
   navigation,
 }): React.JSX.Element => {
-  const [fetchMissions, { data: allMissions }] = useLazyGetAllMissionsQuery();
+  const [fetchMissions, { data: allMissions, isLoading: fetchingMissions }] =
+    useLazyGetAllMissionsQuery();
   const [screenHeight, setScreenHeight] = useState(
     Dimensions.get("window").height
   );
@@ -80,6 +82,17 @@ const MissionStart: React.FC<MissionStartProps> = ({
         icon={Star}
         title={item.title}
         description={item.description}
+        isFetching={fetchingMissions}
+      />
+    );
+  };
+  const renderItemSkeleton = ({ item }) => {
+    return (
+      <CustomGoalListComponent
+        icon={Star}
+        title={""}
+        description={""}
+        isFetching={fetchingMissions}
       />
     );
   };
@@ -103,8 +116,18 @@ const MissionStart: React.FC<MissionStartProps> = ({
       <HelphulPharasesComp
         title={item.text}
         text_language={item?.text_language}
+        isFetching={fetchingMissions}
       />
     ) : null;
+  };
+  const renderHelpfulPharasesSkeleton = ({ item }) => {
+    return (
+      <HelphulPharasesComp
+        title={""}
+        text_language={""}
+        isFetching={fetchingMissions}
+      />
+    );
   };
 
   return (
@@ -151,7 +174,25 @@ const MissionStart: React.FC<MissionStartProps> = ({
               <Text style={(styles.missionTxt, styles.defaultFontFamily)}>
                 World 1, Mission 1
               </Text>
-              {allMissions?.length ? (
+              {fetchingMissions ? (
+                <>
+                  <CustomShimmer
+                    styleProps={{
+                      width: "70%",
+                      height: 10,
+                      backgroundColor: "#9e9e9e",
+                      marginTop: 10,
+                    }}
+                  />
+                  <CustomShimmer
+                    styleProps={{
+                      width: "40%",
+                      height: 10,
+                      backgroundColor: "#9e9e9e",
+                    }}
+                  />
+                </>
+              ) : allMissions?.length ? (
                 <View style={styles.coffeeShopTxtContainer}>
                   <Text
                     style={[styles.coffeeShopTxt, styles.defaultFontFamilyBold]}
@@ -162,61 +203,92 @@ const MissionStart: React.FC<MissionStartProps> = ({
               ) : null}
             </View>
 
-            {allMissions?.length ? (
-              <>
-                <View style={styles.dividerContainer}>
-                  <FadedDivider color={LIGHT_BLACK_FADED_COLOR} />
-                  <View style={styles.dividerTxtContainer}>
-                    <Text style={[styles.dividerTxt, styles.defaultFontFamily]}>
-                      {allMissions[0]?.public_summary}
-                    </Text>
-                  </View>
-                  <FadedDivider color={LIGHT_BLACK_FADED_COLOR} />
-                </View>
-
-                <View style={styles.goalsContainer}>
-                  <Text style={[styles.defaultFontFamilyBold, styles.goalstxt]}>
-                    Goals
-                  </Text>
-
-                  <FlatList
-                    data={allMissions[0]?.goals || []}
-                    renderItem={renderItem}
-                  />
-                </View>
-
-                <View style={styles.helpfulPharasesContainer}>
-                  <View style={styles.helpfulPharasesHeader}>
-                    <Text
-                      style={[
-                        styles.helpfulPharasesTxt,
-                        styles.defaultFontFamilyBold,
-                      ]}
-                    >
-                      Helpful Phrases
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("HelpfulPharases")}
-                    >
-                      <Text
-                        style={[
-                          styles.seeAllPharasesTxt,
-                          styles.defaultFontFamily,
-                        ]}
-                      >
-                        See all phrases
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.helpfulPharasesListContainer}>
-                    <FlatList
-                      data={allMissions[0]?.helpful_phrases}
-                      renderItem={renderHelpfulPharases}
+            <View style={styles.dividerContainer}>
+              <FadedDivider color={LIGHT_BLACK_FADED_COLOR} />
+              <View style={styles.dividerTxtContainer}>
+                {fetchingMissions ? (
+                  <>
+                    <CustomShimmer
+                      styleProps={{
+                        width: "100%",
+                        height: 10,
+                        backgroundColor: "#9e9e9e",
+                      }}
                     />
-                  </View>
-                </View>
-              </>
-            ) : null}
+                    <CustomShimmer
+                      styleProps={{
+                        width: "100%",
+                        height: 10,
+                        backgroundColor: "#9e9e9e",
+                      }}
+                    />
+                    <CustomShimmer
+                      styleProps={{
+                        width: "40%",
+                        height: 10,
+                        backgroundColor: "#9e9e9e",
+                      }}
+                    />
+                  </>
+                ) : (
+                  <Text style={[styles.dividerTxt, styles.defaultFontFamily]}>
+                    {allMissions && allMissions[0]?.public_summary}
+                  </Text>
+                )}
+              </View>
+              <FadedDivider color={LIGHT_BLACK_FADED_COLOR} />
+            </View>
+
+            <View style={styles.goalsContainer}>
+              <Text style={[styles.defaultFontFamilyBold, styles.goalstxt]}>
+                Goals
+              </Text>
+              {fetchingMissions ? (
+                <FlatList data={[1, 2, 3]} renderItem={renderItemSkeleton} />
+              ) : (
+                <FlatList
+                  data={(allMissions && allMissions[0]?.goals) || []}
+                  renderItem={renderItem}
+                />
+              )}
+            </View>
+
+            <View style={styles.helpfulPharasesContainer}>
+              <View style={styles.helpfulPharasesHeader}>
+                <Text
+                  style={[
+                    styles.helpfulPharasesTxt,
+                    styles.defaultFontFamilyBold,
+                  ]}
+                >
+                  Helpful Phrases
+                </Text>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("HelpfulPharases")}
+                >
+                  <Text
+                    style={[styles.seeAllPharasesTxt, styles.defaultFontFamily]}
+                  >
+                    See all phrases
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.helpfulPharasesListContainer}>
+                {fetchingMissions ? (
+                  <FlatList
+                    data={[1, 2, 3]}
+                    renderItem={renderHelpfulPharasesSkeleton}
+                  />
+                ) : (
+                  <FlatList
+                    data={
+                      (allMissions && allMissions[0]?.helpful_phrases) || []
+                    }
+                    renderItem={renderHelpfulPharases}
+                  />
+                )}
+              </View>
+            </View>
           </ScrollView>
 
           <TouchableOpacity

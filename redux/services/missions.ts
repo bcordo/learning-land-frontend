@@ -7,7 +7,7 @@ const missionsApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
   endpoints: (builder) => ({
     getAllMissions: builder.query({
-      query: (id) =>   `/api/v1/missions/`,
+      query: () =>   `/api/v1/missions`,
     }),
   }),
 });

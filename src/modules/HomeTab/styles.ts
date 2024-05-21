@@ -79,6 +79,7 @@ export const styles = StyleSheet.create({
   missionDetailsFixedFooterTxt: {
     color: "#F58C39",
     paddingTop: 4,
+    fontSize:12
   },
   missionDetailsFixedFooterList: {
     borderTopWidth: 2,

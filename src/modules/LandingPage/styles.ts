@@ -12,7 +12,8 @@ export const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal:24
+    paddingHorizontal:24,
+    backgroundColor:'#F1F5F9'
   },
   textContainer: {
     justifyContent: 'flex-end',

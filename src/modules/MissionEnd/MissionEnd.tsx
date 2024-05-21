@@ -249,7 +249,7 @@ const MissionEnd: React.FC<MissionEndProps> = ({
                 <View style={styles.reviewBox}>
                   <Text
                     style={[
-                      styles.defaultFontFamilyBold,
+                      styles.defaultFontFamilySemiBold,
                       styles.reviewTxt,
                       { color: item.color || "" },
                     ]}
@@ -264,7 +264,7 @@ const MissionEnd: React.FC<MissionEndProps> = ({
                     />
                     <Text
                       style={[
-                        styles.defaultFontFamily,
+                        styles.defaultFontFamilySemiBold,
                         styles.reviewScore,
                         { color: item.color || "" },
                       ]}

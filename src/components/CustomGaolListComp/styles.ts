@@ -7,12 +7,17 @@ export const styles = StyleSheet.create({
       defaultFontFamilyBold: {
         fontFamily: "Montserrat-Bold",
       },
+
+  defaultFontFamilySemiBold: {
+    fontFamily: "Montserrat-SemiBold",
+  },
     goalsList: {
         paddingVertical: 16,
         paddingHorizontal: 10,
         flexDirection: "row",
         gap: 10,
         alignItems: "center",
+        
         borderBottomWidth: 1,
         borderBottomColor: "#E5E5E5",
       },

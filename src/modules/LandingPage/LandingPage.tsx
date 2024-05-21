@@ -54,7 +54,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
                 styles.defaultFontFamilyBold,
               ]}
               buttonStyle={styles.getStarted}
-              onPress={() => navigation.navigate("MissionStart")}
+              onPress={() => navigation.navigate("HomeTab")}
               buttonTxt={"GET STARTED"}
             />
             <CustomButtom

@@ -171,11 +171,10 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
   const handleServerMessage = async (message: string) => {
     try {
       const parsedMessage = JSON.parse(message);
-      console.log(message, "ok new one");
 
       switch (parsedMessage.interaction_type) {
         case InteractionType.USER_UTTERANCE:
-          handleUserUtteranceMessage(parsedMessage);
+          // handleUserUtteranceMessage(parsedMessage);
           break;
         case InteractionType.CHARACTER_UTTERANCE:
         case InteractionType.CHARACTER_ACTION:
@@ -185,18 +184,27 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
         case InteractionType.CHARACTER_UPDATED_LOCATION:
         case InteractionType.CHARACTER_UPDATED_TIME:
         case InteractionType.COMMAND:
-          console.log(message, "ok new one11");
-          await handleCharacterResponseMessage(parsedMessage);
+          setTimeout(() => {
+            handleCharacterResponseMessage(parsedMessage);
+          }, 1000);
           break;
 
         case InteractionType.ASSISTANT_HINT:
-          handleHintMessage(parsedMessage);
+          setTimeout(() => {
+            handleHintMessage(parsedMessage);
+          }, 1000);
           break;
         case InteractionType.ASSISTANT_CORRECTION:
-          handleCorrectionMessage(parsedMessage);
+          setTimeout(() => {
+            handleCorrectionMessage(parsedMessage);
+          }, 5000);
+
           break;
         case InteractionType.MISSION_STATUS:
-          handleMissionStatusMessage(parsedMessage);
+          setTimeout(() => {
+            handleMissionStatusMessage(parsedMessage);
+          }, 1000);
+
           break;
         default:
           console.log(
@@ -466,7 +474,6 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
 
       RNFS.readFile(result, "base64")
         .then((data) => {
-          console.log(data, "BASE 64 Audio File");
           sendMessage({
             message_type: MessageType.FULL,
             interaction_type: InteractionType.USER_UTTERANCE,

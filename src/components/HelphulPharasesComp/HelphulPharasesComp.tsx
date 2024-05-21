@@ -18,6 +18,7 @@ interface HelphulPharasesCompProps {
   hideDescriptionText?: boolean;
   isRight?: boolean;
   showDescriptionIcons?: boolean;
+  isFetching: boolean;
 }
 
 const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({
@@ -29,6 +30,7 @@ const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({
   isRight,
   hideDescriptionText,
   showDescriptionIcons,
+  isFetching,
 }): React.JSX.Element => {
   const [translateText, { data: translatedText, isLoading }] =
     useLazyGetTranslatedTextQuery();
@@ -75,9 +77,24 @@ const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({
                 Component={Tick}
               />
             ) : null}
-            <Text style={[styles.defaultFontFamily, styles.goalsListTextBold]}>
-              {title}
-            </Text>
+            {isFetching ? (
+              <CustomShimmer
+                styleProps={{
+                  width: "70%",
+                  height: 10,
+                  backgroundColor: "#9e9e9e",
+                }}
+              />
+            ) : (
+              <Text
+                style={[
+                  styles.defaultFontFamilySemiBold,
+                  styles.goalsListTextBold,
+                ]}
+              >
+                {title}
+              </Text>
+            )}
           </View>
           {description ? (
             showDescriptionIcons ? (
@@ -105,7 +122,7 @@ const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({
               </Text>
             )
           ) : null}
-          {isLoading ? (
+          {!isFetching && isLoading ? (
             <CustomShimmer
               styleProps={{
                 width: "80%",

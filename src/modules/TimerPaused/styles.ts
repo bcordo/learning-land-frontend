@@ -7,6 +7,10 @@ export const styles = StyleSheet.create({
   defaultFontFamilyBold: {
     fontFamily: "Montserrat-Bold",
   },
+
+  defaultFontFamilySemiBold: {
+    fontFamily: "Montserrat-SemiBold",
+  },
   container: {
     width: "100%",
     height: "100%",
@@ -38,6 +42,14 @@ export const styles = StyleSheet.create({
     shadowRadius: 3.84,
 
     elevation: 5,
+  },
+  buttonBoxtxt:{
+alignItems:'center',
+gap:6
+  },
+  stoptxt:{
+    color:'#A3A3A3',
+    fontSize:14,
   },
   buttonContainer: {
     flexDirection: "row",
@@ -121,5 +133,60 @@ export const styles = StyleSheet.create({
     fontSize: 28,
     marginRight: 8,
   },
-  
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    margin: 40,
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    backgroundColor: "#F1F5F9",
+    shadowColor: "#3282ce9c",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
+  },
+  modalText: {
+    marginBottom: 24,
+    textAlign: 'center',  
+  },
+  modalButtonContainer:{
+    width:'100%',
+    flexDirection:'row',
+    justifyContent:'space-between'
+  },
+  modalConfirmButton:{
+    backgroundColor: '#F58C39',
+   
+    paddingHorizontal: 20,
+    paddingVertical:10,
+    borderRadius: 10,
+    
+  },
+  modalConfirmButtonCancel:{
+    backgroundColor: '#737373',
+   
+    paddingHorizontal: 20,
+    paddingVertical:10,
+    borderRadius: 10,
+    
+  },
+  getStartedButtonText: {
+    color: '#fff',
+    fontSize:12,
+  },
+  getStartedButtonTextCancel: {
+    color: '#fff',
+    fontSize:12,
+  },
+
 });

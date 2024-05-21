@@ -7,6 +7,9 @@ export const styles = StyleSheet.create({
   defaultFontFamilyBold: {
     fontFamily: "Montserrat-Bold",
   },
+
+  defaultFontFamilySemiBold: {
+    fontFamily:'Montserrat-SemiBold'},
   mainContainer: {
     width: "100%",
     height: "100%",

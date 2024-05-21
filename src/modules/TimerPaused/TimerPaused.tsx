@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import {
+  Button,
   FlatList,
+  Modal,
   ScrollView,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
@@ -32,6 +35,7 @@ const TimerPaused: React.FC<TimerPausedProps> = ({
   navigation,
 }): React.JSX.Element => {
   const dispatch = useDispatch();
+  const [modalVisible, setModalVisible] = useState(false);
 
   interface ListItem {
     icon: any;
@@ -164,31 +168,100 @@ const TimerPaused: React.FC<TimerPausedProps> = ({
             Timer Paused
           </Text>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.buttonBox}
-              onPress={() => {
-                navigation.navigate("MissionEnd");
+            <View style={styles.buttonBoxtxt}>
+              <TouchableOpacity
+                style={styles.buttonBox}
+                onPress={() =>
+                  // navigation.navigate("MissionEnd");
+                  setModalVisible(true)
+                }
+              >
+                <CustomSvgImageComponent
+                  width={27}
+                  height={27}
+                  Component={Vector}
+                />
+              </TouchableOpacity>
+              <Text style={[styles.defaultFontFamily, styles.stoptxt]}>
+                stop
+              </Text>
+            </View>
+            <Modal
+              animationType="none"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => {
+                setModalVisible(false);
               }}
             >
-              <CustomSvgImageComponent
-                width={27}
-                height={27}
-                Component={Vector}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.buttonBox}
-              onPress={() => {
-                dispatch(updatePauseTimmer(false));
-                navigation.navigate("CharacterChat");
-              }}
-            >
-              <CustomSvgImageComponent
-                width={40}
-                height={40}
-                Component={Play}
-              />
-            </TouchableOpacity>
+              <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+                <View style={styles.modalBackground}>
+                  <TouchableWithoutFeedback>
+                    <View style={styles.modalView}>
+                      <Text
+                        style={[
+                          styles.modalText,
+                          styles.defaultFontFamilySemiBold,
+                        ]}
+                      >
+                        Are you sure you want to exit the mission ?
+                      </Text>
+                      <View style={styles.modalButtonContainer}>
+                        <TouchableOpacity
+                          onPress={() => {
+                            navigation.navigate("MissionEnd");
+
+                            setModalVisible(false);
+                          }}
+                          style={styles.modalConfirmButton}
+                        >
+                          <Text
+                            style={[
+                              styles.getStartedButtonTextCancel,
+                              styles.defaultFontFamilySemiBold,
+                            ]}
+                          >
+                            Confirm
+                          </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() => setModalVisible(false)}
+                          style={styles.modalConfirmButtonCancel}
+                        >
+                          <Text
+                            style={[
+                              styles.getStartedButtonTextCancel,
+                              styles.defaultFontFamilySemiBold,
+                            ]}
+                          >
+                            Cancel
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </TouchableWithoutFeedback>
+                </View>
+              </TouchableWithoutFeedback>
+            </Modal>
+
+            <View style={styles.buttonBoxtxt}>
+              <TouchableOpacity
+                style={styles.buttonBox}
+                onPress={() => {
+                  dispatch(updatePauseTimmer(false));
+                  navigation.navigate("CharacterChat");
+                }}
+              >
+                <CustomSvgImageComponent
+                  width={40}
+                  height={40}
+                  Component={Play}
+                />
+              </TouchableOpacity>
+              <Text style={[styles.defaultFontFamily, styles.stoptxt]}>
+                resume
+              </Text>
+            </View>
           </View>
         </View>
         <ScrollView style={{ paddingBottom: 200 }}>

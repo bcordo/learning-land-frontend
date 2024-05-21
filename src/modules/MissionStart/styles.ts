@@ -46,6 +46,7 @@ export const styles = StyleSheet.create({
   },
   dividerTxtContainer: {
     paddingHorizontal: 50,
+    gap:6
   },
   dividerTxt: {
     color: "#171717",

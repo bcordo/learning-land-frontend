@@ -7,6 +7,9 @@ export const styles = StyleSheet.create({
       defaultFontFamilyBold: {
         fontFamily: "Montserrat-Bold",
       },
+      
+  defaultFontFamilySemiBold: {
+    fontFamily:'Montserrat-SemiBold'},
       helpfulPharasesListItem: {
         
         flexDirection: "row",
