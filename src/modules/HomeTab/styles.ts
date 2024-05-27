@@ -97,6 +97,17 @@ export const styles = StyleSheet.create({
     alignItems:'center',
     paddingVertical:12,
     textAlign:'center',
-    borderRadius:30
+    borderRadius:15
+  },
+  tooltipParentStyle:{
+
+    shadowColor: "#3282ce9c",
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   }
+
 });

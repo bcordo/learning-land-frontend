@@ -22,7 +22,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
                 style={{
                   width: 106,
                   height: 112,
-                  marginBottom: 40,
+                  marginBottom: 50,
                 }}
                 source={require("../../assets/icons/landing-page-logo.png")}
               />
@@ -40,10 +40,10 @@ const LandingPage: React.FC<LandingPageProps> = ({
             </Text>
             <View style={{ marginTop: 8 }}>
               <Text style={[styles.blackText, styles.defaultFontFamily]}>
-                Personalized education{" "}
+                Personalized education.{" "}
               </Text>
               <Text style={[styles.blackText, styles.defaultFontFamily]}>
-                For everyone
+                For everyone.
               </Text>
             </View>
           </View>
@@ -51,7 +51,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             <CustomButtom
               textStyle={[
                 styles.getStartedButtonText,
-                styles.defaultFontFamilyBold,
+                styles.defaultFontFamilySemiBold,
               ]}
               buttonStyle={styles.getStarted}
               onPress={() => navigation.navigate("HomeTab")}
@@ -60,7 +60,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             <CustomButtom
               textStyle={[
                 styles.alreadyHaveAccountButtonText,
-                styles.defaultFontFamilyBold,
+                styles.defaultFontFamilySemiBold,
               ]}
               buttonStyle={styles.alreadyHaveAnAccount}
               onPress={() => {}}

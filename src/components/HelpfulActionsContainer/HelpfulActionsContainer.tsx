@@ -33,7 +33,9 @@ const HelpfulActionsContainer: React.FC<HelpfulActionsContainerProps> = ({
   return (
     <View style={styles.incorrectPhaseContainer}>
       <View style={styles.helpfulPharasesHeader}>
-        <Text style={[styles.helpfulPharasesTxt, styles.defaultFontFamilyBold]}>
+        <Text
+          style={[styles.helpfulPharasesTxt, styles.defaultFontFamilySemiBold]}
+        >
           {heading}
         </Text>
         <TouchableOpacity onPress={() => navigation.navigate(navigationRoute)}>

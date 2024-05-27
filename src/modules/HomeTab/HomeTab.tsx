@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 import {
+  DimensionValue,
   FlatList,
   SafeAreaView,
   ScrollView,
@@ -24,124 +25,152 @@ import GlobeIcon from "../../assets/icons/globe-alt-orange.svg";
 import UsersIcon from "../../assets/icons/user-group.svg";
 import UserIcon from "../../assets/icons/user.svg";
 import Tooltip from "react-native-walkthrough-tooltip";
-import Navigation from "../../navigation/Navigation";
 
 interface HomeTabProps {
   navigation: any;
 }
+interface ContainerProps {
+  item: {
+    position: string;
+    currentltActive: boolean;
+    icon: any;
+    secondaryIcon?: any;
+  };
+  toolTipVisible: boolean;
+  setToolTipVisible: Function;
+  navigation: any;
+}
 
-const Container = ({ item, toolTipVisible, setToolTipVisible, navigation }) => (
-  <>
-    {item.currentltActive ? (
-      <View style={[styles.missionListContainer, { height: 110 }]}>
-        {item?.secondaryIcon ? (
-          <View
-            style={{
-              position: "absolute",
-              left: `${item.position === "8" ? 85 : 15}%`,
+const Container: React.FC<ContainerProps> = ({
+  item,
+  toolTipVisible,
+  setToolTipVisible,
+  navigation,
+}) => {
+  useEffect(() => {
+    setToolTipVisible(true);
+  }, []);
+  return (
+    <>
+      {item.currentltActive ? (
+        <View style={[styles.missionListContainer, { height: 110 }]}>
+          {item?.secondaryIcon ? (
+            <View
+              style={{
+                position: "absolute",
+                left: `${item.position === "8" ? 85 : 15}%`,
 
-              transform: [
-                {
-                  translateX: -`${item.position === "8" ? 85 : 15}`,
-                },
-              ],
-            }}
-          >
-            <CustomSvgImageComponent
-              width={110}
-              height={110}
-              Component={item.secondaryIcon}
-            />
-          </View>
-        ) : null}
-
-        <AnimatedCircularProgress
-          size={100}
-          width={4}
-          fill={50}
-          tintColor="#DD6100"
-          backgroundColor="lightgray"
-          lineCap="round"
-          rotation={0}
-          style={{
-            position: "absolute",
-            left: `${item.position}%`,
-            top: 0,
-            transform: [{ translateX: -item.position }],
-          }}
-        >
-          {(fill) => (
-            <Tooltip
-              contentStyle={styles.tooltip}
-              isVisible={toolTipVisible}
-              content={
-                <Text
-                  style={[styles.defaultFontFamilySemiBold, styles.tooltipTxt]}
-                >
-                  CONTINUE
-                </Text>
-              }
-              placement="top"
-              onClose={() => setToolTipVisible(false)}
+                transform: [
+                  {
+                    translateX: -`${item.position === "8" ? 85 : 15}`,
+                  },
+                ],
+              }}
             >
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("MissionStart");
-                  // setToolTipVisible(true);
-                }}
-                style={styles.circularBarRoundBox}
+              <CustomSvgImageComponent
+                width={110}
+                height={110}
+                Component={item.secondaryIcon}
+              />
+            </View>
+          ) : null}
+          <Tooltip
+            backgroundColor={"transparent"}
+            onClose={() => setToolTipVisible(false)}
+            contentStyle={styles.tooltip}
+            tooltipStyle={[
+              styles.tooltipParentStyle,
+              {
+                position: "absolute",
+                left: `${item.position}%` as DimensionValue,
+                transform: [{ translateX: -item.position }],
+              },
+            ]}
+            isVisible={toolTipVisible}
+            content={
+              <Text
+                style={[styles.defaultFontFamilySemiBold, styles.tooltipTxt]}
               >
-                <CustomSvgImageComponent
-                  width={42}
-                  height={42}
-                  Component={item.icon}
-                />
-              </TouchableOpacity>
-            </Tooltip>
-          )}
-        </AnimatedCircularProgress>
-      </View>
-    ) : (
-      <View style={[styles.missionListContainer, { height: 90 }]}>
-        {item?.secondaryIcon ? (
+                CONTINUE
+              </Text>
+            }
+            placement="top"
+          >
+            <AnimatedCircularProgress
+              size={100}
+              width={4}
+              fill={50}
+              tintColor="#DD6100"
+              backgroundColor="lightgray"
+              lineCap="round"
+              rotation={0}
+              style={{
+                position: "absolute",
+                left: `${item.position}%` as DimensionValue,
+                top: 0,
+                transform: [{ translateX: -item.position }],
+              }}
+            >
+              {(fill) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate("MissionStart");
+                    setToolTipVisible(false);
+                  }}
+                  style={styles.circularBarRoundBox}
+                >
+                  <CustomSvgImageComponent
+                    width={42}
+                    height={42}
+                    Component={item.icon}
+                  />
+                </TouchableOpacity>
+              )}
+            </AnimatedCircularProgress>
+          </Tooltip>
+        </View>
+      ) : (
+        <View style={[styles.missionListContainer, { height: 90 }]}>
+          {item?.secondaryIcon ? (
+            <View
+              style={{
+                position: "absolute",
+                left: `${item.position === "8" ? 85 : 15}%`,
+                top: 0,
+                transform: [
+                  { translateX: -`${item.position === "8" ? 85 : 15}` },
+                ],
+              }}
+            >
+              <CustomSvgImageComponent
+                width={110}
+                height={110}
+                Component={item.secondaryIcon}
+              />
+            </View>
+          ) : null}
           <View
-            style={{
-              position: "absolute",
-              left: `${item.position === "8" ? 85 : 15}%`,
-              top: 0,
-              transform: [
-                { translateX: -`${item.position === "8" ? 85 : 15}` },
-              ],
-            }}
+            style={[
+              styles.circularBarRoundBox,
+              {
+                position: "absolute",
+                left: `${item.position}%` as DimensionValue,
+                top: 0,
+                transform: [{ translateX: -item.position }],
+              },
+            ]}
           >
             <CustomSvgImageComponent
-              width={110}
-              height={110}
-              Component={item.secondaryIcon}
+              width={42}
+              height={42}
+              Component={item.icon}
             />
           </View>
-        ) : null}
-        <View
-          style={[
-            styles.circularBarRoundBox,
-            {
-              position: "absolute",
-              left: `${item.position}%`,
-              top: 0,
-              transform: [{ translateX: -item.position }],
-            },
-          ]}
-        >
-          <CustomSvgImageComponent
-            width={42}
-            height={42}
-            Component={item.icon}
-          />
         </View>
-      </View>
-    )}
-  </>
-);
+      )}
+    </>
+  );
+};
 const list = [
   {
     position: "50",
@@ -157,10 +186,12 @@ const list = [
     position: "95",
     icon: GiftIcon,
     secondaryIcon: Coffee,
+    currentltActive: false,
   },
   {
     position: "77",
     currentltActive: false,
+
     icon: LockIcon,
   },
   {
@@ -193,8 +224,17 @@ const list = [
 const HomeTab: React.FC<HomeTabProps> = ({ navigation }): React.JSX.Element => {
   const [toolTipVisible, setToolTipVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState("home");
-  console.log(selectedItem, "selectedItem");
-  const renderItem = ({ item }) => {
+
+  const renderItem = ({
+    item,
+  }: {
+    item: {
+      position: string;
+      currentltActive: boolean;
+      icon: any;
+      secondaryIcon?: any;
+    };
+  }) => {
     return (
       <Container
         item={item}

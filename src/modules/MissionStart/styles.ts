@@ -26,7 +26,6 @@ export const styles = StyleSheet.create({
     color: "#737373",
     fontSize: 14,
     fontStyle: "normal",
-    lineHeight: 20,
   },
   coffeeShopTxtContainer: {
     width: "50%",
@@ -35,7 +34,6 @@ export const styles = StyleSheet.create({
   coffeeShopTxt: {
     color: "#171717",
     fontSize: 24,
-    fontStyle: "normal",
     lineHeight: 32,
     letterSpacing: -0.48,
     textAlign: "center",
@@ -51,7 +49,6 @@ export const styles = StyleSheet.create({
   dividerTxt: {
     color: "#171717",
     fontSize: 16,
-    fontStyle: "normal",
     lineHeight: 24,
   },
   goalsContainer: {

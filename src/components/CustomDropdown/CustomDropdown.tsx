@@ -9,6 +9,8 @@ interface CustomDropdownProps {
   renderButton: (selectedItem: any, isOpened: boolean) => ReactNode;
   renderItem: RenderItemFunction;
   dropdownStyle: {};
+  setDifficultyLevel: Function;
+  difficultyLevel: string;
 }
 
 const CustomDropdown: React.FC<CustomDropdownProps> = ({
@@ -16,13 +18,16 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
   renderButton,
   renderItem,
   dropdownStyle,
+  setDifficultyLevel,
+  difficultyLevel,
 }): React.JSX.Element => {
   return (
     <SelectDropdown
       data={list}
-      onSelect={(selectedItem, index) => {
-        console.log(selectedItem, index);
+      onSelect={(selectedItem) => {
+        setDifficultyLevel(selectedItem.title);
       }}
+      defaultValue={difficultyLevel}
       renderButton={renderButton}
       renderItem={renderItem}
       showsVerticalScrollIndicator={false}

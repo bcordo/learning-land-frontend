@@ -18,7 +18,7 @@ interface HelphulPharasesCompProps {
   hideDescriptionText?: boolean;
   isRight?: boolean;
   showDescriptionIcons?: boolean;
-  isFetching: boolean;
+  isFetching?: boolean;
 }
 
 const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({

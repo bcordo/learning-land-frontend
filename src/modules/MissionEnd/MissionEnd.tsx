@@ -11,7 +11,8 @@ import {
 } from "react-native";
 import CustomSvgImageComponent from "../../components/CustomComponents/Image";
 import LeftIcon from "../../assets/icons/arrow-left-black.svg";
-import StarIcon from "../../assets/icons/golder-star.svg";
+import StarIcon from "../../assets/icons/golden-star2.svg";
+import GrayStarIcon from "../../assets/icons/start-gray.svg";
 import MessageIcon from "../../assets/icons/message.svg";
 import XCrossIcon from "../../assets/icons/x-circle.svg";
 import CheckIcon from "../../assets/icons/check-circle.svg";
@@ -191,24 +192,59 @@ const MissionEnd: React.FC<MissionEndProps> = ({
                 size={250}
                 width={12}
                 fill={50}
-                tintColor="#fff"
-                backgroundColor="lightgray"
+                tintColor="#F1F5F9"
+                backgroundColor="#d8e1ee"
                 lineCap="round"
                 rotation={-135}
+                style={{
+                  borderRadius: 20,
+                  shadowColor: "#3282ce9c",
+                  shadowOffset: {
+                    width: 0,
+                    height: 2,
+                  },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 3.84,
+                  elevation: 5,
+                }}
               >
                 {(fill) => (
                   <View style={styles.scoretxtContainer}>
+                    <View style={{ flexDirection: "row" }}>
+                      <Text
+                        style={[
+                          styles.defaultFontFamilyBold,
+                          styles.scoretxt,
+                          styles.scoretxtXL,
+                        ]}
+                      >
+                        2
+                      </Text>
+                      <Text
+                        style={[
+                          styles.defaultFontFamilySemiBold,
+                          styles.scoretxt,
+                          styles.scoretxtXL,
+                        ]}
+                      >
+                        /
+                      </Text>
+                      <Text
+                        style={[
+                          styles.defaultFontFamilyBold,
+                          styles.scoretxt,
+                          styles.scoretxtXL,
+                        ]}
+                      >
+                        3
+                      </Text>
+                    </View>
+
                     <Text
                       style={[
-                        styles.defaultFontFamilyBold,
+                        styles.defaultFontFamilySemiBold,
                         styles.scoretxt,
-                        styles.scoretxtXL,
                       ]}
-                    >
-                      2/3
-                    </Text>
-                    <Text
-                      style={[styles.defaultFontFamilyBold, styles.scoretxt]}
                     >
                       GOALS COMPLETE{" "}
                     </Text>
@@ -236,7 +272,7 @@ const MissionEnd: React.FC<MissionEndProps> = ({
                   <CustomSvgImageComponent
                     width={42}
                     height={40}
-                    Component={StarIcon}
+                    Component={GrayStarIcon}
                   />
                 </View>
               </View>
@@ -278,7 +314,7 @@ const MissionEnd: React.FC<MissionEndProps> = ({
           </View>
 
           <View style={styles.goalsContainer}>
-            <Text style={[styles.goalsTxt, styles.defaultFontFamilyBold]}>
+            <Text style={[styles.goalsTxt, styles.defaultFontFamilySemiBold]}>
               Goals Review
             </Text>
             <FlatList data={goalsList} renderItem={renderItem} />
@@ -314,7 +350,7 @@ const MissionEnd: React.FC<MissionEndProps> = ({
             <CustomButtom
               textStyle={[
                 styles.alreadyHaveAccountButtonText,
-                styles.defaultFontFamilyBold,
+                styles.defaultFontFamilySemiBold,
               ]}
               buttonStyle={styles.alreadyHaveAnAccount}
               onPress={() => {}}
@@ -325,7 +361,7 @@ const MissionEnd: React.FC<MissionEndProps> = ({
             <CustomButtom
               textStyle={[
                 styles.getStartedButtonText,
-                styles.defaultFontFamilyBold,
+                styles.defaultFontFamilySemiBold,
               ]}
               buttonStyle={styles.getStarted}
               onPress={() => {}}

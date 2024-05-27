@@ -27,6 +27,7 @@ const CustomSwitch: React.FC<CustomSwitchProps> = ({
       onValueChange={toggleSwitch}
       value={isEnabled}
       style={style}
+      ios_backgroundColor={trackColor.false}
     />
   );
 };

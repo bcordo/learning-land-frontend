@@ -149,7 +149,19 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
   }, [isRecording]);
 
   const connectWebSocket = () => {
-    const newWS = new WebSocket(WEBSOCKET_URL);
+    const newWS = new WebSocket(
+      "wss://desolate-anchorage-97861-39db3837351f.herokuapp.com/api/v1/user_missions/chat",
+      null,
+      {
+        headers: {
+          "Accept-Language": "en,en-US;q=0.9,ru;q=0.8,de;q=0.7",
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+          "User-Agent":
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36",
+        },
+      }
+    );
     setWS(newWS);
     newWS.onopen = () => {
       setSocketConnected(true);
@@ -487,11 +499,18 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
     }
   };
 
-  const sendMessage = async (message: any) => {
+  const sendMessage = async (message: any, metadata = {}) => {
     if (WS && WS.readyState === WebSocket.OPEN) {
       isSendingAudio(true);
       try {
-        await WS.send(JSON.stringify(message));
+        const messageWithMetadata = {
+          ...message,
+          metadata: {
+            ...metadata,
+            user_mission_id: 6,
+          },
+        };
+        await WS.send(JSON.stringify(messageWithMetadata));
       } catch (err) {
         console.log(err, "Error");
       }

@@ -9,7 +9,8 @@ export const styles = StyleSheet.create({
   },
 
   defaultFontFamilySemiBold: {
-    fontFamily:'Montserrat-SemiBold'},
+    fontFamily: "Montserrat-SemiBold",
+  },
   mainContainer: {
     width: "100%",
     height: "100%",
@@ -27,24 +28,23 @@ export const styles = StyleSheet.create({
     color: "#171717",
     textAlign: "center",
     fontSize: 28,
-    lineHeight: 40,
     letterSpacing: -0.64,
     paddingTop: 20,
   },
   scoreContainer: {
     alignItems: "center",
     position: "relative",
-    width:250,
-    height:250,
+    width: 250,
+    height: 250,
   },
   scoretxt: {
     color: "#FFC171",
-    fontSize: 20,
+    fontSize: 18,
     letterSpacing: -0.4,
   },
   scoretxtXL: {
-    fontSize:66,
-    letterSpacing:8
+    fontSize: 74,
+    letterSpacing: 10,
   },
   scoretxtContainer: {
     alignItems: "center",
@@ -93,7 +93,7 @@ export const styles = StyleSheet.create({
     paddingTop: 50,
   },
   reviewBox: {
-    paddingHorizontal: 6,
+    paddingHorizontal: 12,
     borderRadius: 20,
     shadowColor: "#3282ce9c",
     shadowOffset: {
@@ -110,7 +110,6 @@ export const styles = StyleSheet.create({
   },
   reviewTxt: {
     fontSize: 14,
-    lineHeight: 20,
     color: "#171717",
   },
   reviewScore: {
@@ -121,7 +120,6 @@ export const styles = StyleSheet.create({
   reviewScoreContainer: {
     gap: 5,
     flexDirection: "row",
-    paddingHorizontal: 10,
     alignItems: "center",
   },
   goalsContainer: {

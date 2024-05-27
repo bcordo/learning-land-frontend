@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  Button,
   FlatList,
   Modal,
   ScrollView,
@@ -36,6 +35,8 @@ const TimerPaused: React.FC<TimerPausedProps> = ({
 }): React.JSX.Element => {
   const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
+
+  const [difficultyLevel, setDifficultyLevel] = useState<string>("Easy");
 
   interface ListItem {
     icon: any;
@@ -84,9 +85,9 @@ const TimerPaused: React.FC<TimerPausedProps> = ({
     },
   ];
   const dropdownList = [
-    { title: "Easy", isSelected: true },
-    { title: "Medium", isSelected: false },
-    { title: "Hard", isSelected: false },
+    { title: "Easy", value: "easy" },
+    { title: "Medium", value: "medium" },
+    { title: "Hard", value: "hard" },
   ];
   const renderDropdownItem = (
     item: { title?: string },
@@ -114,7 +115,17 @@ const TimerPaused: React.FC<TimerPausedProps> = ({
             Component={item.icon}
           />
           <View>
-            <Text style={[styles.optionTitle, styles.defaultFontFamilyBold]}>
+            <Text
+              style={[
+                item?.type
+                  ? styles.defaultFontFamilySemiBold
+                  : styles.defaultFontFamilyBold,
+                {
+                  fontSize: item.type ? 14 : 16,
+                  color: item.type ? "#262626" : "#404040",
+                },
+              ]}
+            >
               {item.title}
             </Text>
             {item?.subTitle ? (
@@ -127,20 +138,22 @@ const TimerPaused: React.FC<TimerPausedProps> = ({
         </View>
         {item.type === "switch" ? (
           <CustomSwitch
-            trackColor={{ false: "lightgray", true: "#F58C39" }}
+            trackColor={{ false: "#fff", true: "#F58C39" }}
             thumbColor={"#fff"}
             style={{ transform: [{ scaleX: 0.7 }, { scaleY: 0.7 }] }}
           />
         ) : null}
         {item.type === "select" ? (
           <CustomDropdown
+            difficultyLevel={difficultyLevel}
+            setDifficultyLevel={setDifficultyLevel}
             list={dropdownList}
             renderButton={(selectedItem, isOpened) => {
               return (
                 <View style={styles.dropdownButtonStyle}>
                   <View style={styles.dropdownButtonStyle2}>
                     <Text style={styles.dropdownButtonTxtStyle}>
-                      {(selectedItem && selectedItem.title) || "Select "}
+                      {difficultyLevel}
                     </Text>
                   </View>
                   <CustomSvgImageComponent
@@ -164,17 +177,18 @@ const TimerPaused: React.FC<TimerPausedProps> = ({
       <SafeAreaView style={styles.container}>
         <View style={styles.timerContainer}>
           <CustomSvgImageComponent width={76} height={76} Component={Pause} />
-          <Text style={[styles.timerPausedTxt, styles.defaultFontFamilyBold]}>
-            Timer Paused
-          </Text>
+          <View style={styles.timerPausedTxtContainer}>
+            <Text style={[styles.timerPausedTxt, styles.defaultFontFamilyBold]}>
+              Timer Paused
+            </Text>
+          </View>
           <View style={styles.buttonContainer}>
             <View style={styles.buttonBoxtxt}>
               <TouchableOpacity
                 style={styles.buttonBox}
-                onPress={() =>
-                  // navigation.navigate("MissionEnd");
-                  setModalVisible(true)
-                }
+                onPress={() => {
+                  setModalVisible(true);
+                }}
               >
                 <CustomSvgImageComponent
                   width={27}
@@ -264,7 +278,7 @@ const TimerPaused: React.FC<TimerPausedProps> = ({
             </View>
           </View>
         </View>
-        <ScrollView style={{ paddingBottom: 200 }}>
+        <ScrollView>
           <FlatList data={optionsList} renderItem={renderItem} />
         </ScrollView>
       </SafeAreaView>

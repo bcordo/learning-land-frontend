@@ -8,7 +8,7 @@ interface CustomGoalListComponentProps {
   icon: any;
   title: string;
   description: string;
-  isFetching: boolean;
+  isFetching?: boolean;
 }
 
 const CustomGoalListComponent: React.FC<CustomGoalListComponentProps> = ({

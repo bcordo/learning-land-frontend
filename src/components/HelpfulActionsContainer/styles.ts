@@ -7,6 +7,9 @@ export const styles = StyleSheet.create({
   defaultFontFamilyBold: {
     fontFamily: "Montserrat-Bold",
   },
+
+  defaultFontFamilySemiBold: {
+    fontFamily:'Montserrat-SemiBold'},
   incorrectPhaseContainer:{
     paddingTop:40,
     gap:10

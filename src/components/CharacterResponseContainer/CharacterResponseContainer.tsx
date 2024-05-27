@@ -11,6 +11,8 @@ import CustomSvgImageComponent from "../CustomComponents/Image";
 import { BASE_URL, Language } from "../../assets/constant";
 import CustomDropdown from "../CustomDropdown/CustomDropdown";
 import CustomShimmer from "../CustomShimmer/CustomShimmer";
+import AudioRecorderPlayer from "react-native-audio-recorder-player";
+import { decode } from "base-64";
 
 interface CharacterResponseContainerProps {
   quoteText?: string;
@@ -26,6 +28,8 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
 }): React.JSX.Element => {
   const [isTranslateEnabled, setIsTranslateEnabled] = useState<boolean>(false);
   const [translatedText, setTranslatedText] = useState<string>("");
+
+  const audioRecorderPlayer = new AudioRecorderPlayer();
 
   useEffect(() => {
     if (!translatedText) return;
@@ -48,11 +52,58 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
       value: "Bad response",
     },
   ];
-  const speakText = (text: string) => {
-    Tts.stop();
-    Tts.speak(text)
-      .then(() => console.log("Text spoken successfully"))
-      .catch((error: any) => console.error("Error occurred:", error));
+
+  const decodeBase64Audio = async (base64String) => {
+    try {
+      const base64Data = base64String.replace(/^data:audio\/mpeg;base64,/, "");
+
+      const binaryData = decode(base64Data);
+
+      const arrayBuffer = new ArrayBuffer(binaryData.length);
+      const byteArray = new Uint8Array(arrayBuffer);
+      for (let i = 0; i < binaryData.length; i++) {
+        byteArray[i] = binaryData.charCodeAt(i);
+      }
+      const blob = new Blob([arrayBuffer], { type: "audio/mpeg" });
+      const audioURI = URL.createObjectURL(blob);
+
+      return await audioRecorderPlayer.startPlayer(audioURI);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const speakText = async (text: string) => {
+    try {
+      const response = await fetch(
+        `https://desolate-anchorage-97861-39db3837351f.herokuapp.com/api/v1/utils/text_to_speech/?text=${encodeURIComponent(
+          text
+        )}&voice=alloy`,
+        {
+          method: "POST",
+        }
+      );
+
+      if (response.ok) {
+        const audioBlob = await response.blob();
+
+        const reader = new FileReader();
+        reader.readAsDataURL(audioBlob);
+        reader.onloadend = () => {
+          decodeBase64Audio(reader.result);
+
+          const base64Data = reader.result.split(",")[1];
+        };
+      } else {
+        console.error("Text-to-speech error:", response.status);
+      }
+    } catch (error) {
+      console.error("Text-to-speech error:", error);
+    }
+    // Tts.stop();
+    // Tts.speak(text)
+    //   .then(() => console.log("Text spoken successfully"))
+    //   .catch((error: any) => console.error("Error occurred:", error));
   };
 
   const handleTranslateClick = async (message: string) => {

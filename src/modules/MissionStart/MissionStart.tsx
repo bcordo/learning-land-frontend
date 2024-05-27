@@ -282,7 +282,10 @@ const MissionStart: React.FC<MissionStartProps> = ({
                 ) : (
                   <FlatList
                     data={
-                      (allMissions && allMissions[0]?.helpful_phrases) || []
+                      (allMissions &&
+                        (allMissions[0]?.phrases ||
+                          allMissions[0]?.helpful_phrases)) ||
+                      []
                     }
                     renderItem={renderHelpfulPharases}
                   />
