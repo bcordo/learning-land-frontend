@@ -3,7 +3,6 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 import ProfileContainer from "../ProfileContainer/ProfileContainer";
 import { styles } from "./styles";
 import uuid from "react-native-uuid";
-import Tts from "react-native-tts";
 import Translate from "../../assets/icons/translate.svg";
 import Speak from "../../assets/icons/speak.svg";
 import Dots from "../../assets/icons/dots-horizontal.svg";
@@ -11,8 +10,8 @@ import CustomSvgImageComponent from "../CustomComponents/Image";
 import { BASE_URL, Language } from "../../assets/constant";
 import CustomDropdown from "../CustomDropdown/CustomDropdown";
 import CustomShimmer from "../CustomShimmer/CustomShimmer";
-import AudioRecorderPlayer from "react-native-audio-recorder-player";
-import { decode } from "base-64";
+import RNFetchBlob from "rn-fetch-blob";
+import Sound from "react-native-sound";
 
 interface CharacterResponseContainerProps {
   quoteText?: string;
@@ -28,8 +27,6 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
 }): React.JSX.Element => {
   const [isTranslateEnabled, setIsTranslateEnabled] = useState<boolean>(false);
   const [translatedText, setTranslatedText] = useState<string>("");
-
-  const audioRecorderPlayer = new AudioRecorderPlayer();
 
   useEffect(() => {
     if (!translatedText) return;
@@ -53,62 +50,57 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
     },
   ];
 
-  const decodeBase64Audio = async (base64String) => {
-    try {
-      const base64Data = base64String.replace(/^data:audio\/mpeg;base64,/, "");
-
-      const binaryData = decode(base64Data);
-
-      const arrayBuffer = new ArrayBuffer(binaryData.length);
-      const byteArray = new Uint8Array(arrayBuffer);
-      for (let i = 0; i < binaryData.length; i++) {
-        byteArray[i] = binaryData.charCodeAt(i);
-      }
-      const blob = new Blob([arrayBuffer], { type: "audio/mpeg" });
-      const audioURI = URL.createObjectURL(blob);
-
-      return await audioRecorderPlayer.startPlayer(audioURI);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const speakText = async (text: string) => {
     try {
-      const response = await fetch(
-        `https://desolate-anchorage-97861-39db3837351f.herokuapp.com/api/v1/utils/text_to_speech/?text=${encodeURIComponent(
+      const response = await RNFetchBlob.fetch(
+        "POST",
+        `${BASE_URL}/api/v1/utils/text_to_speech/?text=${encodeURIComponent(
           text
         )}&voice=alloy`,
         {
-          method: "POST",
+          "Content-Type": "application/x-www-form-urlencoded",
         }
       );
+      if (response.info().status === 200) {
+        const base64Data = response.base64();
 
-      if (response.ok) {
-        const audioBlob = await response.blob();
-
-        const reader = new FileReader();
-        reader.readAsDataURL(audioBlob);
-        reader.onloadend = () => {
-          decodeBase64Audio(reader.result);
-
-          const base64Data = reader.result.split(",")[1];
-        };
+        playAudioChunk(base64Data);
       } else {
-        console.error("Text-to-speech error:", response.status);
+        console.error("Text-to-speech error:", response.info().status);
       }
     } catch (error) {
       console.error("Text-to-speech error:", error);
     }
-    // Tts.stop();
-    // Tts.speak(text)
-    //   .then(() => console.log("Text spoken successfully"))
-    //   .catch((error: any) => console.error("Error occurred:", error));
   };
 
+  const playAudioChunk = async (audioChunk: string) => {
+    const audioFilePath = `${RNFetchBlob.fs.dirs.CacheDir}/audio.mp3`;
+
+    await RNFetchBlob.fs.writeFile(audioFilePath, audioChunk, "base64");
+
+    try {
+      if (audioFilePath) {
+        const sound = new Sound(audioFilePath, "", (error) => {
+          if (error) {
+            console.error("Error loading sound:", error);
+            return;
+          }
+
+          sound.play((success) => {
+            if (success) {
+              console.log("Sound played successfully");
+            } else {
+              console.error("Error playing sound");
+            }
+          });
+        });
+      }
+    } catch (error) {
+      console.error("Error playing audio:", error);
+    }
+  };
   const handleTranslateClick = async (message: string) => {
     try {
-      console.log(message, "message");
       setIsTranslateEnabled(true);
       const response = await fetch(
         `${BASE_URL}/api/v1/utils/translate?foreign_text=${encodeURIComponent(
@@ -116,6 +108,7 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
         )}&target_lang=${Language.AMERICAN_ENGLISH}`
       );
       if (!response.ok) {
+        setIsTranslateEnabled(false);
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
       const data = await response.json();
@@ -126,7 +119,7 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
     }
   };
 
-  const renderItem = (item, i) => {
+  const renderItem = (item: { icon: any; value: string }, i: number) => {
     return (
       <View
         key={uuid.v4().toString()}

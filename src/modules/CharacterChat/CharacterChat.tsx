@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   Keyboard,
+  Platform,
   SafeAreaView,
   ScrollView,
   Text,
@@ -35,6 +36,7 @@ import CharacterChatFooter from "../../components/CharacterChatFooter/CharacterC
 import Drawer from "react-native-drawer";
 import AddAction from "../../components/AddAction/AddAction";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
+import { useSelector } from "react-redux";
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 audioRecorderPlayer.setSubscriptionDuration(0.09);
@@ -65,13 +67,20 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
   const [invalidRecord, setInvalidRecord] = useState(false);
   const [startSpeaking, setStartSpeaking] = useState(false);
   const [WS, setWS] = React.useState<WebSocket | null>(null);
+  const [chatState, setChatState] = React.useState("inactive");
   const [screenHeight, setScreenHeight] = useState<number>(
     Dimensions.get("window").height
   );
+  const [missionState, setMissionState] = React.useState(
+    UserMissionState.INACTIVE
+  );
+  const [goals, setGoals] = React.useState([]);
 
   const [chatMessages, setChatMessages] = React.useState<
     chatMessagesInterface[]
   >([]);
+
+  const user_mission = useSelector((state) => state.missionSlice.mission);
 
   const drawerRef = useRef<any>(null);
   const scrollViewRef = useRef<ScrollView | null>(null);
@@ -149,19 +158,7 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
   }, [isRecording]);
 
   const connectWebSocket = () => {
-    const newWS = new WebSocket(
-      "wss://desolate-anchorage-97861-39db3837351f.herokuapp.com/api/v1/user_missions/chat",
-      null,
-      {
-        headers: {
-          "Accept-Language": "en,en-US;q=0.9,ru;q=0.8,de;q=0.7",
-          "Cache-Control": "no-cache",
-          Pragma: "no-cache",
-          "User-Agent":
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36",
-        },
-      }
-    );
+    const newWS = new WebSocket(WEBSOCKET_URL);
     setWS(newWS);
     newWS.onopen = () => {
       setSocketConnected(true);
@@ -175,6 +172,7 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
     };
 
     newWS.onclose = () => {
+      isSendingAudio(false);
       console.log("WebSocket disconnected");
       setWS(null);
     };
@@ -186,7 +184,7 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
 
       switch (parsedMessage.interaction_type) {
         case InteractionType.USER_UTTERANCE:
-          // handleUserUtteranceMessage(parsedMessage);
+          handleUserUtteranceMessage(parsedMessage);
           break;
         case InteractionType.CHARACTER_UTTERANCE:
         case InteractionType.CHARACTER_ACTION:
@@ -209,7 +207,7 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
         case InteractionType.ASSISTANT_CORRECTION:
           setTimeout(() => {
             handleCorrectionMessage(parsedMessage);
-          }, 5000);
+          }, 2000);
 
           break;
         case InteractionType.MISSION_STATUS:
@@ -329,15 +327,24 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
     }
   };
 
-  const handleMissionStatusMessage = (message: any) => {
+  const handleMissionStatusMessage = (message) => {
+    console.log("Received mission status message:", message);
     if (
       message.content_type === ContentType.JSON ||
       message.content_type === ContentType.TEXT
     ) {
       try {
         const missionStatusData = JSON.parse(message.data);
+        console.log("Parsed mission status data:", missionStatusData);
+
+        setMissionState(missionStatusData.mission_state);
+        setGoals(missionStatusData.goals || []); // Ensure goals are updated correctly
+
+        console.log("Mission state:", missionStatusData.mission_state);
+        console.log("Goals:", missionStatusData.goals);
 
         if (missionStatusData.mission_state === UserMissionState.COMPLETED) {
+          setChatState("completed");
           setChatMessages([
             { type: "state", text: "Mission completed successfully!" },
           ]);
@@ -345,20 +352,25 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
             ...messages,
             { type: "state", text: "Refresh page to retry" },
           ]);
+          // setChatMessages((messages) => [...messages, { type: 'state', text: 'Mission completed successfully!!' }]);
         } else if (
           missionStatusData.mission_state === UserMissionState.FAILED
         ) {
+          setChatState("failed");
           setChatMessages([{ type: "state", text: "Mission failed" }]);
           setChatMessages((messages) => [
             ...messages,
             { type: "state", text: "Refresh page to retry" },
           ]);
+          // setChatMessages((messages) => [...messages, { type: 'state', text: 'Mission failed' }]);
         } else if (
           missionStatusData.mission_state === UserMissionState.ACTIVE
         ) {
+          setChatState("active");
         } else if (
           missionStatusData.mission_state === UserMissionState.PAUSED
         ) {
+          setChatState("paused");
         }
       } catch (error) {
         console.error("Error parsing mission status:", error);
@@ -372,7 +384,7 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
         return <></>;
       case "user":
         return <UserResponseContainer message={message.text} />;
-      case "CHARACTER_UTTERANCE":
+      case InteractionType.CHARACTER_UTTERANCE:
         return (
           <>
             <CharacterResponseContainer
@@ -381,7 +393,7 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
             />
           </>
         );
-      case "CHARACTER_ACTION":
+      case InteractionType.CHARACTER_ACTION:
       case InteractionType.USER_ACTION:
         return (
           <View>
@@ -396,7 +408,7 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
             )}
           </View>
         );
-      case "CHARACTER_NARRATION":
+      case InteractionType.CHARACTER_NARRATION:
         return (
           <View>
             {message.text && (
@@ -483,34 +495,57 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
   const sendAudio = (result: any) => {
     if (WS) {
       setSpeakStatus("Sending audio");
-
-      RNFS.readFile(result, "base64")
-        .then((data) => {
-          sendMessage({
-            message_type: MessageType.FULL,
-            interaction_type: InteractionType.USER_UTTERANCE,
-            content_type: ContentType.AUDIO,
-            data: data,
+      try {
+        RNFS.readFile(result, "base64")
+          .then((data) => {
+            sendMessage({
+              message_type: MessageType.FULL,
+              interaction_type: InteractionType.USER_UTTERANCE,
+              content_type: ContentType.AUDIO,
+              data: data,
+              metadata: {
+                file_extension: Platform.OS === "ios" ? "m4a" : "mp4",
+              },
+            });
+          })
+          .catch((error) => {
+            console.error(error);
           });
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      } catch (err) {
+        console.log(err, "ERROR");
+      }
     }
   };
 
   const sendMessage = async (message: any, metadata = {}) => {
     if (WS && WS.readyState === WebSocket.OPEN) {
-      isSendingAudio(true);
+      if (message.content_type === ContentType.AUDIO) isSendingAudio(true);
       try {
-        const messageWithMetadata = {
-          ...message,
-          metadata: {
-            ...metadata,
-            user_mission_id: 6,
-          },
-        };
+        let messageWithMetadata = {};
+        if (Platform.OS === "ios") {
+          messageWithMetadata = {
+            ...message,
+            metadata: {
+              ...metadata,
+              user_mission_id: 6,
+              user_id: 14,
+              file_extension: "m4a",
+            },
+          };
+        } else {
+          messageWithMetadata = {
+            ...message,
+            metadata: {
+              ...metadata,
+              user_mission_id: 6,
+              user_id: 14,
+            },
+          };
+        }
+
+        console.log(messageWithMetadata, "messageWithMetadata");
         await WS.send(JSON.stringify(messageWithMetadata));
+        console.log("Message Sent");
       } catch (err) {
         console.log(err, "Error");
       }
@@ -574,10 +609,10 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
         >
           <View style={styles.missionTxtContainer}>
             <Text style={[styles.defaultFontFamilyBold, styles.coffeeShopTxt]}>
-              The girl in the coffee shop
+              {user_mission?.title}
             </Text>
             <Text style={[styles.defaultFontFamily, styles.missionTxt]}>
-              World 1, Mission 1
+              World {user_mission?.index}, Mission 1
             </Text>
           </View>
           <View>

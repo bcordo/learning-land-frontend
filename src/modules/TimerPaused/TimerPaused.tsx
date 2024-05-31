@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FlatList,
   Modal,
@@ -25,6 +25,7 @@ import Right from "../../assets/icons/Right.svg";
 import TranslateIcon from "../../assets/icons/translate-black.svg";
 import CustomSwitch from "../../components/CustomSwitch/CustomSwitch";
 import CustomDropdown from "../../components/CustomDropdown/CustomDropdown";
+import { useLazyGetUserSettingsQuery } from "../../../redux/services/user_settings";
 
 interface TimerPausedProps {
   navigation: any;
@@ -38,50 +39,64 @@ const TimerPaused: React.FC<TimerPausedProps> = ({
 
   const [difficultyLevel, setDifficultyLevel] = useState<string>("Easy");
 
+  const [getUserSettings, { data: userSettings, isLoading }] =
+    useLazyGetUserSettingsQuery();
+
+  useEffect(() => {
+    getUserSettings(14);
+  }, []);
+
   interface ListItem {
     icon: any;
     title: string;
     subTitle?: string;
     type?: string;
+    name: string;
   }
 
   const optionsList: ListItem[] = [
-    { icon: SettingsIcon, title: "Settings" },
+    { icon: SettingsIcon, title: "Settings", name: "" },
     {
       icon: TranslateIcon,
       title: "Set Difficulty",
       subTitle: "Choose difficulty of character",
       type: "select",
+      name: "mission_difficulty",
     },
     {
       icon: TranslateIcon,
       title: "Show translations",
       subTitle: "Automatically translate each response",
       type: "switch",
+      name: "show_translation",
     },
     {
       icon: LightBlubIcon,
       title: "Show hints",
       subTitle: "Show hints before you respond",
       type: "switch",
+      name: "show_hints",
     },
     {
       icon: SpeakIcon,
       title: "Slow audio",
       subTitle: "Have the character speak slowly",
       type: "switch",
+      name: "slow_audio",
     },
     {
       icon: AsteriskIcon,
       title: "Show corrections",
       subTitle: "Automatically show corrections to mistakes",
       type: "switch",
+      name: "show_corrections",
     },
     {
       icon: AsteriskIcon,
       title: "Default to Audio Input",
       subTitle: "Use audio as the default input",
       type: "switch",
+      name: "default_audio_input",
     },
   ];
   const dropdownList = [
@@ -140,12 +155,15 @@ const TimerPaused: React.FC<TimerPausedProps> = ({
           <CustomSwitch
             trackColor={{ false: "#fff", true: "#F58C39" }}
             thumbColor={"#fff"}
+            value={userSettings ? userSettings[item.name] : false}
             style={{ transform: [{ scaleX: 0.7 }, { scaleY: 0.7 }] }}
           />
         ) : null}
         {item.type === "select" ? (
           <CustomDropdown
-            difficultyLevel={difficultyLevel}
+            onSelect={(selectedItem: { title: string }) => {
+              setDifficultyLevel(selectedItem.title);
+            }}
             setDifficultyLevel={setDifficultyLevel}
             list={dropdownList}
             renderButton={(selectedItem, isOpened) => {
@@ -153,7 +171,7 @@ const TimerPaused: React.FC<TimerPausedProps> = ({
                 <View style={styles.dropdownButtonStyle}>
                   <View style={styles.dropdownButtonStyle2}>
                     <Text style={styles.dropdownButtonTxtStyle}>
-                      {difficultyLevel}
+                      {userSettings ? userSettings[item.name] : "Select"}
                     </Text>
                   </View>
                   <CustomSvgImageComponent

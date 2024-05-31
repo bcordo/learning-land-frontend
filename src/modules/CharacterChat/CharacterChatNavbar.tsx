@@ -13,14 +13,16 @@ import {
 import CustomDropdown from "../../components/CustomDropdown/CustomDropdown";
 
 const CharacterChatNavbar = ({ navigation }): React.JSX.Element => {
-  const [id, setId] = useState<string>("1");
+  const completedGoals = 1;
+  const [id, setId] = useState<number>(completedGoals);
 
   const dispatch = useDispatch();
+  const totalGoals = 3;
 
   const data = [
-    { id: "1", value: "Order", subVal: "Order a coffee with oat milk" },
-    { id: "2", value: "Get her number", subVal: "Get her telephone number" },
-    { id: "3", value: "Setup date", subVal: "Setup a date to meet her later" },
+    { id: 1, value: "Order", subVal: "Order a coffee with oat milk" },
+    { id: 2, value: "Get her number", subVal: "Get her telephone number" },
+    { id: 3, value: "Setup date", subVal: "Setup a date to meet her later" },
   ];
 
   const { totalSeconds, minutes, seconds, pauseTimmer } = useSelector(
@@ -51,19 +53,20 @@ const CharacterChatNavbar = ({ navigation }): React.JSX.Element => {
         item.id === data[data.length - 1].id
           ? styles.lastGoalsDropdownSubContainer
           : null,
+        { gap: id >= item.id ? 8 : 10 },
       ]}
     >
-      {id === item.id ? (
+      {id >= item.id ? (
         <Image
-          style={styles.goalsDropdownContainerIcon}
+          style={[styles.goalsDropdownContainerIcon, { marginLeft: -5 }]}
           source={require("../../assets/icons/Progress_step.png")}
         />
       ) : (
         <View style={styles.stepCircleOutlined}></View>
       )}
 
-      <View>
-        <Text style={[styles.defaultFontFamilyBold, styles.goalsValue]}>
+      <View style={{ gap: 5 }}>
+        <Text style={[styles.defaultFontFamilySemiBold, styles.goalsValue]}>
           {item.value}
         </Text>
         <Text style={[styles.defaultFontFamily, , styles.goalsValue]}>
@@ -91,11 +94,12 @@ const CharacterChatNavbar = ({ navigation }): React.JSX.Element => {
       <View style={styles.dropdownContainer}>
         <CustomDropdown
           list={data}
+          // dropdownOverlayColor={"rgba(0, 0, 0, 0.18)"}
           renderButton={(selectedItem, isOpened) => {
             return (
               <View style={styles.dropdownTxtContainer}>
                 <Text style={[styles.orangeText, styles.defaultFontFamily]}>
-                  0 of 3 goals
+                  {`  ${id} of ${totalGoals} goals`}
                 </Text>
                 <CustomSvgImageComponent
                   width={16}
@@ -110,15 +114,43 @@ const CharacterChatNavbar = ({ navigation }): React.JSX.Element => {
         />
 
         <View style={styles.stepperContainer}>
-          <View style={styles.stepCircle}>
-            <View style={styles.stepCircleOutlined}></View>
-          </View>
-          <View style={styles.stepLine}></View>
-          <View style={styles.stepCircle}>
-            <View style={styles.stepCircleOutlined}></View>
-          </View>
-          <View style={styles.stepLine}></View>
-          <View style={styles.stepCircleOutlined}></View>
+          {data.map((e, i) => (
+            <>
+              <View style={styles.stepCircle}>
+                {id < i + 1 ? (
+                  <View style={styles.stepCircleOutlined}></View>
+                ) : (
+                  <Image
+                    style={[
+                      styles.goalsDropdownContainerIcon,
+                      { marginTop: -4, width: 26 },
+                    ]}
+                    source={require("../../assets/icons/Progress_step.png")}
+                  />
+                )}
+              </View>
+              {i !== 2 && (
+                <View
+                  style={[
+                    styles.stepLine,
+                    {
+                      alignItems: id > i ? "flex-start" : "flex-end",
+                      marginLeft: id > i ? -4 : 0,
+                    },
+                  ]}
+                >
+                  {id > i && (
+                    <View
+                      style={[
+                        styles.stepLineFilled,
+                        { width: id > i + 1 ? "100%" : "50%" },
+                      ]}
+                    ></View>
+                  )}
+                </View>
+              )}
+            </>
+          ))}
         </View>
       </View>
       <View style={styles.wrapper}>

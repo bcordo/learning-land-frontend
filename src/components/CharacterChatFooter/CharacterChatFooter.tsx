@@ -132,6 +132,7 @@ const CharacterChatFooter: React.FC<characterChatFooterProps> = ({
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.startRecordButton}
+              disabled={sendingAudio}
               onPress={
                 isRecording
                   ? () => onStopRecord(true)

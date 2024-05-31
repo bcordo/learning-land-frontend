@@ -82,14 +82,14 @@ export const styles = StyleSheet.create({
     marginBottom: 57,
   },
   dropdownButtonStyle: {
-    width: 100,
+    width:100,
     flexDirection: "row",
     gap: 4,
     alignItems: "center",
     justifyContent: "flex-end",
   },
   dropdownButtonStyle2: {
-    width: 50,
+    paddingHorizontal:8,
     height: 24,
     justifyContent: "center",
     alignItems: "center",

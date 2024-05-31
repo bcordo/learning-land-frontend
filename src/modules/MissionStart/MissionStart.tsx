@@ -20,10 +20,9 @@ import PlayIcon from "../../assets/icons/white-play-Icon.svg";
 import CustomSvgImageComponent from "../../components/CustomComponents/Image";
 import FadedDivider from "../../components/FadedDivider/FadedDivider";
 import HelphulPharasesComp from "../../components/HelphulPharasesComp/HelphulPharasesComp";
-import { useLazyGetAllMissionsQuery } from "../../../redux/services/missions";
 import CustomGoalListComponent from "../../components/CustomGaolListComp/CustomGaolListComp";
 import { LIGHT_BLACK_FADED_COLOR } from "../../assets/constant";
-import CustomShimmer from "../../components/CustomShimmer/CustomShimmer";
+import { useSelector } from "react-redux";
 
 interface MissionStartProps {
   navigation: any;
@@ -32,14 +31,13 @@ interface MissionStartProps {
 const MissionStart: React.FC<MissionStartProps> = ({
   navigation,
 }): React.JSX.Element => {
-  const [fetchMissions, { data: allMissions, isLoading: fetchingMissions }] =
-    useLazyGetAllMissionsQuery();
   const [screenHeight, setScreenHeight] = useState(
     Dimensions.get("window").height
   );
 
+  const user_mission = useSelector((state) => state.missionSlice.mission);
+
   useEffect(() => {
-    fetchMissions("");
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
       (event) => {
@@ -82,20 +80,10 @@ const MissionStart: React.FC<MissionStartProps> = ({
         icon={Star}
         title={item.title}
         description={item.description}
-        isFetching={fetchingMissions}
       />
     );
   };
-  const renderItemSkeleton = ({ item }) => {
-    return (
-      <CustomGoalListComponent
-        icon={Star}
-        title={""}
-        description={""}
-        isFetching={fetchingMissions}
-      />
-    );
-  };
+
   const renderHelpfulPharases = ({
     item,
     index,
@@ -119,15 +107,6 @@ const MissionStart: React.FC<MissionStartProps> = ({
         isFetching={fetchingMissions}
       />
     ) : null;
-  };
-  const renderHelpfulPharasesSkeleton = ({ item }) => {
-    return (
-      <HelphulPharasesComp
-        title={""}
-        text_language={""}
-        isFetching={fetchingMissions}
-      />
-    );
   };
 
   return (
@@ -172,32 +151,14 @@ const MissionStart: React.FC<MissionStartProps> = ({
           >
             <View style={styles.missiontxtContainer}>
               <Text style={(styles.missionTxt, styles.defaultFontFamily)}>
-                World 1, Mission 1
+                World {user_mission?.index}, Mission 1
               </Text>
-              {fetchingMissions ? (
-                <>
-                  <CustomShimmer
-                    styleProps={{
-                      width: "70%",
-                      height: 10,
-                      backgroundColor: "#9e9e9e",
-                      marginTop: 10,
-                    }}
-                  />
-                  <CustomShimmer
-                    styleProps={{
-                      width: "40%",
-                      height: 10,
-                      backgroundColor: "#9e9e9e",
-                    }}
-                  />
-                </>
-              ) : allMissions?.length ? (
+              {user_mission ? (
                 <View style={styles.coffeeShopTxtContainer}>
                   <Text
                     style={[styles.coffeeShopTxt, styles.defaultFontFamilyBold]}
                   >
-                    {allMissions[0]?.title}
+                    {user_mission?.title}
                   </Text>
                 </View>
               ) : null}
@@ -206,35 +167,9 @@ const MissionStart: React.FC<MissionStartProps> = ({
             <View style={styles.dividerContainer}>
               <FadedDivider color={LIGHT_BLACK_FADED_COLOR} />
               <View style={styles.dividerTxtContainer}>
-                {fetchingMissions ? (
-                  <>
-                    <CustomShimmer
-                      styleProps={{
-                        width: "100%",
-                        height: 10,
-                        backgroundColor: "#9e9e9e",
-                      }}
-                    />
-                    <CustomShimmer
-                      styleProps={{
-                        width: "100%",
-                        height: 10,
-                        backgroundColor: "#9e9e9e",
-                      }}
-                    />
-                    <CustomShimmer
-                      styleProps={{
-                        width: "40%",
-                        height: 10,
-                        backgroundColor: "#9e9e9e",
-                      }}
-                    />
-                  </>
-                ) : (
-                  <Text style={[styles.dividerTxt, styles.defaultFontFamily]}>
-                    {allMissions && allMissions[0]?.public_summary}
-                  </Text>
-                )}
+                <Text style={[styles.dividerTxt, styles.defaultFontFamily]}>
+                  {user_mission && user_mission?.public_summary}
+                </Text>
               </View>
               <FadedDivider color={LIGHT_BLACK_FADED_COLOR} />
             </View>
@@ -243,14 +178,10 @@ const MissionStart: React.FC<MissionStartProps> = ({
               <Text style={[styles.defaultFontFamilyBold, styles.goalstxt]}>
                 Goals
               </Text>
-              {fetchingMissions ? (
-                <FlatList data={[1, 2, 3]} renderItem={renderItemSkeleton} />
-              ) : (
-                <FlatList
-                  data={(allMissions && allMissions[0]?.goals) || []}
-                  renderItem={renderItem}
-                />
-              )}
+              <FlatList
+                data={(user_mission && user_mission?.goals) || []}
+                renderItem={renderItem}
+              />
             </View>
 
             <View style={styles.helpfulPharasesContainer}>
@@ -274,22 +205,15 @@ const MissionStart: React.FC<MissionStartProps> = ({
                 </TouchableOpacity>
               </View>
               <View style={styles.helpfulPharasesListContainer}>
-                {fetchingMissions ? (
-                  <FlatList
-                    data={[1, 2, 3]}
-                    renderItem={renderHelpfulPharasesSkeleton}
-                  />
-                ) : (
-                  <FlatList
-                    data={
-                      (allMissions &&
-                        (allMissions[0]?.phrases ||
-                          allMissions[0]?.helpful_phrases)) ||
-                      []
-                    }
-                    renderItem={renderHelpfulPharases}
-                  />
-                )}
+                <FlatList
+                  data={
+                    (user_mission &&
+                      (user_mission?.phrases ||
+                        user_mission?.helpful_phrases)) ||
+                    []
+                  }
+                  renderItem={renderHelpfulPharases}
+                />
               </View>
             </View>
           </ScrollView>

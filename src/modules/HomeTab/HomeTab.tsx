@@ -25,6 +25,10 @@ import GlobeIcon from "../../assets/icons/globe-alt-orange.svg";
 import UsersIcon from "../../assets/icons/user-group.svg";
 import UserIcon from "../../assets/icons/user.svg";
 import Tooltip from "react-native-walkthrough-tooltip";
+import { useLazyGetAllMissionsQuery } from "../../../redux/services/missions";
+import { updateMission } from "../../../redux/slices/missionSlice";
+import { useDispatch } from "react-redux";
+import CustomShimmer from "../../components/CustomShimmer/CustomShimmer";
 
 interface HomeTabProps {
   navigation: any;
@@ -39,6 +43,8 @@ interface ContainerProps {
   toolTipVisible: boolean;
   setToolTipVisible: Function;
   navigation: any;
+  extraData: any;
+  index: number;
 }
 
 const Container: React.FC<ContainerProps> = ({
@@ -46,7 +52,10 @@ const Container: React.FC<ContainerProps> = ({
   toolTipVisible,
   setToolTipVisible,
   navigation,
+  extraData,
+  index,
 }) => {
+  const dispatch = useDispatch();
   useEffect(() => {
     setToolTipVisible(true);
   }, []);
@@ -114,6 +123,7 @@ const Container: React.FC<ContainerProps> = ({
               {(fill) => (
                 <TouchableOpacity
                   onPress={() => {
+                    dispatch(updateMission({ ...extraData, index: index + 1 }));
                     navigation.navigate("MissionStart");
                     setToolTipVisible(false);
                   }}
@@ -202,7 +212,7 @@ const list = [
   {
     position: "27",
     currentltActive: false,
-    icon: DumbelIcon,
+    icon: LockIcon,
   },
   {
     position: "8",
@@ -224,26 +234,14 @@ const list = [
 const HomeTab: React.FC<HomeTabProps> = ({ navigation }): React.JSX.Element => {
   const [toolTipVisible, setToolTipVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState("home");
+  const [currentItemIndex, setCurrentItemIndex] = useState(0);
 
-  const renderItem = ({
-    item,
-  }: {
-    item: {
-      position: string;
-      currentltActive: boolean;
-      icon: any;
-      secondaryIcon?: any;
-    };
-  }) => {
-    return (
-      <Container
-        item={item}
-        toolTipVisible={toolTipVisible}
-        setToolTipVisible={setToolTipVisible}
-        navigation={navigation}
-      />
-    );
-  };
+  const [fetchMissions, { data: allMissions, isLoading: fetchingMissions }] =
+    useLazyGetAllMissionsQuery();
+
+  useEffect(() => {
+    fetchMissions("");
+  }, []);
 
   const footerList = [
     { label: "home", icon: GlobeIcon },
@@ -252,74 +250,129 @@ const HomeTab: React.FC<HomeTabProps> = ({ navigation }): React.JSX.Element => {
     { label: "profile", icon: UserIcon },
   ];
 
+  const handleScroll = (event) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    const iterationHeight = 550;
+
+    const visibleIndex = Math.floor(offsetY / iterationHeight);
+
+    setCurrentItemIndex(visibleIndex);
+  };
+
   return (
     <>
       <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
       <SafeAreaView style={styles.container}>
-        <View style={styles.container}>
-          <HomeTabHeader />
-          <View style={styles.missionDetailsContainer}>
-            <CustomSvgImageComponent
-              width={60}
-              height={55}
-              Component={Coffee}
-            />
-            <View style={styles.missionDetailsTxtContainer}>
-              <Text
-                style={[
-                  styles.defaultFontFamilySemiBold,
-                  styles.missionDetailsTxt,
-                ]}
-              >
-                World 1: The coffee shop{" "}
-              </Text>
-              <Text
-                style={[
-                  styles.defaultFontFamily,
-                  styles.missionDetailsTxtSmall,
-                ]}
-              >
-                Learn to flirt and basic greetings
-              </Text>
-            </View>
-          </View>
-          <ScrollView>
-            <FadedDividerMiddleText text={"WORLD 1"} />
-            <View style={{ paddingTop: 32 }}>
-              <FlatList data={list} renderItem={renderItem} />
-            </View>
-          </ScrollView>
-          <View style={styles.missionDetailsFixedFooterContainer}>
-            {footerList.map((e, index) => {
-              return (
-                <TouchableOpacity
-                  onPress={() => setSelectedItem(e.label)}
-                  style={[
-                    styles.missionDetailsFixedFooterList,
-                    { borderTopWidth: selectedItem === e.label ? 2 : 0 },
-                  ]}
-                >
-                  <CustomSvgImageComponent
-                    width={20}
-                    height={20}
-                    Component={e.icon}
-                  />
+        {
+          <View style={styles.container}>
+            <HomeTabHeader />
+            <View style={styles.missionDetailsContainer}>
+              <CustomSvgImageComponent
+                width={60}
+                height={55}
+                Component={Coffee}
+              />
+              <View style={styles.missionDetailsTxtContainer}>
+                {fetchingMissions ? (
+                  <>
+                    <CustomShimmer
+                      styleProps={{
+                        width: "70%",
+                        height: 10,
+                        backgroundColor: "#9e9e9e",
+                      }}
+                    />
+                  </>
+                ) : (
                   <Text
                     style={[
-                      styles.defaultFontFamily,
-                      styles.missionDetailsFixedFooterTxt,
-                      {
-                        color: selectedItem === e.label ? "#F58C39" : "#171717",
-                      },
+                      styles.defaultFontFamilySemiBold,
+                      styles.missionDetailsTxt,
                     ]}
                   >
-                    {e?.label}
+                    World{" "}
+                    {currentItemIndex > allMissions?.length - 1
+                      ? allMissions?.length
+                      : currentItemIndex <= 0
+                      ? 1
+                      : currentItemIndex + 1}
+                    :{" "}
+                    {allMissions &&
+                      allMissions[
+                        currentItemIndex > allMissions?.length - 1
+                          ? allMissions?.length - 1
+                          : currentItemIndex <= 0
+                          ? 0
+                          : currentItemIndex
+                      ]?.title}{" "}
                   </Text>
-                </TouchableOpacity>
-              );
-            })}
+                )}
+                <Text
+                  style={[
+                    styles.defaultFontFamily,
+                    styles.missionDetailsTxtSmall,
+                  ]}
+                >
+                  {(allMissions &&
+                    allMissions[currentItemIndex]?.description) ||
+                    `Learn to flirt and basic greetings`}
+                </Text>
+              </View>
+            </View>
+            <ScrollView onScroll={handleScroll}>
+              {allMissions?.map((element, idx) => (
+                <>
+                  <FadedDividerMiddleText text={`WORLD ${idx + 1}`} />
+                  <View style={{ paddingTop: 32 }}>
+                    {list.map((item) => {
+                      return (
+                        <Container
+                          item={item}
+                          extraData={element}
+                          index={idx}
+                          toolTipVisible={toolTipVisible}
+                          setToolTipVisible={setToolTipVisible}
+                          navigation={navigation}
+                        />
+                      );
+                    })}
+                  </View>
+                </>
+              ))}
+            </ScrollView>
+            <View style={styles.missionDetailsFixedFooterContainer}>
+              {footerList.map((e, index) => {
+                return (
+                  <TouchableOpacity
+                    onPress={() => setSelectedItem(e.label)}
+                    style={[
+                      styles.missionDetailsFixedFooterList,
+                      { borderTopWidth: selectedItem === e.label ? 2 : 0 },
+                    ]}
+                  >
+                    <CustomSvgImageComponent
+                      width={20}
+                      height={20}
+                      Component={e.icon}
+                    />
+                    <Text
+                      style={[
+                        styles.defaultFontFamily,
+                        styles.missionDetailsFixedFooterTxt,
+                        {
+                          color:
+                            selectedItem === e.label ? "#F58C39" : "#171717",
+                        },
+                      ]}
+                    >
+                      {e?.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
           </View>
-        </View>
+        }
       </SafeAreaView>
     </>
   );

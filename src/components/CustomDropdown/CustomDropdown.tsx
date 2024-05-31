@@ -7,10 +7,10 @@ interface RenderItemFunction {
 interface CustomDropdownProps {
   list: {}[];
   renderButton: (selectedItem: any, isOpened: boolean) => ReactNode;
-  renderItem: RenderItemFunction;
+  renderItem: () => RenderItemFunction;
   dropdownStyle: {};
-  setDifficultyLevel: Function;
-  difficultyLevel: string;
+  onSelect?: Function;
+  dropdownOverlayColor?: string;
 }
 
 const CustomDropdown: React.FC<CustomDropdownProps> = ({
@@ -18,20 +18,18 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
   renderButton,
   renderItem,
   dropdownStyle,
-  setDifficultyLevel,
-  difficultyLevel,
+  onSelect,
+  dropdownOverlayColor,
 }): React.JSX.Element => {
   return (
     <SelectDropdown
       data={list}
-      onSelect={(selectedItem) => {
-        setDifficultyLevel(selectedItem.title);
-      }}
-      defaultValue={difficultyLevel}
+      dropdownOverlayColor={dropdownOverlayColor || "transparent"}
+      onSelect={onSelect}
       renderButton={renderButton}
       renderItem={renderItem}
       showsVerticalScrollIndicator={false}
-      dropdownStyle={dropdownStyle}
+      dropdownStyle={{ ...dropdownStyle }}
     />
   );
 };

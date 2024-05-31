@@ -4,7 +4,10 @@
 <dict>
 	<key>CFBundleIdentifier</key>
 	<string>LearningLand</string>
+	<key>NSMicrophoneUsageDescription</key>
+<string>Need microphone access to record audio</string>
 	<key>CFBundleDevelopmentRegion</key>
+	
 	<string>Learning Land</string>
 	<key>CFBundleDisplayName</key>
 	<string>Learning Land</string>
@@ -28,8 +31,7 @@
 	<string>Learning land would like to access files in your Documents folder.</string>
 	<key>NSDownloadsFolderUsageDescription</key>
 	<string>Learning land would like to access your Downloads folder.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This application requires microphone access to record audio.</string>
+	
 	<key>NSFileSharingEnabled</key>
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>

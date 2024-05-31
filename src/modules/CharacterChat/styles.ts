@@ -7,6 +7,10 @@ export const styles = StyleSheet.create({
   defaultFontFamilyBold: {
     fontFamily: "Montserrat-Bold",
   },
+
+  defaultFontFamilySemiBold: {
+    fontFamily: "Montserrat-SemiBold",
+  },
   mainContainer: {
     width: "100%",
     height: "100%",
@@ -25,8 +29,8 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-end",
     paddingHorizontal: 24,
-  paddingTop:10,  
-    paddingBottom:24
+    paddingTop: 10,
+    paddingBottom: 24,
   },
   pauseIcon: {
     shadowColor: "#3282ce9c",
@@ -49,9 +53,8 @@ export const styles = StyleSheet.create({
   dropdownTxtContainer: {
     flexDirection: "row",
     gap: 6,
-    justifyContent:'center',
-    width:265
-   
+    justifyContent: "center",
+    width: 265,
   },
   pipe: {
     width: 5,
@@ -61,8 +64,8 @@ export const styles = StyleSheet.create({
   },
   dropdownContainer: {
     gap: 5,
-    width:'80%',
-    alignItems:'center'
+    width: "80%",
+    alignItems: "center",
   },
   orangeText: {
     color: "#F58C39",
@@ -85,7 +88,7 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: "#737373",
     lineHeight: 20,
-    paddingBottom:22,
+    paddingBottom: 22,
     letterSpacing: 0,
   },
 
@@ -105,18 +108,32 @@ export const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#d6e2ed",
     borderRadius: 50,
-
     backgroundColor: "transparent",
   },
   stepperContainer: {
     flexDirection: "row",
-    justifyContent:'center'
+    justifyContent: "center",
   },
   stepLine: {
     width: 45,
     height: 2,
     backgroundColor: "#d6e2ed",
     marginTop: 6,
+    alignItems:"flex-end",
+  },
+  stepLineFilled: {
+    width: '50%',
+    height: 2,
+    backgroundColor: "#F1F5F9",
+    shadowColor: "#3282ce9c",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
   },
   stepLineHalfFilled: {
     width: 20,
@@ -157,25 +174,27 @@ export const styles = StyleSheet.create({
     width: 36,
     height: 36,
   },
-  
-  goalsDropdownContainerIcon:{
-    width:22,
-    height:22,
-    
+
+  goalsDropdownContainerIcon: {
+    width: 22,
+    height: 22,
+   
+
   },
-  goalsValue:{
-color:'#404040'
+  goalsValue: {
+    color: "#404040",
+    fontSize:12
   },
-  goalsDropdownSubContainer:{
-    padding:10,
-    gap:10,
-    flexDirection:'row',
-    alignItems:'center',
-    borderBottomColor:"#E5E5E5",
-    borderBottomWidth:1
+  goalsDropdownSubContainer: {
+    padding: 10,
+    gap: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    borderBottomColor: "#E5E5E5",
+    borderBottomWidth: 1,
   },
-  lastGoalsDropdownSubContainer:{
-    borderBottomWidth:0
+  lastGoalsDropdownSubContainer: {
+    borderBottomWidth: 0,
   },
   container: {
     flex: 1,
@@ -230,18 +249,21 @@ color:'#404040'
     elevation: 5,
     alignItems: "center",
   },
-  contentContainer:{
-    justifyContent:'space-between',
-    
+  contentContainer: {
+    justifyContent: "space-between",
   },
-  dropdownMenuStyle:{
-    borderWidth:1,
-    borderColor:'#D4D4D4',
+  dropdownMenuStyle: {
+    
+    borderWidth: 1,
+    borderTopWidth: 1,
+    
+    borderColor: "#D4D4D4",
     backgroundColor: "#F1F5F9",
-    borderRadius:10,
+    marginTop:4,
+    borderRadius: 10,
     ...Platform.select({
       ios: {
-        shadowColor: 'rgba(0, 0, 0, 0.08)',
+        shadowColor: "rgba(0, 0, 0, 0.8)",
         shadowOffset: { width: 10, height: 10 },
         shadowOpacity: 1,
         shadowRadius: 15,
@@ -251,5 +273,4 @@ color:'#404040'
       },
     }),
   },
- 
 });

@@ -29,11 +29,13 @@ export const styles = StyleSheet.create({
   },
   missionDetailsTxtContainer: {
     gap: 4,
+    maxWidth:'75%',
+    width:'75%'
   },
   missionDetailsTxt: {
     fontSize: 16,
     lineHeight: 24,
-    color: "#F58C39",
+    color: "#DD6100",
   },
   missionDetailsTxtSmall: {
     fontSize: 12,
