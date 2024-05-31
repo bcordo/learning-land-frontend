@@ -255,7 +255,7 @@ const HomeTab: React.FC<HomeTabProps> = ({ navigation }): React.JSX.Element => {
     const iterationHeight = 550;
 
     const visibleIndex = Math.floor(offsetY / iterationHeight);
-
+    ``;
     setCurrentItemIndex(visibleIndex);
   };
 
