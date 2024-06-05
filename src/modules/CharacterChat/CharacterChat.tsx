@@ -36,7 +36,9 @@ import CharacterChatFooter from "../../components/CharacterChatFooter/CharacterC
 import Drawer from "react-native-drawer";
 import AddAction from "../../components/AddAction/AddAction";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useLazyGetUserSettingsQuery } from "../../../redux/services/user_settings";
+import { updateUserSettingsByType } from "../../../redux/slices/userSetingsSlice";
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 audioRecorderPlayer.setSubscriptionDuration(0.09);
@@ -81,6 +83,14 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
   >([]);
 
   const user_mission = useSelector((state) => state.missionSlice.mission);
+  const [getUserSettings, { data: userSettings, isLoading }] =
+    useLazyGetUserSettingsQuery();
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(updateUserSettingsByType({ type: "isLoading", value: isLoading }));
+  }, [isLoading]);
 
   const drawerRef = useRef<any>(null);
   const scrollViewRef = useRef<ScrollView | null>(null);
@@ -103,6 +113,7 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
     ]);
 
     connectWebSocket();
+    getUserSettings(14);
 
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -194,26 +205,20 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
         case InteractionType.CHARACTER_UPDATED_LOCATION:
         case InteractionType.CHARACTER_UPDATED_TIME:
         case InteractionType.COMMAND:
-          setTimeout(() => {
-            handleCharacterResponseMessage(parsedMessage);
-          }, 1000);
+          handleCharacterResponseMessage(parsedMessage);
+
           break;
 
         case InteractionType.ASSISTANT_HINT:
-          setTimeout(() => {
-            handleHintMessage(parsedMessage);
-          }, 1000);
+          handleHintMessage(parsedMessage);
+
           break;
         case InteractionType.ASSISTANT_CORRECTION:
-          setTimeout(() => {
-            handleCorrectionMessage(parsedMessage);
-          }, 2000);
+          handleCorrectionMessage(parsedMessage);
 
           break;
         case InteractionType.MISSION_STATUS:
-          setTimeout(() => {
-            handleMissionStatusMessage(parsedMessage);
-          }, 1000);
+          handleMissionStatusMessage(parsedMessage);
 
           break;
         default:
@@ -328,20 +333,15 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
   };
 
   const handleMissionStatusMessage = (message) => {
-    console.log("Received mission status message:", message);
     if (
       message.content_type === ContentType.JSON ||
       message.content_type === ContentType.TEXT
     ) {
       try {
         const missionStatusData = JSON.parse(message.data);
-        console.log("Parsed mission status data:", missionStatusData);
 
         setMissionState(missionStatusData.mission_state);
-        setGoals(missionStatusData.goals || []); // Ensure goals are updated correctly
-
-        console.log("Mission state:", missionStatusData.mission_state);
-        console.log("Goals:", missionStatusData.goals);
+        setGoals(missionStatusData.goals || []);
 
         if (missionStatusData.mission_state === UserMissionState.COMPLETED) {
           setChatState("completed");
@@ -395,19 +395,6 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
         );
       case InteractionType.CHARACTER_ACTION:
       case InteractionType.USER_ACTION:
-        return (
-          <View>
-            {message.text && (
-              <FadedDividerText
-                key={uuid.v4().toString()}
-                idx={uuid.v4()}
-                text={message.text}
-                color={LIGHT_BLACK_FADED_COLOR}
-                showIcon={false}
-              />
-            )}
-          </View>
-        );
       case InteractionType.CHARACTER_NARRATION:
         return (
           <View>
@@ -543,7 +530,6 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
           };
         }
 
-        console.log(messageWithMetadata, "messageWithMetadata");
         await WS.send(JSON.stringify(messageWithMetadata));
         console.log("Message Sent");
       } catch (err) {
@@ -595,7 +581,10 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
       <SafeAreaView style={[styles.mainContainer]}>
         <View style={styles.characterChatContainer}>
           <View>
-            <CharacterChatNavbar navigation={navigation} />
+            <CharacterChatNavbar
+              userSettings={{ ...userSettings }}
+              navigation={navigation}
+            />
           </View>
         </View>
         <ScrollView

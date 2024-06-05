@@ -15,7 +15,7 @@ import Pause from "../../assets/icons/pause-btn.svg";
 import Vector from "../../assets/icons/Vector.svg";
 import Play from "../../assets/icons/play.svg";
 import { styles } from "./styles";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updatePauseTimmer } from "../../../redux/slices/timmerSlice";
 import SettingsIcon from "../../assets/icons/settings-black.svg";
 import AsteriskIcon from "../../assets/icons/asterisk.svg";
@@ -25,7 +25,15 @@ import Right from "../../assets/icons/Right.svg";
 import TranslateIcon from "../../assets/icons/translate-black.svg";
 import CustomSwitch from "../../components/CustomSwitch/CustomSwitch";
 import CustomDropdown from "../../components/CustomDropdown/CustomDropdown";
-import { useLazyGetUserSettingsQuery } from "../../../redux/services/user_settings";
+import {
+  useLazyGetUserSettingsQuery,
+  useUpdateUserSettingsMutation,
+} from "../../../redux/services/user_settings";
+import {
+  updateUserSettings,
+  updateUserSettingsByType,
+} from "../../../redux/slices/userSetingsSlice";
+import CustomShimmer from "../../components/CustomShimmer/CustomShimmer";
 
 interface TimerPausedProps {
   navigation: any;
@@ -37,14 +45,11 @@ const TimerPaused: React.FC<TimerPausedProps> = ({
   const dispatch = useDispatch();
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [difficultyLevel, setDifficultyLevel] = useState<string>("Easy");
+  const userSettings = useSelector(
+    (state: { userSettingsSlice: {} }) => state.userSettingsSlice
+  );
 
-  const [getUserSettings, { data: userSettings, isLoading }] =
-    useLazyGetUserSettingsQuery();
-
-  useEffect(() => {
-    getUserSettings(14);
-  }, []);
+  const [updateUserSettingsAPI] = useUpdateUserSettingsMutation();
 
   interface ListItem {
     icon: any;
@@ -100,9 +105,9 @@ const TimerPaused: React.FC<TimerPausedProps> = ({
     },
   ];
   const dropdownList = [
-    { title: "Easy", value: "easy" },
-    { title: "Medium", value: "medium" },
-    { title: "Hard", value: "hard" },
+    { title: "EASY", value: "easy" },
+    { title: "MEDIUM", value: "medium" },
+    { title: "HARD", value: "hard" },
   ];
   const renderDropdownItem = (
     item: { title?: string },
@@ -116,7 +121,9 @@ const TimerPaused: React.FC<TimerPausedProps> = ({
           ...(isSelected && { backgroundColor: "#D2D9DF" }),
         }}
       >
-        <Text style={styles.dropdownItemTxtStyle}>{item.title}</Text>
+        <Text style={[styles.defaultFontFamily, styles.dropdownItemTxtStyle]}>
+          {item.title}
+        </Text>
       </View>
     );
   };
@@ -157,14 +164,59 @@ const TimerPaused: React.FC<TimerPausedProps> = ({
             thumbColor={"#fff"}
             value={userSettings ? userSettings[item.name] : false}
             style={{ transform: [{ scaleX: 0.7 }, { scaleY: 0.7 }] }}
+            name={item.name}
+            onValueChange={async () => {
+              try {
+                dispatch(
+                  updateUserSettingsByType({
+                    type: item.name,
+                    value: !userSettings[item.name],
+                  })
+                );
+                const res = await updateUserSettingsAPI({
+                  user_id: userSettings.user_id,
+                  body: {
+                    ...userSettings,
+                    [item.name]: !userSettings[item.name],
+                  },
+                });
+                if (res?.data) {
+                  dispatch(updateUserSettings(res?.data));
+                }
+              } catch (err) {
+                console.log(
+                  "getting error from onValueChange CustomSwitch " + err
+                );
+              }
+            }}
           />
         ) : null}
         {item.type === "select" ? (
           <CustomDropdown
-            onSelect={(selectedItem: { title: string }) => {
-              setDifficultyLevel(selectedItem.title);
+            onSelect={async (selectedItem: { title: string }) => {
+              try {
+                dispatch(
+                  updateUserSettingsByType({
+                    type: item.name,
+                    value: selectedItem?.title,
+                  })
+                );
+                const res = await updateUserSettingsAPI({
+                  user_id: userSettings.user_id,
+                  body: {
+                    ...userSettings,
+                    [item.name]: selectedItem?.title,
+                  },
+                });
+                if (res?.data) {
+                  dispatch(updateUserSettings(res?.data));
+                }
+              } catch (err) {
+                console.log(
+                  "getting error from onValueChange CustomSwitch " + err
+                );
+              }
             }}
-            setDifficultyLevel={setDifficultyLevel}
             list={dropdownList}
             renderButton={(selectedItem, isOpened) => {
               return (
@@ -296,9 +348,29 @@ const TimerPaused: React.FC<TimerPausedProps> = ({
             </View>
           </View>
         </View>
-        <ScrollView>
-          <FlatList data={optionsList} renderItem={renderItem} />
-        </ScrollView>
+        {userSettings?.isLoading ? (
+          <>
+            <CustomShimmer
+              styleProps={{
+                width: "80%",
+                height: 10,
+                backgroundColor: "#9e9e9e",
+              }}
+            />
+            <CustomShimmer
+              styleProps={{
+                width: "60%",
+                height: 10,
+                marginTop: 8,
+                backgroundColor: "#9e9e9e",
+              }}
+            />
+          </>
+        ) : (
+          <ScrollView>
+            <FlatList data={optionsList} renderItem={renderItem} />
+          </ScrollView>
+        )}
       </SafeAreaView>
     </>
   );

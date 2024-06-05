@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { styles } from "./styles";
 import FireIcon from "../../assets/icons/fire.svg";
 import MessageIcon from "../../assets/icons/message-gray.svg";

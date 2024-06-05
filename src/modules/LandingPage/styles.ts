@@ -54,7 +54,7 @@ export const styles = StyleSheet.create({
   alreadyHaveAnAccount: {
     alignItems: "center",
     width: "100%",
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderWidth: 1,
     borderColor: "#F58C39",
     borderRadius: 20,

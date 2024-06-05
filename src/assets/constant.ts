@@ -76,7 +76,7 @@ export const UserMissionState = {
     CHINESE: "ZH",
   };
 
-  export const BASE_URL =`https://desolate-anchorage-97861-39db3837351f.herokuapp.com`
+  export const BASE_URL =`https://language-land-api-f38099e7047e.herokuapp.com`
 
   export const LIGHT_BLACK_FADED_COLOR=[
     "rgba(255, 255, 255, 0)",

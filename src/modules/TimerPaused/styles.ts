@@ -109,20 +109,19 @@ export const styles = StyleSheet.create({
   },
   dropdownMenuStyle: {
     borderRadius: 8,
+  backgroundColor:'#F1F5F9',
+  marginTop:4
   },
   dropdownItemStyle: {
     width: "100%",
-    flexDirection: "row",
-    paddingHorizontal: 12,
-    justifyContent: "center",
-    alignItems: "center",
+    paddingHorizontal:12,
     paddingVertical: 8,
+    borderBottomColor: "#E5E5E5",
+    borderBottomWidth: 1,
   },
   dropdownItemTxtStyle: {
-    flex: 1,
-    fontSize: 18,
-    fontWeight: "500",
-    color: "#151E26",
+    color: "#404040",
+    fontSize:12
   },
   dropdownItemIconStyle: {
     fontSize: 28,

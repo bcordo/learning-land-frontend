@@ -11,9 +11,13 @@ import {
   updateTime,
 } from "../../../redux/slices/timmerSlice";
 import CustomDropdown from "../../components/CustomDropdown/CustomDropdown";
+import { updateUserSettings } from "../../../redux/slices/userSetingsSlice";
 
-const CharacterChatNavbar = ({ navigation }): React.JSX.Element => {
-  const completedGoals = 1;
+const CharacterChatNavbar = ({
+  navigation,
+  userSettings,
+}): React.JSX.Element => {
+  const completedGoals = 0;
   const [id, setId] = useState<number>(completedGoals);
 
   const dispatch = useDispatch();
@@ -80,6 +84,7 @@ const CharacterChatNavbar = ({ navigation }): React.JSX.Element => {
       <View style={styles.pauseIconContainer}>
         <TouchableOpacity
           onPress={() => {
+            dispatch(updateUserSettings(userSettings));
             navigation.navigate("TimerPausedScreen");
             dispatch(updatePauseTimmer(true));
           }}

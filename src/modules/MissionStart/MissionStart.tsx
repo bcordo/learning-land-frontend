@@ -20,6 +20,7 @@ import PlayIcon from "../../assets/icons/white-play-Icon.svg";
 import CustomSvgImageComponent from "../../components/CustomComponents/Image";
 import FadedDivider from "../../components/FadedDivider/FadedDivider";
 import HelphulPharasesComp from "../../components/HelphulPharasesComp/HelphulPharasesComp";
+import { useLazyGetAllMissionsQuery } from "../../../redux/services/missions";
 import CustomGoalListComponent from "../../components/CustomGaolListComp/CustomGaolListComp";
 import { LIGHT_BLACK_FADED_COLOR } from "../../assets/constant";
 import { useSelector } from "react-redux";
@@ -31,13 +32,16 @@ interface MissionStartProps {
 const MissionStart: React.FC<MissionStartProps> = ({
   navigation,
 }): React.JSX.Element => {
+  const [fetchMissions, { data: allMissionss, isLoading: fetchingMissions }] =
+    useLazyGetAllMissionsQuery();
+
+  const allMissions = useSelector((state) => state.missionSlice.mission);
   const [screenHeight, setScreenHeight] = useState(
     Dimensions.get("window").height
   );
 
-  const user_mission = useSelector((state) => state.missionSlice.mission);
-
   useEffect(() => {
+    fetchMissions("");
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
       (event) => {
@@ -80,10 +84,20 @@ const MissionStart: React.FC<MissionStartProps> = ({
         icon={Star}
         title={item.title}
         description={item.description}
+        isFetching={fetchingMissions}
       />
     );
   };
-
+  const renderItemSkeleton = ({ item }) => {
+    return (
+      <CustomGoalListComponent
+        icon={Star}
+        title={""}
+        description={""}
+        isFetching={fetchingMissions}
+      />
+    );
+  };
   const renderHelpfulPharases = ({
     item,
     index,
@@ -151,71 +165,75 @@ const MissionStart: React.FC<MissionStartProps> = ({
           >
             <View style={styles.missiontxtContainer}>
               <Text style={(styles.missionTxt, styles.defaultFontFamily)}>
-                World {user_mission?.index}, Mission 1
+                World {allMissions?.index}, Mission 1
               </Text>
-              {user_mission ? (
-                <View style={styles.coffeeShopTxtContainer}>
-                  <Text
-                    style={[styles.coffeeShopTxt, styles.defaultFontFamilyBold]}
-                  >
-                    {user_mission?.title}
-                  </Text>
-                </View>
-              ) : null}
+              <View style={styles.coffeeShopTxtContainer}>
+                <Text
+                  style={[styles.coffeeShopTxt, styles.defaultFontFamilyBold]}
+                >
+                  {allMissions.title}
+                </Text>
+              </View>
             </View>
 
             <View style={styles.dividerContainer}>
               <FadedDivider color={LIGHT_BLACK_FADED_COLOR} />
               <View style={styles.dividerTxtContainer}>
                 <Text style={[styles.dividerTxt, styles.defaultFontFamily]}>
-                  {user_mission && user_mission?.public_summary}
+                  {allMissions.public_summary}
                 </Text>
               </View>
               <FadedDivider color={LIGHT_BLACK_FADED_COLOR} />
             </View>
 
-            <View style={styles.goalsContainer}>
-              <Text style={[styles.defaultFontFamilyBold, styles.goalstxt]}>
-                Goals
-              </Text>
-              <FlatList
-                data={(user_mission && user_mission?.goals) || []}
-                renderItem={renderItem}
-              />
-            </View>
-
-            <View style={styles.helpfulPharasesContainer}>
-              <View style={styles.helpfulPharasesHeader}>
-                <Text
-                  style={[
-                    styles.helpfulPharasesTxt,
-                    styles.defaultFontFamilyBold,
-                  ]}
-                >
-                  Helpful Phrases
+            {allMissions.goals?.length > 0 && (
+              <View style={styles.goalsContainer}>
+                <Text style={[styles.defaultFontFamilyBold, styles.goalstxt]}>
+                  Goals
                 </Text>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("HelpfulPharases")}
-                >
+                {fetchingMissions ? (
+                  <FlatList data={[1, 2, 3]} renderItem={renderItemSkeleton} />
+                ) : (
+                  <FlatList
+                    data={allMissions?.goals || []}
+                    renderItem={renderItem}
+                  />
+                )}
+              </View>
+            )}
+
+            {allMissions.helpful_phrases?.length > 0 && (
+              <View style={styles.helpfulPharasesContainer}>
+                <View style={styles.helpfulPharasesHeader}>
                   <Text
-                    style={[styles.seeAllPharasesTxt, styles.defaultFontFamily]}
+                    style={[
+                      styles.helpfulPharasesTxt,
+                      styles.defaultFontFamilyBold,
+                    ]}
                   >
-                    See all phrases
+                    Helpful Phrases
                   </Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("HelpfulPharases")}
+                  >
+                    <Text
+                      style={[
+                        styles.seeAllPharasesTxt,
+                        styles.defaultFontFamily,
+                      ]}
+                    >
+                      See all phrases
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.helpfulPharasesListContainer}>
+                  <FlatList
+                    data={allMissions.helpful_phrases || []}
+                    renderItem={renderHelpfulPharases}
+                  />
+                </View>
               </View>
-              <View style={styles.helpfulPharasesListContainer}>
-                <FlatList
-                  data={
-                    (user_mission &&
-                      (user_mission?.phrases ||
-                        user_mission?.helpful_phrases)) ||
-                    []
-                  }
-                  renderItem={renderHelpfulPharases}
-                />
-              </View>
-            </View>
+            )}
           </ScrollView>
 
           <TouchableOpacity

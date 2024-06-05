@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Image, SafeAreaView, Text, View } from "react-native";
 import { styles } from "./styles";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 import CustomButtom from "../../components/CustomButtom/CustomButtom";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import uuid from "react-native-uuid";
+import axios from "axios";
 
 interface LandingPageProps {
   navigation: any;
@@ -11,6 +14,53 @@ interface LandingPageProps {
 const LandingPage: React.FC<LandingPageProps> = ({
   navigation,
 }): React.JSX.Element => {
+  const generateEmailAndPassword = () => {
+    const email = `user_${uuid.v4()}@example.com`;
+    const password = uuid.v4();
+    return { email, password };
+  };
+  useEffect(() => {
+    const authenticate = async () => {
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        const { email, password } = generateEmailAndPassword();
+        const details = {
+          email,
+          is_active: true,
+          is_superuser: false,
+          is_staff: false,
+          first_name: "string",
+          last_name: "string",
+          phone_number: "string",
+          age: 0,
+          gender: "M",
+          description: "string",
+          language_level: "A1",
+          learning_language: "BG",
+          native_language: "BG",
+          password,
+          hashed_password: password,
+        };
+
+        try {
+          const response = await axios.post(
+            "https://language-land-api-f38099e7047e.herokuapp.com/api/v1/users/signup",
+            details
+          );
+          if (response?.data) {
+            const { access_token } = response?.data;
+            await AsyncStorage.setItem("token", access_token);
+            await AsyncStorage.setItem("email", details?.email);
+            await AsyncStorage.setItem("password", details?.password);
+          }
+        } catch (error) {
+          console.error("ERROR" + error.response.data);
+        }
+      }
+    };
+
+    authenticate();
+  }, []);
   return (
     <>
       <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
@@ -22,7 +72,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
                 style={{
                   width: 106,
                   height: 112,
-                  marginBottom: 50,
+                  marginBottom: 25,
                 }}
                 source={require("../../assets/icons/landing-page-logo.png")}
               />
