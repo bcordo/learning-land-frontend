@@ -2,11 +2,7 @@ import LottieView from "lottie-react-native";
 import React from "react";
 import { View } from "react-native";
 import { styles } from "./styles";
-
-interface ProfileContainerProps {
-  profileAlignmnent?: {};
-  isTyping?: boolean;
-}
+import { ProfileContainerProps } from "../../intefaces/componentsInterfaces";
 
 const ProfileContainer: React.FC<ProfileContainerProps> = ({
   isTyping,

@@ -9,6 +9,7 @@ import MissionStart from "../modules/MissionStart/MissionStart";
 import HelpfulPharasesListContainer from "../components/HelpfulPharasesListContainer/HelpfulPharasesListContainer";
 import MissionEnd from "../modules/MissionEnd/MissionEnd";
 import HomeTab from "../modules/HomeTab/HomeTab";
+import MissionHistory from "../modules/MissionHistory/MissionHistory";
 
 const Stack = createNativeStackNavigator();
 
@@ -54,6 +55,11 @@ const Navigation = (): React.JSX.Element => {
         <Stack.Screen
           name="HomeTab"
           component={HomeTab}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="MissionHistory"
+          component={MissionHistory}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

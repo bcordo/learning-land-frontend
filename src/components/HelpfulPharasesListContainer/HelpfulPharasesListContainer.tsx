@@ -15,25 +15,12 @@ import { styles } from "./styles";
 import CustomSvgImageComponent from "../CustomComponents/Image";
 import HelphulPharasesComp from "../HelphulPharasesComp/HelphulPharasesComp";
 import { useLazyGetPharasesQuery } from "../../../redux/services/helpfulPharases";
+import { NavigationInterface } from "../../intefaces/componentsInterfaces";
+import { pharsesInterface } from "../../intefaces/variablesInterfaces";
 
-interface HelpfulPharasesListContainerProps {
-  navigation: any;
-}
-
-interface pharsesInterface {
-  created_at: string;
-  id: number;
-  mission_id: number;
-  text: string;
-  text_language: string;
-  training_id: number;
-  updated_at: string;
-  user_id: number;
-}
-
-const HelpfulPharasesListContainer: React.FC<
-  HelpfulPharasesListContainerProps
-> = ({ navigation }): React.JSX.Element => {
+const HelpfulPharasesListContainer: React.FC<NavigationInterface> = ({
+  navigation,
+}): React.JSX.Element => {
   const [inputText, setInputText] = useState<string>("");
   const [pharasesList, setPharasesList] = useState<pharsesInterface[]>([]);
 

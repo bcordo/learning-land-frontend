@@ -5,15 +5,16 @@ import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 import CustomButtom from "../../components/CustomButtom/CustomButtom";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import uuid from "react-native-uuid";
-import axios from "axios";
+import { useLoginUserMutation } from "../../../redux/services/loginApi";
+import { useSignUpUserMutation } from "../../../redux/services/signupApi";
+import { NavigationInterface } from "../../intefaces/componentsInterfaces";
 
-interface LandingPageProps {
-  navigation: any;
-}
-
-const LandingPage: React.FC<LandingPageProps> = ({
+const LandingPage: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
+  const [loginUserApi, { data }] = useLoginUserMutation();
+  const [signUpApi] = useSignUpUserMutation();
+
   const generateEmailAndPassword = () => {
     const email = `user_${uuid.v4()}@example.com`;
     const password = uuid.v4();
@@ -41,12 +42,8 @@ const LandingPage: React.FC<LandingPageProps> = ({
           password,
           hashed_password: password,
         };
-
         try {
-          const response = await axios.post(
-            "https://language-land-api-f38099e7047e.herokuapp.com/api/v1/users/signup",
-            details
-          );
+          const response = await signUpApi({ body: details });
           if (response?.data) {
             const { access_token } = response?.data;
             await AsyncStorage.setItem("token", access_token);

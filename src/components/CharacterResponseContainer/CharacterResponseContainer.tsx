@@ -12,13 +12,8 @@ import CustomDropdown from "../CustomDropdown/CustomDropdown";
 import CustomShimmer from "../CustomShimmer/CustomShimmer";
 import RNFetchBlob from "rn-fetch-blob";
 import Sound from "react-native-sound";
+import { CharacterResponseContainerProps } from "../../intefaces/componentsInterfaces";
 
-interface CharacterResponseContainerProps {
-  quoteText?: string;
-  isTyping?: boolean;
-  profileIconContainerStyle?: object;
-  message?: string;
-}
 const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
   quoteText,
   isTyping,

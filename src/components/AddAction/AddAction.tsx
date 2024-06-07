@@ -16,35 +16,27 @@ import {
   InteractionType,
   MessageType,
 } from "../../assets/constant";
-
-interface AddActionProps {
-  closeDrawer: Function;
-  sendMessage: Function;
-  setChatMessages: Function;
-}
+import { AddActionProps } from "../../intefaces/componentsInterfaces";
+import {
+  ActionList,
+  RenderActionListItem,
+  StringInterface,
+} from "../../intefaces/variablesInterfaces";
 
 const AddAction: React.FC<AddActionProps> = ({
   closeDrawer,
   sendMessage,
   setChatMessages,
 }): React.JSX.Element => {
-  const [inputText, setInputText] = useState("");
-  const [selectedAction, setSelectedAction] = useState("");
-  const actionsList = [
+  const [inputText, setInputText] = useState<StringInterface>("");
+  const [selectedAction, setSelectedAction] = useState<StringInterface>("");
+  const actionsList: ActionList[] = [
     { title: "Ask for her number", value: "Ask for her number", custom: false },
     { title: "Smile", value: "Smile", custom: false },
     { title: "Shake hands", value: "Shake hands", custom: false },
     { title: "Custom Action", value: "Custom Action", custom: true },
   ];
-  const renderActionList = ({
-    item,
-  }: {
-    item: {
-      title: string;
-      value: string;
-      custom: boolean;
-    };
-  }) => {
+  const renderActionList = ({ item }: { item: RenderActionListItem }) => {
     return (
       <View
         style={[

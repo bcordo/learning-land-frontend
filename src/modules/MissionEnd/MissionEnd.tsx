@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
@@ -24,18 +24,47 @@ import HelphulPharasesComp from "../../components/HelphulPharasesComp/HelphulPha
 import HelpfulActionsContainer from "../../components/HelpfulActionsContainer/HelpfulActionsContainer";
 import CustomButtom from "../../components/CustomButtom/CustomButtom";
 import CustomGoalListComponent from "../../components/CustomGaolListComp/CustomGaolListComp";
+import { useLazyGetUserMissionByMissionIdQuery } from "../../../redux/services/missions";
+import { useSelector } from "react-redux";
+import { NavigationInterface } from "../../intefaces/componentsInterfaces";
 
-interface MissionEndProps {
-  navigation: any;
-}
-
-const MissionEnd: React.FC<MissionEndProps> = ({
+const MissionEnd: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
+  const [
+    getchMissionByMissionId,
+    { data: missionDetails, isLoading: fetchingMission },
+  ] = useLazyGetUserMissionByMissionIdQuery();
+
+  const { id } = useSelector((state) => state.missionSlice.mission);
+
+  useEffect(() => {
+    if (!id) return;
+    getchMissionByMissionId({ id });
+  }, [id]);
+
   const reviewBoxList = [
-    { value: "PHRASES", icon: MessageIcon, color: "#1717171", score: "+22" },
-    { value: "CORRECT", icon: CheckIcon, color: "#7DDFDE", score: 18 },
-    { value: "INCORRECT", icon: XCrossIcon, color: "#FF8B67", score: 4 },
+    {
+      value: "PHRASES",
+      icon: MessageIcon,
+      color: "#1717171",
+      score: "+22",
+      key: "total_phrases",
+    },
+    {
+      value: "CORRECT",
+      icon: CheckIcon,
+      color: "#7DDFDE",
+      score: 18,
+      key: "correct_phrases",
+    },
+    {
+      value: "INCORRECT",
+      icon: XCrossIcon,
+      color: "#FF8B67",
+      score: 4,
+      key: "incorrect_phrases",
+    },
   ];
 
   const goalsList = [
@@ -218,7 +247,7 @@ const MissionEnd: React.FC<MissionEndProps> = ({
                           styles.scoretxtXL,
                         ]}
                       >
-                        2
+                        {missionDetails?.number_of_goals_completed}
                       </Text>
                       <Text
                         style={[
@@ -236,7 +265,7 @@ const MissionEnd: React.FC<MissionEndProps> = ({
                           styles.scoretxtXL,
                         ]}
                       >
-                        3
+                        {missionDetails?.user_goals?.length}
                       </Text>
                     </View>
 
@@ -305,7 +334,7 @@ const MissionEnd: React.FC<MissionEndProps> = ({
                         { color: item.color || "" },
                       ]}
                     >
-                      {item.score}
+                      {missionDetails && missionDetails[item?.key]?.length}
                     </Text>
                   </View>
                 </View>
@@ -353,7 +382,9 @@ const MissionEnd: React.FC<MissionEndProps> = ({
                 styles.defaultFontFamilySemiBold,
               ]}
               buttonStyle={styles.alreadyHaveAnAccount}
-              onPress={() => {}}
+              onPress={() => {
+                navigation.navigate("MissionHistory");
+              }}
               buttonTxt={"PRACTICE MISTAKES"}
               icon={DumbleIcon}
             />

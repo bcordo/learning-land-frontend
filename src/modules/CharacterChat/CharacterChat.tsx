@@ -39,38 +39,37 @@ import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 import { useDispatch, useSelector } from "react-redux";
 import { useLazyGetUserSettingsQuery } from "../../../redux/services/user_settings";
 import { updateUserSettingsByType } from "../../../redux/slices/userSetingsSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { NavigationInterface } from "../../intefaces/componentsInterfaces";
+import {
+  BooleanInterface,
+  NullInterface,
+  NumberInterface,
+  StringInterface,
+  chatMessagesInterface,
+} from "../../intefaces/variablesInterfaces";
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 audioRecorderPlayer.setSubscriptionDuration(0.09);
 
-interface CharacterChatProps {
-  navigation: any;
-}
-
-const CharacterChat: React.FC<CharacterChatProps> = ({
+const CharacterChat: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
-  interface chatMessagesInterface {
-    type: string;
-    text: string;
-    action?: string;
-    emotion?: string;
-    thought?: string;
-    isTyping?: boolean;
-  }
-
-  const [inputText, setInputText] = useState<string>("");
-  const [enableRecording, setEnableRecording] = useState<boolean>(false);
-  const [isRecording, setIsRecording] = useState<boolean>(false);
-  const [socketConnected, setSocketConnected] = useState(false);
-  const [sendingAudio, isSendingAudio] = useState<boolean>(false);
-  const [speakStatus, setSpeakStatus] = useState<string>("Start speaking");
+  const [inputText, setInputText] = useState<StringInterface>("");
+  const [enableRecording, setEnableRecording] =
+    useState<BooleanInterface>(false);
+  const [isRecording, setIsRecording] = useState<BooleanInterface>(false);
+  const [socketConnected, setSocketConnected] =
+    useState<BooleanInterface>(false);
+  const [sendingAudio, isSendingAudio] = useState<BooleanInterface>(false);
+  const [speakStatus, setSpeakStatus] =
+    useState<StringInterface>("Start speaking");
   const [duration, setDuration] = useState(0);
-  const [invalidRecord, setInvalidRecord] = useState(false);
-  const [startSpeaking, setStartSpeaking] = useState(false);
-  const [WS, setWS] = React.useState<WebSocket | null>(null);
+  const [invalidRecord, setInvalidRecord] = useState<BooleanInterface>(false);
+  const [startSpeaking, setStartSpeaking] = useState<BooleanInterface>(false);
+  const [WS, setWS] = React.useState<WebSocket | NullInterface>(null);
   const [chatState, setChatState] = React.useState("inactive");
-  const [screenHeight, setScreenHeight] = useState<number>(
+  const [screenHeight, setScreenHeight] = useState<NumberInterface>(
     Dimensions.get("window").height
   );
   const [missionState, setMissionState] = React.useState(
@@ -93,7 +92,7 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
   }, [isLoading]);
 
   const drawerRef = useRef<any>(null);
-  const scrollViewRef = useRef<ScrollView | null>(null);
+  const scrollViewRef = useRef<ScrollView | NullInterface>(null);
 
   const openDrawer = () => {
     drawerRef.current.open();
@@ -168,8 +167,15 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
     return () => clearInterval(timer);
   }, [isRecording]);
 
-  const connectWebSocket = () => {
-    const newWS = new WebSocket(WEBSOCKET_URL);
+  const connectWebSocket = async () => {
+    const token = await AsyncStorage.getItem("token");
+    const websocketOptions = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const newWS = new WebSocket(`${WEBSOCKET_URL}`, [], websocketOptions);
     setWS(newWS);
     newWS.onopen = () => {
       setSocketConnected(true);
@@ -177,6 +183,7 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
       console.log("WebSocket connected");
     };
     newWS.onmessage = (event) => {
+      console.log("MESSAGE ARRIVED");
       isSendingAudio(false);
       setSpeakStatus("Start speaking");
       handleServerMessage(event.data);
@@ -189,7 +196,7 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
     };
   };
 
-  const handleServerMessage = async (message: string) => {
+  const handleServerMessage = async (message: StringInterface) => {
     try {
       const parsedMessage = JSON.parse(message);
 
@@ -467,7 +474,7 @@ const CharacterChat: React.FC<CharacterChatProps> = ({
     }, 1000);
   };
 
-  const onStopRecord = async (sendAudioViaSocket: boolean) => {
+  const onStopRecord = async (sendAudioViaSocket: BooleanInterface) => {
     const result = await audioRecorderPlayer.stopRecorder();
 
     if (duration <= 1) {

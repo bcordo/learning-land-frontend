@@ -25,8 +25,11 @@ const missionsApi = createApi({
     getMissionByWorldId: builder.query({
       query: ({id}) =>   `/api/v1/worlds/${id}/missions`,
     }), 
+    getUserMissionByMissionId: builder.query({
+      query: ({id}) =>   `/api/v1/user_missions/${id}`,
+    }), 
   }),
 });
 
-export const { useGetAllMissionsQuery,useLazyGetAllMissionsQuery,useLazyGetMissionByIdQuery,useLazyGetMissionByWorldIdQuery } = missionsApi;
+export const { useGetAllMissionsQuery,useLazyGetAllMissionsQuery,useLazyGetMissionByIdQuery,useLazyGetMissionByWorldIdQuery,useLazyGetUserMissionByMissionIdQuery } = missionsApi;
 export default missionsApi

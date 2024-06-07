@@ -3,12 +3,9 @@ import React from "react";
 import { Image, Text, View } from "react-native";
 import { styles } from "./styles";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
+import { NavigationInterface } from "../../intefaces/componentsInterfaces";
 
-interface SplashScreenProps {
-  navigation: any;
-}
-
-const SplashScreen: React.FC<SplashScreenProps> = ({
+const SplashScreen: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
   useFocusEffect(() => {

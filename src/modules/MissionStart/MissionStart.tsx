@@ -23,19 +23,20 @@ import HelphulPharasesComp from "../../components/HelphulPharasesComp/HelphulPha
 import { useLazyGetAllMissionsQuery } from "../../../redux/services/missions";
 import CustomGoalListComponent from "../../components/CustomGaolListComp/CustomGaolListComp";
 import { LIGHT_BLACK_FADED_COLOR } from "../../assets/constant";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { NavigationInterface } from "../../intefaces/componentsInterfaces";
+import { updateTime } from "../../../redux/slices/timmerSlice";
 
-interface MissionStartProps {
-  navigation: any;
-}
-
-const MissionStart: React.FC<MissionStartProps> = ({
+const MissionStart: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
-  const [fetchMissions, { data: allMissionss, isLoading: fetchingMissions }] =
+  const dispatch = useDispatch();
+  const [fetchMissions, { isLoading: fetchingMissions }] =
     useLazyGetAllMissionsQuery();
 
-  const allMissions = useSelector((state) => state.missionSlice.mission);
+  const allMissions = useSelector(
+    (state: { missionSlice: any }) => state.missionSlice.mission
+  );
   const [screenHeight, setScreenHeight] = useState(
     Dimensions.get("window").height
   );
@@ -122,10 +123,10 @@ const MissionStart: React.FC<MissionStartProps> = ({
       />
     ) : null;
   };
-
   return (
     <>
       <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
+
       <SafeAreaView>
         <View style={styles.container}>
           <View style={styles.header}>
@@ -202,7 +203,7 @@ const MissionStart: React.FC<MissionStartProps> = ({
               </View>
             )}
 
-            {allMissions.helpful_phrases?.length > 0 && (
+            {allMissions.phrases?.length > 0 && (
               <View style={styles.helpfulPharasesContainer}>
                 <View style={styles.helpfulPharasesHeader}>
                   <Text
@@ -228,7 +229,7 @@ const MissionStart: React.FC<MissionStartProps> = ({
                 </View>
                 <View style={styles.helpfulPharasesListContainer}>
                   <FlatList
-                    data={allMissions.helpful_phrases || []}
+                    data={allMissions.phrases || []}
                     renderItem={renderHelpfulPharases}
                   />
                 </View>
@@ -238,7 +239,16 @@ const MissionStart: React.FC<MissionStartProps> = ({
 
           <TouchableOpacity
             style={styles.startButton}
-            onPress={() => navigation.navigate("CharacterChat")}
+            onPress={() => {
+              dispatch(
+                updateTime({
+                  minutes: 5,
+                  seconds: 0,
+                  totalSeconds: 300,
+                })
+              );
+              navigation.navigate("CharacterChat");
+            }}
           >
             <CustomSvgImageComponent
               width={22}

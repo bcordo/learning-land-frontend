@@ -7,11 +7,9 @@ import Stars from "../../assets/icons/stars.svg";
 import Bookmark from "../../assets/icons/bookmark.svg";
 import CircleDot from "../../assets/icons/circle-dot.svg";
 import { LIGHT_BLACK_FADED_COLOR } from "../../assets/constant";
+import { AssistantCorrectionProps } from "../../intefaces/componentsInterfaces";
 
-interface assistantCorrectionProps {
-  text: string;
-}
-const AssistantCorrection: React.FC<assistantCorrectionProps> = ({
+const AssistantCorrection: React.FC<AssistantCorrectionProps> = ({
   text,
 }): React.JSX.Element => {
   return (

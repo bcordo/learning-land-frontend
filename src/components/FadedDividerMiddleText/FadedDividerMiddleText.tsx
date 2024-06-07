@@ -2,10 +2,7 @@ import React from "react";
 import { Text, View } from "react-native";
 import { LIGHT_BLACK_FADED_COLOR } from "../../assets/constant";
 import LinearGradient from "react-native-linear-gradient";
-
-interface FadedDividerMiddleTextProps {
-  text: string;
-}
+import { FadedDividerMiddleTextProps } from "../../intefaces/componentsInterfaces";
 
 const FadedDividerMiddleText: React.FC<FadedDividerMiddleTextProps> = ({
   text,

@@ -5,10 +5,8 @@ import { styles } from "./styles";
 import CustomSvgImageComponent from "../CustomComponents/Image";
 import Pencil from "../../assets/icons/pencil.svg";
 import Bookmark from "../../assets/icons/bookmark.svg";
+import { UserResponseContainerProps } from "../../intefaces/componentsInterfaces";
 
-interface UserResponseContainerProps {
-  message: string;
-}
 const UserResponseContainer: React.FC<UserResponseContainerProps> = ({
   message,
 }): React.JSX.Element => {
@@ -25,14 +23,6 @@ const UserResponseContainer: React.FC<UserResponseContainerProps> = ({
       <View style={styles.userResponseTxtContainer}>
         <Text style={[styles.defaultFontFamily, styles.userResponseTxt]}>
           {message}
-          {/* <Text style={styles.userResponseTxtOranged}>
-            This is an incorrect sentence.
-          </Text>{" "}
-          This is a user response. This is a user response.
-          <Text style={styles.userResponseTxtOranged}>
-            {" "}
-            This is also incorrect.
-          </Text> */}
         </Text>
         <View style={styles.userResponseIconsContainer}>
           <CustomSvgImageComponent width={18} height={18} Component={Pencil} />

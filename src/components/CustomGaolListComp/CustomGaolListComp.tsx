@@ -3,13 +3,7 @@ import { View, Text } from "react-native";
 import CustomSvgImageComponent from "../CustomComponents/Image";
 import { styles } from "./styles";
 import CustomShimmer from "../CustomShimmer/CustomShimmer";
-
-interface CustomGoalListComponentProps {
-  icon: any;
-  title: string;
-  description: string;
-  isFetching?: boolean;
-}
+import { CustomGoalListComponentProps } from "../../intefaces/componentsInterfaces";
 
 const CustomGoalListComponent: React.FC<CustomGoalListComponentProps> = ({
   icon,

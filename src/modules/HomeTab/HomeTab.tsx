@@ -18,27 +18,23 @@ import UserIcon from "../../assets/icons/user.svg";
 import CustomShimmer from "../../components/CustomShimmer/CustomShimmer";
 import { useLazyGetAllWorldsQuery } from "../../../redux/services/worldsApi";
 import CustomMissionHomeTabComponent from "../../components/CustomMissionsHomeTab/CustomMissionsHomeTab";
-interface HomeTabProps {
-  navigation: any;
-}
-interface ComponentHeightsObjInterface {
-  [key: string]: number;
-}
-interface WorldInterface {
-  created_at: string;
-  description: string;
-  id: number;
-  title: string;
-  updated_at: string;
-  world_icon: string;
-  world_index: number;
-}
-const HomeTab: React.FC<HomeTabProps> = ({ navigation }): React.JSX.Element => {
-  const [selectedItem, setSelectedItem] = useState<string>("home");
-  const [currentItemIndex, setCurrentItemIndex] = useState<number>(0);
-  const scrollViewRef = useRef(null);
+import { NavigationInterface } from "../../intefaces/componentsInterfaces";
+import {
+  ComponentHeightsObjInterface,
+  NumberInterface,
+  StringInterface,
+  WorldInterface,
+} from "../../intefaces/variablesInterfaces";
+
+const HomeTab: React.FC<NavigationInterface> = ({
+  navigation,
+}): React.JSX.Element => {
+  const [selectedItem, setSelectedItem] = useState<StringInterface>("home");
+  const [currentItemIndex, setCurrentItemIndex] = useState<NumberInterface>(0);
+  const scrollViewRef = useRef<NumberInterface>(null);
   const [componentHeights, setComponentHeights] =
     useState<ComponentHeightsObjInterface>({});
+
   const [fetchWorlds, { data: allWorlds, isLoading: fetchingWorlds }] =
     useLazyGetAllWorldsQuery();
 
@@ -120,7 +116,6 @@ const HomeTab: React.FC<HomeTabProps> = ({ navigation }): React.JSX.Element => {
                       styles.missionDetailsTxt,
                     ]}
                   >
-                    {/* World {currentItemIndex ? currentItemIndex : 1}:{" "} */}
                     {allWorlds &&
                       allWorlds[currentItemIndex ? currentItemIndex - 1 : 0]
                         ?.title}{" "}
@@ -148,18 +143,20 @@ const HomeTab: React.FC<HomeTabProps> = ({ navigation }): React.JSX.Element => {
               ref={scrollViewRef}
               onScroll={handleScroll}
             >
-              {allWorlds?.map((element: WorldInterface, idx: number) => {
-                return (
-                  <CustomMissionHomeTabComponent
-                    extraData={element}
-                    index={idx}
-                    navigation={navigation}
-                    world_id={element?.id}
-                    onLayout={(event) => handleComponentLayout(idx, event)}
-                    currentItemIndex={currentItemIndex}
-                  />
-                );
-              })}
+              {allWorlds?.map(
+                (element: WorldInterface, idx: NumberInterface) => {
+                  return (
+                    <CustomMissionHomeTabComponent
+                      extraData={element}
+                      index={idx}
+                      navigation={navigation}
+                      world_id={element?.id}
+                      onLayout={(event) => handleComponentLayout(idx, event)}
+                      currentItemIndex={currentItemIndex}
+                    />
+                  );
+                }
+              )}
             </ScrollView>
             <View style={styles.missionDetailsFixedFooterContainer}>
               {footerList.map((e, index) => {

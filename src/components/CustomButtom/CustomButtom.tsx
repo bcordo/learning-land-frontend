@@ -1,14 +1,7 @@
 import React from "react";
 import { Text, TouchableOpacity } from "react-native";
 import CustomSvgImageComponent from "../CustomComponents/Image";
-
-interface CustomButtomProps {
-  buttonStyle: {};
-  textStyle: {};
-  onPress: Function;
-  buttonTxt: string;
-  icon?: any;
-}
+import { CustomButtomProps } from "../../intefaces/componentsInterfaces";
 
 const CustomButtom: React.FC<CustomButtomProps> = ({
   textStyle,

@@ -1,9 +1,6 @@
 import React from "react";
-interface CustomSvgImageComponentInterface {
-  Component: React.ComponentType<any>;
-  width: number;
-  height: number;
-}
+import { CustomSvgImageComponentInterface } from "../../intefaces/componentsInterfaces";
+
 const CustomSvgImageComponent: React.FC<CustomSvgImageComponentInterface> = ({
   Component,
   width,

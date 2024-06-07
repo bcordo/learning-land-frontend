@@ -5,8 +5,7 @@ import FireIcon from "../../assets/icons/fire.svg";
 import MessageIcon from "../../assets/icons/message-gray.svg";
 import CircleIcon from "../../assets/icons/dotCircleBoldGray.svg";
 import CustomSvgImageComponent from "../../components/CustomComponents/Image";
-
-interface HomeTabHeaderProps {}
+import { HomeTabHeaderProps } from "../../intefaces/componentsInterfaces";
 
 const HomeTabHeader: React.FC<HomeTabHeaderProps> = (): React.JSX.Element => {
   return (

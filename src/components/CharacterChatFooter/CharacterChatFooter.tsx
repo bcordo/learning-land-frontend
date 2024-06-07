@@ -10,25 +10,9 @@ import ArrowUpGrey from "../../assets/icons/arrow-up-grey.svg";
 import XSvg from "../../assets/icons/x.svg";
 import XBlack from "../../assets/icons/blackX.svg";
 import { styles } from "./styles";
-interface characterChatFooterProps {
-  enableRecording: boolean;
-  isRecording: boolean;
-  speakStatus: string;
-  invalidRecord: boolean;
-  setInvalidRecord: Function;
-  sendingAudio: boolean;
-  startSpeaking: boolean;
-  setEnableRecording: Function;
-  onStopRecord: Function;
-  setIsRecording: Function;
-  handleStartRecord: Function;
-  setInputText: Function;
-  handleInputEnter: Function;
-  openDrawer: Function;
-  inputText: string;
-}
+import { CharacterChatFooterProps } from "../../intefaces/componentsInterfaces";
 
-const CharacterChatFooter: React.FC<characterChatFooterProps> = ({
+const CharacterChatFooter: React.FC<CharacterChatFooterProps> = ({
   enableRecording,
   isRecording,
   speakStatus,

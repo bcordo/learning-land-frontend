@@ -25,21 +25,16 @@ import Right from "../../assets/icons/Right.svg";
 import TranslateIcon from "../../assets/icons/translate-black.svg";
 import CustomSwitch from "../../components/CustomSwitch/CustomSwitch";
 import CustomDropdown from "../../components/CustomDropdown/CustomDropdown";
-import {
-  useLazyGetUserSettingsQuery,
-  useUpdateUserSettingsMutation,
-} from "../../../redux/services/user_settings";
+import { useUpdateUserSettingsMutation } from "../../../redux/services/user_settings";
 import {
   updateUserSettings,
   updateUserSettingsByType,
 } from "../../../redux/slices/userSetingsSlice";
 import CustomShimmer from "../../components/CustomShimmer/CustomShimmer";
+import { NavigationInterface } from "../../intefaces/componentsInterfaces";
+import { ListItem } from "../../intefaces/variablesInterfaces";
 
-interface TimerPausedProps {
-  navigation: any;
-}
-
-const TimerPaused: React.FC<TimerPausedProps> = ({
+const TimerPaused: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
   const dispatch = useDispatch();
@@ -50,14 +45,6 @@ const TimerPaused: React.FC<TimerPausedProps> = ({
   );
 
   const [updateUserSettingsAPI] = useUpdateUserSettingsMutation();
-
-  interface ListItem {
-    icon: any;
-    title: string;
-    subTitle?: string;
-    type?: string;
-    name: string;
-  }
 
   const optionsList: ListItem[] = [
     { icon: SettingsIcon, title: "Settings", name: "" },

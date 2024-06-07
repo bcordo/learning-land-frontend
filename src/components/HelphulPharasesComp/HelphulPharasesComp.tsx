@@ -8,18 +8,7 @@ import { useLazyGetTranslatedTextQuery } from "../../../redux/services/translate
 import CustomShimmer from "../CustomShimmer/CustomShimmer";
 import XSvg from "../../assets/icons/x.svg";
 import Tick from "../../assets/icons/check-tick.svg";
-
-interface HelphulPharasesCompProps {
-  title: string;
-  text_language?: string;
-  description?: string;
-  descriptionColor?: string;
-  type?: string;
-  hideDescriptionText?: boolean;
-  isRight?: boolean;
-  showDescriptionIcons?: boolean;
-  isFetching?: boolean;
-}
+import { HelphulPharasesCompProps } from "../../intefaces/componentsInterfaces";
 
 const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({
   title,

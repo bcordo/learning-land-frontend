@@ -1,4 +1,7 @@
+// export const WEBSOCKET_URL:string= "wss://language-land-api-f38099e7047e.herokuapp.com/api/v1/user_missions/chat"
+
 export const WEBSOCKET_URL:string= "wss://desolate-anchorage-97861-39db3837351f.herokuapp.com/api/v1/user_missions/chat"
+export const BASE_URL =`https://language-land-api-f38099e7047e.herokuapp.com`
 
 export const UserMissionState = {
     INACTIVE: "INACTIVE",
@@ -76,7 +79,7 @@ export const UserMissionState = {
     CHINESE: "ZH",
   };
 
-  export const BASE_URL =`https://language-land-api-f38099e7047e.herokuapp.com`
+ 
 
   export const LIGHT_BLACK_FADED_COLOR=[
     "rgba(255, 255, 255, 0)",

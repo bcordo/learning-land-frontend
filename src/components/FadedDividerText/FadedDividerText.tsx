@@ -4,13 +4,8 @@ import FadedDivider from "../FadedDivider/FadedDivider";
 import { styles } from "./styles";
 import OrangeStars from "../../assets/icons/orange-stars.svg";
 import CustomSvgImageComponent from "../CustomComponents/Image";
-interface FadedDividerTextProps {
-  fadedDividerTextColor?: {};
-  color: string[];
-  showIcon?: boolean;
-  text: string;
-  idx?: any;
-}
+import { FadedDividerTextProps } from "../../intefaces/componentsInterfaces";
+
 const FadedDividerText: React.FC<FadedDividerTextProps> = ({
   fadedDividerTextColor,
   color,
@@ -24,12 +19,7 @@ const FadedDividerText: React.FC<FadedDividerTextProps> = ({
         style={{ marginVertical: 11, width: "100%" }}
         color={color}
       />
-      <View
-        style={[
-          styles.fadedDividerTextContainer,
-          // { justifyContent: showIcon ? "flex-start" : "center" },
-        ]}
-      >
+      <View style={[styles.fadedDividerTextContainer]}>
         {showIcon ? (
           <CustomSvgImageComponent
             width={18}

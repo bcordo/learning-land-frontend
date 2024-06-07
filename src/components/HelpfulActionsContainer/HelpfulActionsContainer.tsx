@@ -1,26 +1,7 @@
 import React from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
-
-interface HelpfulActionsContainerProps {
-  list: [
-    {
-      title: string;
-      description: string;
-      descriptionColor?: string;
-      type?: string;
-      hideDescriptionText?: boolean;
-      isRight: boolean;
-      text_language: string;
-      showDescriptionIcons?: boolean;
-    }
-  ];
-  renderItem: Function;
-  buttonText: string;
-  heading: string;
-  navigation: any;
-  navigationRoute: string;
-}
+import { HelpfulActionsContainerProps } from "../../intefaces/componentsInterfaces";
 
 const HelpfulActionsContainer: React.FC<HelpfulActionsContainerProps> = ({
   list,

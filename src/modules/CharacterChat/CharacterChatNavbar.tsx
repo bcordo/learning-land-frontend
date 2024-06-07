@@ -12,13 +12,15 @@ import {
 } from "../../../redux/slices/timmerSlice";
 import CustomDropdown from "../../components/CustomDropdown/CustomDropdown";
 import { updateUserSettings } from "../../../redux/slices/userSetingsSlice";
+import { CharacterChatNavbarProps } from "../../intefaces/componentsInterfaces";
+import { NumberInterface } from "../../intefaces/variablesInterfaces";
 
-const CharacterChatNavbar = ({
+const CharacterChatNavbar: React.FC<CharacterChatNavbarProps> = ({
   navigation,
   userSettings,
 }): React.JSX.Element => {
   const completedGoals = 0;
-  const [id, setId] = useState<number>(completedGoals);
+  const [id, setId] = useState<NumberInterface>(completedGoals);
 
   const dispatch = useDispatch();
   const totalGoals = 3;
