@@ -27,7 +27,18 @@ import { NavigationInterface } from "../../intefaces/componentsInterfaces";
 import Drawer from "react-native-drawer";
 import { BlurView } from "@react-native-community/blur";
 import CustomGoalListComponent from "../../components/CustomGaolListComp/CustomGaolListComp";
-
+import { useGetUserMissionHistoryQuery } from "../../../redux/services/missions";
+import {
+  AnyInterface,
+  NumberInterface,
+  RenderMissionHistoryItemInterface,
+  StringInterface,
+} from "../../intefaces/variablesInterfaces";
+interface ScoreInterface {
+  type: StringInterface;
+  icon: any;
+  score: StringInterface | string;
+}
 const MissionHistory: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
@@ -35,6 +46,51 @@ const MissionHistory: React.FC<NavigationInterface> = ({
   const [screenHeight, setScreenHeight] = useState(
     Dimensions.get("window").height
   );
+
+  const [scoreList, setScoreList] = useState<
+    [
+      {
+        type: StringInterface;
+        icon: AnyInterface;
+        score: StringInterface | NumberInterface;
+      }
+    ][]
+  >([]);
+
+  const { data } = useGetUserMissionHistoryQuery({ user_mission_id: 119 });
+
+  useEffect(() => {
+    if (!data) return;
+
+    const newData = data.map(
+      (element: {
+        number_of_goals_completed: number;
+        user_goals: [];
+        incorrect_user_phrases: [];
+        correct_user_phrases: [];
+      }) => {
+        return [
+          {
+            type: "user_goals",
+            icon: Goal,
+            score: `${element?.number_of_goals_completed}/${element?.user_goals?.length}`,
+          },
+          {
+            type: "incorrect_user_phrases",
+            icon: XCiexle,
+            score: `${element?.incorrect_user_phrases?.length}`,
+          },
+          {
+            type: "correct_user_phrases",
+            icon: Message,
+            score: `${element?.correct_user_phrases?.length}`,
+          },
+        ];
+      }
+    );
+
+    setScoreList([...newData]);
+  }, [data]);
 
   useEffect(() => {
     drawerRef.current.open();
@@ -89,52 +145,52 @@ const MissionHistory: React.FC<NavigationInterface> = ({
     );
   };
 
-  const missionsHistoryData = [
-    {
-      date: "12 June 2022",
-      status: "COMPLETED",
-      missionCompleted: 10,
-      totalMissions: 3,
-      completedMissions: 2,
-      pharases: 22,
-      progressText: 12,
-      progressFill: 60,
-    },
-    {
-      date: "12 June 2022",
-      status: "ACTIVE",
-      missionCompleted: 10,
-      totalMissions: 3,
-      completedMissions: 2,
-      pharases: 22,
-      progressText: 3,
-      progressFill: 50,
-    },
-    {
-      date: "12 June 2022",
-      status: "NOT_STARTED",
-      missionCompleted: 10,
-      totalMissions: 3,
-      completedMissions: 2,
-      pharases: 22,
-      progressFill: 0,
-    },
-  ];
-  const renderMissionHistory = ({ item }) => {
+  function formatDate(inputDate: string) {
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const date = new Date(inputDate);
+
+    const day = date.getDate();
+    const monthIndex = date.getMonth();
+    const year = date.getFullYear();
+
+    const formattedDate = `${day} ${months[monthIndex]} ${year}`;
+
+    return formattedDate;
+  }
+  const renderMissionHistory = ({
+    item,
+    index,
+  }: {
+    item: RenderMissionHistoryItemInterface;
+    index: NumberInterface;
+  }) => {
     return (
       <View style={styles.missionHistoryDetailsListContainer}>
         <View style={styles.missionDateContainer}>
           <Text style={[styles.defaultFontFamily, styles.missionDate]}>
-            {item?.date}
+            {formatDate(item?.user_mission_current_time)}
           </Text>
           <View
             style={[
               styles?.missionStatusContainer,
               {
                 backgroundColor:
-                  item?.status === "ACTIVE"
+                  item?.mission_state === "ACTIVE"
                     ? "#FFEFE3"
-                    : item?.status === "COMPLETED"
+                    : item?.mission_state === "COMPLETED"
                     ? "#D9F5F5"
                     : "#F5F5F5",
               },
@@ -146,24 +202,24 @@ const MissionHistory: React.FC<NavigationInterface> = ({
                 styles?.missionStatusTxt,
                 {
                   color:
-                    item?.status === "ACTIVE"
+                    item?.mission_state === "ACTIVE"
                       ? "#F58C39"
-                      : item?.status === "COMPLETED"
+                      : item?.mission_state === "COMPLETED"
                       ? "#7DDFDE"
                       : "#A2AAAA",
                 },
               ]}
             >
-              {item?.status === "ACTIVE"
+              {item?.mission_state === "ACTIVE"
                 ? "IN-PROGRESS"
-                : item?.status === "COMPLETED"
+                : item?.mission_state === "COMPLETED"
                 ? "COMPLETE"
                 : "NOT-STARTED"}
             </Text>
           </View>
         </View>
         <View style={styles.progressBarParent}>
-          <View
+          {/* <View
             style={[styles.progressBar, { width: `${item?.progressFill}%` }]}
           >
             {item?.progressText && (
@@ -171,19 +227,29 @@ const MissionHistory: React.FC<NavigationInterface> = ({
                 + {item?.progressText}
               </Text>
             )}
-          </View>
+          </View> */}
         </View>
         <View style={styles.scoreContainer}>
-          {[Goal, XCiexle, Message].map((e) => (
+          {scoreList[index]?.map((e) => (
             <View
               style={[
                 styles.scoreSubContainer,
-                { opacity: item?.status === "NOT_STARTED" ? 0.5 : 1 },
+                {
+                  opacity:
+                    item?.mission_state === "NOT_STARTED" ||
+                    item?.mission_state === "INACTIVE"
+                      ? 0.5
+                      : 1,
+                },
               ]}
             >
-              <CustomSvgImageComponent width={13} height={13} Component={e} />
+              <CustomSvgImageComponent
+                width={13}
+                height={13}
+                Component={e?.icon}
+              />
               <Text style={[styles.defaultFontFamilySemiBold, styles.scoreTxt]}>
-                {item?.status === "NOT_STARTED" ? "-" : "2/3"}
+                {e?.score}
               </Text>
             </View>
           ))}
@@ -224,10 +290,7 @@ const MissionHistory: React.FC<NavigationInterface> = ({
                 </View>
 
                 <View style={{ marginBottom: 60 }}>
-                  <FlatList
-                    data={missionsHistoryData}
-                    renderItem={renderMissionHistory}
-                  />
+                  <FlatList data={data} renderItem={renderMissionHistory} />
                 </View>
               </View>
               <View></View>

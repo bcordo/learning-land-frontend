@@ -1,7 +1,5 @@
-// export const WEBSOCKET_URL:string= "wss://language-land-api-f38099e7047e.herokuapp.com/api/v1/user_missions/chat"
-
 export const WEBSOCKET_URL:string= "wss://desolate-anchorage-97861-39db3837351f.herokuapp.com/api/v1/user_missions/chat"
-export const BASE_URL =`https://language-land-api-f38099e7047e.herokuapp.com`
+export const BASE_URL =`https://desolate-anchorage-97861-39db3837351f.herokuapp.com`
 
 export const UserMissionState = {
     INACTIVE: "INACTIVE",
@@ -19,7 +17,7 @@ export const UserMissionState = {
   };
   export const InteractionType = {
     COMMAND: "COMMAND",
-    USER_UTTERANCE: "USER_UTTERANCE",
+    USER_UTTERANCE: "USER_UTTERANCE", 
     CHARACTER_UTTERANCE: "CHARACTER_UTTERANCE",
     CHARACTER_RESPONSE: "CHARACTER_RESPONSE",
     ASSISTANT_HINT: "ASSISTANT_HINT",

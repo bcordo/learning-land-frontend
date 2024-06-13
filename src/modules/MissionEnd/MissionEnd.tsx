@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
@@ -24,48 +24,81 @@ import HelphulPharasesComp from "../../components/HelphulPharasesComp/HelphulPha
 import HelpfulActionsContainer from "../../components/HelpfulActionsContainer/HelpfulActionsContainer";
 import CustomButtom from "../../components/CustomButtom/CustomButtom";
 import CustomGoalListComponent from "../../components/CustomGaolListComp/CustomGaolListComp";
-import { useLazyGetUserMissionByMissionIdQuery } from "../../../redux/services/missions";
+import { useLazyGetUserMissionByUserMissionIdQuery } from "../../../redux/services/missions";
 import { useSelector } from "react-redux";
 import { NavigationInterface } from "../../intefaces/componentsInterfaces";
-
+import { StringInterface } from "../../intefaces/variablesInterfaces";
+interface aa {
+  value: string;
+  icon: any;
+  color: string;
+  score: string | number;
+  key: string;
+}
 const MissionEnd: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
+  const [reviewBoxList, setReviewBoxList] = useState<aa[]>([]);
   const [
     getchMissionByMissionId,
     { data: missionDetails, isLoading: fetchingMission },
-  ] = useLazyGetUserMissionByMissionIdQuery();
+  ] = useLazyGetUserMissionByUserMissionIdQuery();
+  useEffect(() => {
+    if (!missionDetails) return;
+    setReviewBoxList([
+      {
+        value: "PHRASES",
+        icon: MessageIcon,
+        color: "#1717171",
+        score: `+${missionDetails?.all_user_phrases?.length}`,
+        key: "total_phrases",
+      },
+      {
+        value: "CORRECT",
+        icon: CheckIcon,
+        color: "#7DDFDE",
+        score: missionDetails?.correct_user_phrases?.length,
+        key: "correct_phrases",
+      },
+      {
+        value: "INCORRECT",
+        icon: XCrossIcon,
+        color: "#FF8B67",
+        score: missionDetails?.incorrect_user_phrases?.length,
+        key: "incorrect_phrases",
+      },
+    ]);
+  }, [missionDetails]);
 
   const { id } = useSelector((state) => state.missionSlice.mission);
 
   useEffect(() => {
-    if (!id) return;
-    getchMissionByMissionId({ id });
-  }, [id]);
+    getchMissionByMissionId({ user_mission_id: id });
+  }, []);
 
-  const reviewBoxList = [
-    {
-      value: "PHRASES",
-      icon: MessageIcon,
-      color: "#1717171",
-      score: "+22",
-      key: "total_phrases",
-    },
-    {
-      value: "CORRECT",
-      icon: CheckIcon,
-      color: "#7DDFDE",
-      score: 18,
-      key: "correct_phrases",
-    },
-    {
-      value: "INCORRECT",
-      icon: XCrossIcon,
-      color: "#FF8B67",
-      score: 4,
-      key: "incorrect_phrases",
-    },
-  ];
+  // const reviewBoxList = [
+  //   {
+  //     value: "PHRASES",
+  //     icon: MessageIcon,
+  //     color: "#1717171",
+  //     score: `+${missionDetails?.all_user_phrases?.length}`,
+  //     key: "total_phrases",
+  //   },
+  //   {
+  //     value: "CORRECT",
+  //     icon: CheckIcon,
+  //     color: "#7DDFDE",
+  //     score: 18,
+  //     key: "correct_phrases",
+  //   },
+  //   {
+  //     value: "INCORRECT",
+  //     icon: XCrossIcon,
+  //     color: "#FF8B67",
+  //     score: 4,
+  //     key: "incorrect_phrases",
+  //   },
+  // ];
 
   const goalsList = [
     {
@@ -161,33 +194,37 @@ const MissionEnd: React.FC<NavigationInterface> = ({
 
   const renderHelpfulPharases = ({
     item,
-    index,
   }: {
     item: {
-      title: string;
-      description: string;
-      descriptionColor?: string;
-      type?: string;
-      hideDescriptionText?: boolean;
-      isRight: boolean;
-      text_language: string;
+      native_text: StringInterface;
+      native_text_language: StringInterface;
+      translated_text: StringInterface;
+      translated_text_language: StringInterface;
+      interaction_type?: string;
       showDescriptionIcons?: boolean;
+      utterance: StringInterface;
     };
     index: number;
   }) => {
     return (
       <HelphulPharasesComp
-        title={item.title}
-        description={item?.description}
-        text_language={item?.text_language}
-        descriptionColor={item.descriptionColor}
-        type={item.type}
-        hideDescriptionText={item.hideDescriptionText}
-        isRight={item.isRight}
-        showDescriptionIcons={item.showDescriptionIcons}
+        title={item.native_text || item?.utterance}
+        description={item?.translated_text}
+        text_language={item?.native_text_language}
+        interaction_type={item?.interaction_type}
+        showDescriptionIcons={item?.showDescriptionIcons}
       />
     );
   };
+  function calculateResult(arr: [], completed_goals: number) {
+    const completionPercentage = (completed_goals || 0 / arr?.length) * 100;
+    let result = (completionPercentage / 100) * 70;
+    result = Math.min(result, 70);
+    result = Math.max(result, 0);
+
+    return result;
+  }
+
   return (
     <>
       <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
@@ -220,7 +257,10 @@ const MissionEnd: React.FC<NavigationInterface> = ({
               <AnimatedCircularProgress
                 size={250}
                 width={12}
-                fill={50}
+                fill={calculateResult(
+                  missionDetails?.user_goals,
+                  missionDetails?.number_of_goals_completed
+                )}
                 tintColor="#F1F5F9"
                 backgroundColor="#d8e1ee"
                 lineCap="round"
@@ -334,7 +374,7 @@ const MissionEnd: React.FC<NavigationInterface> = ({
                         { color: item.color || "" },
                       ]}
                     >
-                      {missionDetails && missionDetails[item?.key]?.length}
+                      {item?.score}
                     </Text>
                   </View>
                 </View>
@@ -350,24 +390,29 @@ const MissionEnd: React.FC<NavigationInterface> = ({
           </View>
 
           <HelpfulActionsContainer
-            list={incorrectPharases}
+            list={missionDetails?.incorrect_user_phrases?.map((element) => {
+              return {
+                ...element,
+                showDescriptionIcons: true,
+              };
+            })}
             renderItem={renderHelpfulPharases}
-            buttonText={` See all 10 mistakes`}
+            buttonText={` See all ${missionDetails?.incorrect_user_phrases?.length} mistakes`}
             heading={"Incorrect Phrases"}
             navigation={navigation}
             navigationRoute={"HelpfulPharases"}
           />
           <HelpfulActionsContainer
-            list={correctPharases}
+            list={missionDetails?.correct_user_phrases}
             renderItem={renderHelpfulPharases}
-            buttonText={`See all 10`}
+            buttonText={`See all ${missionDetails?.correct_user_phrases?.length}`}
             heading={"Correct Phrases"}
             navigation={navigation}
             navigationRoute={"HelpfulPharases"}
           />
 
           <HelpfulActionsContainer
-            list={transcriptList}
+            list={missionDetails?.interactions}
             renderItem={renderHelpfulPharases}
             buttonText={`See full transcript`}
             heading={"Transcript"}

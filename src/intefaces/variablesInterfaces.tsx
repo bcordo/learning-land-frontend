@@ -25,6 +25,7 @@ export interface WorldInterface {
   updated_at: StringInterface;
   world_icon: StringInterface;
   world_index: NumberInterface;
+  missions: any;
 }
 export interface ListItem {
   icon: AnyInterface;
@@ -61,8 +62,31 @@ export interface pharsesInterface {
   user_id: NumberInterface;
 }
 export interface MissionItemInterface {
-  position: string;
-  currentltActive: boolean;
-  icon: any;
-  secondaryIcon?: any;
+  position: StringInterface;
+  currentltActive: BooleanInterface;
+  icon: AnyInterface;
+  secondaryIcon?: AnyInterface;
+}
+export interface RenderMissionHistoryItemInterface {
+  all_user_phrases: AnyInterface;
+  correct_user_phrases: AnyInterface;
+  created_at: StringInterface;
+  id: NumberInterface;
+  incorrect_user_phrases: AnyInterface;
+  interaction_summary: StringInterface | NullInterface;
+  interactions: AnyInterface;
+  mission_id: NumberInterface;
+  mission_state: StringInterface;
+  number_of_goals_completed: NumberInterface;
+  pause_time: AnyInterface;
+  start_time: AnyInterface;
+  time_spent_seconds: NumberInterface;
+  updated_at: StringInterface;
+  user_assistant_id: NumberInterface;
+  user_character_id: NumberInterface;
+  user_goals: AnyInterface;
+  user_id: NumberInterface;
+  user_mission_current_location: StringInterface;
+  user_mission_current_time: StringInterface;
+  world_id: NumberInterface;
 }

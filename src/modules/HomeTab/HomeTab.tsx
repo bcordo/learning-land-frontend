@@ -37,11 +37,9 @@ const HomeTab: React.FC<NavigationInterface> = ({
 
   const [fetchWorlds, { data: allWorlds, isLoading: fetchingWorlds }] =
     useLazyGetAllWorldsQuery();
-
   useEffect(() => {
     fetchWorlds("");
   }, []);
-
   const footerList = [
     { label: "Home", icon: GlobeIcon },
     { label: "Training", icon: DumbleBlackIcon },
@@ -147,6 +145,7 @@ const HomeTab: React.FC<NavigationInterface> = ({
                 (element: WorldInterface, idx: NumberInterface) => {
                   return (
                     <CustomMissionHomeTabComponent
+                      missions={element?.missions}
                       extraData={element}
                       index={idx}
                       navigation={navigation}

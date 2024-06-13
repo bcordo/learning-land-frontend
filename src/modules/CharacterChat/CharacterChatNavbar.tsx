@@ -21,6 +21,7 @@ const CharacterChatNavbar: React.FC<CharacterChatNavbarProps> = ({
 }): React.JSX.Element => {
   const completedGoals = 0;
   const [id, setId] = useState<NumberInterface>(completedGoals);
+  // const { data: userGoals } = useGetUserGoalsByUserMissionIdQuery("");
 
   const dispatch = useDispatch();
   const totalGoals = 3;
@@ -52,35 +53,37 @@ const CharacterChatNavbar: React.FC<CharacterChatNavbarProps> = ({
     return () => clearInterval(interval);
   }, [totalSeconds, pauseTimmer]);
 
-  const renderItem = (item) => (
-    <View
-      style={[
-        styles.goalsDropdownSubContainer,
-        item.id === data[data.length - 1].id
-          ? styles.lastGoalsDropdownSubContainer
-          : null,
-        { gap: id >= item.id ? 8 : 10 },
-      ]}
-    >
-      {id >= item.id ? (
-        <Image
-          style={[styles.goalsDropdownContainerIcon, { marginLeft: -5 }]}
-          source={require("../../assets/icons/Progress_step.png")}
-        />
-      ) : (
-        <View style={styles.stepCircleOutlined}></View>
-      )}
+  const renderItem = (item) => {
+    return (
+      <View
+        style={[
+          styles.goalsDropdownSubContainer,
+          item.id === data[data.length - 1].id
+            ? styles.lastGoalsDropdownSubContainer
+            : null,
+          { gap: id >= item.id ? 8 : 10 },
+        ]}
+      >
+        {id >= item.id ? (
+          <Image
+            style={[styles.goalsDropdownContainerIcon, { marginLeft: -5 }]}
+            source={require("../../assets/icons/Progress_step.png")}
+          />
+        ) : (
+          <View style={styles.stepCircleOutlined}></View>
+        )}
 
-      <View style={{ gap: 5 }}>
-        <Text style={[styles.defaultFontFamilySemiBold, styles.goalsValue]}>
-          {item.value}
-        </Text>
-        <Text style={[styles.defaultFontFamily, , styles.goalsValue]}>
-          {item.subVal}
-        </Text>
+        <View style={{ gap: 5 }}>
+          <Text style={[styles.defaultFontFamilySemiBold, styles.goalsValue]}>
+            {item.value}
+          </Text>
+          <Text style={[styles.defaultFontFamily, , styles.goalsValue]}>
+            {item.subVal}
+          </Text>
+        </View>
       </View>
-    </View>
-  );
+    );
+  };
   return (
     <View style={styles.characterNavContainer}>
       <View style={styles.pauseIconContainer}>
@@ -101,7 +104,6 @@ const CharacterChatNavbar: React.FC<CharacterChatNavbarProps> = ({
       <View style={styles.dropdownContainer}>
         <CustomDropdown
           list={data}
-          // dropdownOverlayColor={"rgba(0, 0, 0, 0.18)"}
           renderButton={(selectedItem, isOpened) => {
             return (
               <View style={styles.dropdownTxtContainer}>

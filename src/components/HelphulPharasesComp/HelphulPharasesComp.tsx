@@ -15,7 +15,7 @@ const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({
   text_language,
   description,
   descriptionColor,
-  type,
+  interaction_type,
   isRight,
   hideDescriptionText,
   showDescriptionIcons,
@@ -25,7 +25,7 @@ const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({
     useLazyGetTranslatedTextQuery();
 
   useEffect(() => {
-    if (!title || !text_language || hideDescriptionText) return;
+    if (!title || !text_language || hideDescriptionText || description) return;
     translateText({
       foreign_text: title,
       source_lang: text_language,
@@ -36,22 +36,23 @@ const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({
   return (
     <View
       style={{
-        alignItems: type === "user-response" ? "flex-end" : "flex-start",
+        alignItems:
+          interaction_type === "USER_UTTERANCE" ? "flex-end" : "flex-start",
       }}
     >
       <View
         style={[
           styles.helpfulPharasesListItem,
-          { width: type ? "90%" : "100%" },
+          { width: interaction_type ? "90%" : "100%" },
         ]}
       >
         <CustomSvgImageComponent
           width={18}
           height={18}
           Component={
-            type === "user-response" && isRight
+            interaction_type === "user-response" && isRight
               ? Tick
-              : type === "user-response" && !isRight
+              : interaction_type === "user-response" && !isRight
               ? XSvg
               : VolumeUp
           }
@@ -110,8 +111,7 @@ const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({
                 {description}
               </Text>
             )
-          ) : null}
-          {!isFetching && isLoading ? (
+          ) : !isFetching && isLoading ? (
             <CustomShimmer
               styleProps={{
                 width: "80%",

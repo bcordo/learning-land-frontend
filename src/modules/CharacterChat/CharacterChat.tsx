@@ -174,8 +174,8 @@ const CharacterChat: React.FC<NavigationInterface> = ({
         Authorization: `Bearer ${token}`,
       },
     };
-
-    const newWS = new WebSocket(`${WEBSOCKET_URL}`, [], websocketOptions);
+    const websocketUrlWithToken = `${WEBSOCKET_URL}?token=${token}`;
+    const newWS = new WebSocket(websocketUrlWithToken);
     setWS(newWS);
     newWS.onopen = () => {
       setSocketConnected(true);
@@ -183,7 +183,6 @@ const CharacterChat: React.FC<NavigationInterface> = ({
       console.log("WebSocket connected");
     };
     newWS.onmessage = (event) => {
-      console.log("MESSAGE ARRIVED");
       isSendingAudio(false);
       setSpeakStatus("Start speaking");
       handleServerMessage(event.data);
@@ -516,12 +515,15 @@ const CharacterChat: React.FC<NavigationInterface> = ({
       if (message.content_type === ContentType.AUDIO) isSendingAudio(true);
       try {
         let messageWithMetadata = {};
-        if (Platform.OS === "ios") {
+        if (
+          Platform.OS === "ios" &&
+          message?.content_type !== ContentType.AUDIO
+        ) {
           messageWithMetadata = {
             ...message,
             metadata: {
               ...metadata,
-              user_mission_id: 6,
+              user_mission_id: 119,
               user_id: 14,
               file_extension: "m4a",
             },
@@ -531,12 +533,12 @@ const CharacterChat: React.FC<NavigationInterface> = ({
             ...message,
             metadata: {
               ...metadata,
-              user_mission_id: 6,
+              user_mission_id: 119,
               user_id: 14,
             },
           };
         }
-
+        console.log(messageWithMetadata, "messageWithMetadata");
         await WS.send(JSON.stringify(messageWithMetadata));
         console.log("Message Sent");
       } catch (err) {

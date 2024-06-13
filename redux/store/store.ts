@@ -11,6 +11,7 @@ import userSettingsApi from '../services/user_settings'
 import worldsApi from '../services/worldsApi'
 import loginApi from '../services/loginApi'
 import signupApi from '../services/signupApi'
+import user_goalsApi from '../services/user_goals'
 
 
 export const store = configureStore({
@@ -27,8 +28,9 @@ export const store = configureStore({
     [worldsApi.reducerPath]: worldsApi.reducer,
     [loginApi.reducerPath]: loginApi.reducer,
     [signupApi.reducerPath]: signupApi.reducer,
+    [user_goalsApi.reducerPath]: user_goalsApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(helpfulPharasesApi.middleware,translateApi.middleware,missionsApi.middleware,userSettingsApi.middleware,worldsApi.middleware,loginApi.middleware,signupApi.middleware)
+    getDefaultMiddleware().concat(helpfulPharasesApi.middleware,translateApi.middleware,missionsApi.middleware,userSettingsApi.middleware,worldsApi.middleware,loginApi.middleware,signupApi.middleware,user_goalsApi.middleware)
 });
 

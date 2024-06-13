@@ -147,7 +147,7 @@ export interface HelphulPharasesCompProps {
   text_language?: StringInterface;
   description?: StringInterface;
   descriptionColor?: StringInterface;
-  type?: StringInterface;
+  interaction_type?: StringInterface;
   hideDescriptionText?: BooleanInterface;
   isRight?: BooleanInterface;
   showDescriptionIcons?: BooleanInterface;
@@ -173,4 +173,24 @@ export interface ContainerProps {
   currentItemIndex: NumberInterface;
   world_id: NumberInterface;
   onLayout?: (event: AnyInterface) => void;
+  missions: [
+    {
+      assistant_id: NumberInterface;
+      character_id: NumberInterface;
+      created_at: StringInterface;
+      id: NumberInterface;
+      mission_definition: StringInterface;
+      mission_icon: any;
+      mission_index: NumberInterface;
+      mission_location: StringInterface;
+      mission_narration_template: StringInterface;
+      mission_start_datetime: StringInterface;
+      mission_start_situation: StringInterface;
+      mission_type: StringInterface;
+      public_summary: StringInterface;
+      title: StringInterface;
+      updated_at: StringInterface;
+      world_id: NumberInterface;
+    }
+  ];
 }

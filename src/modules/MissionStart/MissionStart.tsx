@@ -31,9 +31,196 @@ const MissionStart: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
   const dispatch = useDispatch();
-  const [fetchMissions, { isLoading: fetchingMissions }] =
-    useLazyGetAllMissionsQuery();
-
+  // const [fetchMissions, { isLoading: fetchingMissions }] =
+  //   useLazyGetAllMissionsQuery();
+  const aa = {
+    all_user_phrases: [],
+    assistant_id: 1,
+    correct_user_phrases: [],
+    created_at: "2024-06-12T20:58:53.880054",
+    id: 1,
+    incorrect_user_phrases: [],
+    index: 1,
+    interaction_summary: null,
+    interactions: [
+      {
+        action: null,
+        created_at: "2024-06-12T20:58:53.880054",
+        embedding: "",
+        emotion: null,
+        from_user_assistant_id: null,
+        from_user_character_id: null,
+        from_user_id: 1,
+        id: 1,
+        importance: 3,
+        interaction_type: "ASSISTANT_CORRECTION",
+        prompt_string: "Prompt string for interaction 1 in user mission 1",
+        status: "ACTIVE",
+        thought: null,
+        to_user_assistant_id: null,
+        to_user_character_id: 1,
+        to_user_id: null,
+        translated_utterance: null,
+        translated_utterance_language: null,
+        updated_at: "2024-06-12T21:01:33.321765",
+        user_mission_id: 1,
+        user_training_id: null,
+        utterance: "Interaction 1 for user mission 1",
+        utterance_language: null,
+      },
+      {
+        action: null,
+        created_at: "2024-06-12T20:58:53.880054",
+        embedding: "",
+        emotion: null,
+        from_user_assistant_id: null,
+        from_user_character_id: null,
+        from_user_id: 1,
+        id: 2,
+        importance: 4,
+        interaction_type: "ASSISTANT_HINT",
+        prompt_string: "Prompt string for interaction 2 in user mission 1",
+        status: "ACTIVE",
+        thought: null,
+        to_user_assistant_id: null,
+        to_user_character_id: 7,
+        to_user_id: null,
+        translated_utterance: null,
+        translated_utterance_language: null,
+        updated_at: "2024-06-12T21:01:33.322558",
+        user_mission_id: 1,
+        user_training_id: null,
+        utterance: "Interaction 2 for user mission 1",
+        utterance_language: null,
+      },
+      {
+        action: null,
+        created_at: "2024-06-12T20:58:53.880054",
+        embedding: "",
+        emotion: null,
+        from_user_assistant_id: null,
+        from_user_character_id: null,
+        from_user_id: 1,
+        id: 3,
+        importance: 2,
+        interaction_type: "USER_ACTION",
+        prompt_string: "Prompt string for interaction 3 in user mission 1",
+        status: "ACTIVE",
+        thought: null,
+        to_user_assistant_id: null,
+        to_user_character_id: 20,
+        to_user_id: null,
+        translated_utterance: null,
+        translated_utterance_language: null,
+        updated_at: "2024-06-12T21:01:33.323170",
+        user_mission_id: 1,
+        user_training_id: null,
+        utterance: "Interaction 3 for user mission 1",
+        utterance_language: null,
+      },
+      {
+        action: null,
+        created_at: "2024-06-12T20:58:53.880054",
+        embedding: "",
+        emotion: null,
+        from_user_assistant_id: null,
+        from_user_character_id: null,
+        from_user_id: 1,
+        id: 4,
+        importance: 3,
+        interaction_type: "ASSISTANT_HINT",
+        prompt_string: "Prompt string for interaction 4 in user mission 1",
+        status: "ACTIVE",
+        thought: null,
+        to_user_assistant_id: null,
+        to_user_character_id: 8,
+        to_user_id: null,
+        translated_utterance: null,
+        translated_utterance_language: null,
+        updated_at: "2024-06-12T21:01:33.323761",
+        user_mission_id: 1,
+        user_training_id: null,
+        utterance: "Interaction 4 for user mission 1",
+        utterance_language: null,
+      },
+      {
+        action: null,
+        created_at: "2024-06-12T20:58:53.880054",
+        embedding: "",
+        emotion: null,
+        from_user_assistant_id: null,
+        from_user_character_id: null,
+        from_user_id: 1,
+        id: 5,
+        importance: 5,
+        interaction_type: "COMMAND",
+        prompt_string: "Prompt string for interaction 5 in user mission 1",
+        status: "ACTIVE",
+        thought: null,
+        to_user_assistant_id: null,
+        to_user_character_id: 2,
+        to_user_id: null,
+        translated_utterance: null,
+        translated_utterance_language: null,
+        updated_at: "2024-06-12T21:01:33.324350",
+        user_mission_id: 1,
+        user_training_id: null,
+        utterance: "Interaction 5 for user mission 1",
+        utterance_language: null,
+      },
+    ],
+    mission_definition: "Definition for mission 1 in world 1",
+    mission_icon: "https://www.google.com",
+    mission_id: 1,
+    mission_index: 1,
+    mission_location: "Location for mission 1 in world 1",
+    mission_narration_template: "Narration template for mission 1 in world 1",
+    mission_start_datetime: "2021-10-01 12:00:00",
+    mission_start_situation: "Start situation for mission 1 in world 1",
+    mission_state: "ACTIVE",
+    mission_type: "PRIMARY",
+    number_of_goals_completed: 0,
+    pause_time: null,
+    public_summary: "Public summary for mission 1 in world 1",
+    start_time: null,
+    time_spent_seconds: 0,
+    title: "Mission 1, world 1",
+    updated_at: "2024-06-12T21:01:31.235205",
+    user_assistant_id: 1,
+    user_goals: [
+      {
+        created_at: "2024-06-12T20:58:53.880054",
+        goal_id: 1,
+        id: 1,
+        state: "FAILED",
+        updated_at: "2024-06-12T21:01:33.320368",
+        user_id: 1,
+        user_mission_id: 1,
+      },
+      {
+        created_at: "2024-06-12T20:58:53.880054",
+        goal_id: 2,
+        id: 2,
+        state: "COMPLETED",
+        updated_at: "2024-06-12T21:01:33.320788",
+        user_id: 1,
+        user_mission_id: 1,
+      },
+      {
+        created_at: "2024-06-12T20:58:53.880054",
+        goal_id: 3,
+        id: 3,
+        state: "ACTIVE",
+        updated_at: "2024-06-12T21:01:33.321040",
+        user_id: 1,
+        user_mission_id: 1,
+      },
+    ],
+    user_id: 1,
+    user_mission_current_location: "Location for user mission 1",
+    user_mission_current_time: "2021-10-01T12:00:00",
+    world_id: 1,
+  };
   const allMissions = useSelector(
     (state: { missionSlice: any }) => state.missionSlice.mission
   );
@@ -42,7 +229,6 @@ const MissionStart: React.FC<NavigationInterface> = ({
   );
 
   useEffect(() => {
-    fetchMissions("");
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
       (event) => {
@@ -85,20 +271,20 @@ const MissionStart: React.FC<NavigationInterface> = ({
         icon={Star}
         title={item.title}
         description={item.description}
-        isFetching={fetchingMissions}
+        // isFetching={fetchingMissions}
       />
     );
   };
-  const renderItemSkeleton = ({ item }) => {
-    return (
-      <CustomGoalListComponent
-        icon={Star}
-        title={""}
-        description={""}
-        isFetching={fetchingMissions}
-      />
-    );
-  };
+  // const renderItemSkeleton = ({ item }) => {
+  //   return (
+  //     <CustomGoalListComponent
+  //       icon={Star}
+  //       title={""}
+  //       description={""}
+  //       // isFetching={fetchingMissions}
+  //     />
+  //   );
+  // };
   const renderHelpfulPharases = ({
     item,
     index,
@@ -119,7 +305,7 @@ const MissionStart: React.FC<NavigationInterface> = ({
       <HelphulPharasesComp
         title={item.text}
         text_language={item?.text_language}
-        isFetching={fetchingMissions}
+        // isFetching={fetchingMissions}
       />
     ) : null;
   };
@@ -192,14 +378,18 @@ const MissionStart: React.FC<NavigationInterface> = ({
                 <Text style={[styles.defaultFontFamilyBold, styles.goalstxt]}>
                   Goals
                 </Text>
-                {fetchingMissions ? (
+                {/* {fetchingMissions ? (
                   <FlatList data={[1, 2, 3]} renderItem={renderItemSkeleton} />
                 ) : (
                   <FlatList
                     data={allMissions?.goals || []}
                     renderItem={renderItem}
                   />
-                )}
+                )} */}
+                <FlatList
+                  data={allMissions?.goals || []}
+                  renderItem={renderItem}
+                />
               </View>
             )}
 

@@ -6,7 +6,7 @@ import GiftIcon from "../../assets/icons/gift.svg";
 import MessageIcon from "../../assets/icons/message-orange.svg";
 import BaristaIcon from "../../assets/icons/barista.svg";
 import Coffee from "../../assets/icons/coffee.svg";
-import { useLazyGetMissionByWorldIdQuery } from "../../../redux/services/missions";
+import { useLazyGetUserMissionByMissionIdsQuery } from "../../../redux/services/missions";
 import CustomShimmer from "../CustomShimmer/CustomShimmer";
 import CustomMissionCircleComponent from "./CustomMissionCircleComponent";
 import { ContainerProps } from "../../intefaces/componentsInterfaces";
@@ -21,14 +21,16 @@ const CustomMissionHomeTabComponent: React.FC<ContainerProps> = ({
   index,
   world_id,
   currentItemIndex,
+  missions,
   onLayout,
 }) => {
-  const [fetchMissionsByWorldId, { data: missionData, isLoading }] =
-    useLazyGetMissionByWorldIdQuery();
-
+  const [fetchMissionsByMissionIds, { data: missionsdata, isLoading }] =
+    useLazyGetUserMissionByMissionIdsQuery();
   useEffect(() => {
+    const missionsIds: number[] = [];
+    missions?.map((e) => missionsIds.push(e?.id));
     if (!world_id) return;
-    fetchMissionsByWorldId({ id: world_id });
+    fetchMissionsByMissionIds({ missionsIds });
   }, [world_id]);
 
   const bounceValue = useRef(new Animated.Value(0)).current;
@@ -71,7 +73,7 @@ const CustomMissionHomeTabComponent: React.FC<ContainerProps> = ({
         }),
       ])
     ).start();
-  }, [bounceValue, currentItemIndex, isLoading]);
+  }, [bounceValue, currentItemIndex]);
   return (
     <>
       <FadedDividerMiddleText text={`WORLD ${index + 1}`} />
@@ -97,7 +99,7 @@ const CustomMissionHomeTabComponent: React.FC<ContainerProps> = ({
         </>
       ) : (
         <View onLayout={handleLayout} style={{ paddingTop: 32 }}>
-          {generateData(missionData?.length).map(
+          {generateData(missionsdata?.length).map(
             (item: MissionItemInterface, listIndex) => {
               return (
                 <CustomMissionCircleComponent
@@ -107,7 +109,10 @@ const CustomMissionHomeTabComponent: React.FC<ContainerProps> = ({
                   item={item}
                   navigation={navigation}
                   bounceValue={bounceValue}
-                  missionData={missionData}
+                  missionData={{
+                    ...missions[listIndex],
+                    ...missionsdata[listIndex],
+                  }}
                   extraData={extraData}
                 />
               );

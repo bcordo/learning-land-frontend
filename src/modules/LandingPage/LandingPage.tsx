@@ -24,26 +24,30 @@ const LandingPage: React.FC<NavigationInterface> = ({
     const authenticate = async () => {
       const token = await AsyncStorage.getItem("token");
       if (!token) {
-        const { email, password } = generateEmailAndPassword();
-        const details = {
-          email,
-          is_active: true,
-          is_superuser: false,
-          is_staff: false,
-          first_name: "string",
-          last_name: "string",
-          phone_number: "string",
-          age: 0,
-          gender: "M",
-          description: "string",
-          language_level: "A1",
-          learning_language: "BG",
-          native_language: "BG",
-          password,
-          hashed_password: password,
-        };
+        //   const { email, password } = generateEmailAndPassword();
+        //   const details = {
+        //     email,
+        //     is_active: true,
+        //     is_superuser: false,
+        //     is_staff: false,
+        //     first_name: "string",
+        //     last_name: "string",
+        //     phone_number: "string",
+        //     age: 0,
+        //     gender: "M",
+        //     description: "string",
+        //     language_level: "A1",
+        //     learning_language: "BG",
+        //     native_language: "BG",
+        //     password,
+        //     hashed_password: password,
+        //   };
         try {
-          const response = await signUpApi({ body: details });
+          const response = await loginUserApi({
+            username: "test@example.com",
+            password: "test",
+          });
+          //     const response = await signUpApi({ body: details });
           if (response?.data) {
             const { access_token } = response?.data;
             await AsyncStorage.setItem("token", access_token);
