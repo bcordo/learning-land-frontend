@@ -94,10 +94,7 @@ const LandingPage: React.FC<NavigationInterface> = ({
           </View>
           <View style={styles.buttonContainer}>
             <CustomButtom
-              textStyle={[
-                styles.getStartedButtonText,
-                styles.defaultFontFamilySemiBold,
-              ]}
+              textStyle={[styles.getStarted, styles.defaultFontFamilySemiBold]}
               buttonStyle={styles.getStarted}
               onPress={() => navigation.navigate("HomeTab")}
               buttonTxt={"GET STARTED"}

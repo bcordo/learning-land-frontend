@@ -383,9 +383,7 @@ const MissionEnd: React.FC<NavigationInterface> = ({
                     styles.defaultFontFamilySemiBold,
                   ]}
                   buttonStyle={styles.alreadyHaveAnAccount}
-                  onPress={() => {
-                    navigation.navigate("MissionHistory");
-                  }}
+                  onPress={() => {}}
                   buttonTxt={"PRACTICE MISTAKES"}
                   icon={DumbleIcon}
                 />
@@ -396,7 +394,9 @@ const MissionEnd: React.FC<NavigationInterface> = ({
                     styles.defaultFontFamilySemiBold,
                   ]}
                   buttonStyle={styles.getStarted}
-                  onPress={() => {}}
+                  onPress={() => {
+                    navigation.navigate("HomeTab");
+                  }}
                   buttonTxt={"CONTINUE"}
                 />
               </View>

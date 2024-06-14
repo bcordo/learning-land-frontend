@@ -153,7 +153,15 @@ const MissionStart: React.FC<NavigationInterface> = ({
               />
             </View>
 
-            <CustomSvgImageComponent width={20} height={20} Component={Timer} />
+            <TouchableOpacity
+              onPress={() => navigation.navigate("MissionHistory")}
+            >
+              <CustomSvgImageComponent
+                width={20}
+                height={20}
+                Component={Timer}
+              />
+            </TouchableOpacity>
           </View>
           <ScrollView
             style={{

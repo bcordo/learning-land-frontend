@@ -35,111 +35,107 @@ const CustomMissionCircleComponent: React.FC<
 
   return (
     <>
-      {
-        // (currentItemIndex === index + 1 || currentItemIndex === 0) &&
-        // listIndex === 0
-        ["ACTIVE", "NOT_STARTED"].includes(missionData?.mission_state) ? (
-          <View style={[styles.missionListContainer, { height: 110 }]}>
-            <AnimatedCircularProgress
-              size={95}
-              width={4}
-              fill={0}
-              tintColor="#DD6100"
-              backgroundColor="#d6e2ed"
-              lineCap="round"
-              rotation={0}
-              style={{
+      {["ACTIVE", "NOT_STARTED"].includes(missionData?.mission_state) &&
+      currentItemIndex === index ? (
+        <View style={[styles.missionListContainer, { height: 110 }]}>
+          {item?.secondaryIcon ? <SecondaryIconComponent item={item} /> : null}
+          <AnimatedCircularProgress
+            size={95}
+            width={4}
+            fill={0}
+            tintColor="#DD6100"
+            backgroundColor="#d6e2ed"
+            lineCap="round"
+            rotation={0}
+            style={{
+              position: "absolute",
+              left: `${item.position}%` as DimensionValue,
+              top: 0,
+              transform: [{ translateX: -item.position }],
+            }}
+          >
+            {(fill) => (
+              <TouchableOpacity
+                onPress={() => {
+                  console.log("okmissionData123", missionData);
+                  dispatch(
+                    updateMission({
+                      ...missionData,
+                      index: index + 1,
+                    })
+                  );
+                  navigation.navigate("MissionStart", {
+                    id: extraData?.id,
+                  });
+                }}
+                style={styles.circularBarRoundBox}
+              >
+                <CustomSvgImageComponent
+                  width={42}
+                  height={42}
+                  Component={MessageIcon}
+                />
+              </TouchableOpacity>
+            )}
+          </AnimatedCircularProgress>
+
+          <Animated.View
+            style={{
+              position: "absolute",
+              top: -42,
+              left: `${+item.position - 7}%`,
+              transform: [
+                {
+                  translateY: bounceValue.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, -20],
+                  }),
+                },
+                { translateX: -item.position },
+              ],
+            }}
+          >
+            <View style={{ position: "relative" }}>
+              <View style={[styles.tooltipContainer]}>
+                <Text
+                  style={[
+                    styles.defaultFontFamilySemiBold,
+                    { color: "#F58C39", fontSize: 16 },
+                  ]}
+                >
+                  {listIndex ? "CONTINUE" : "START HERE"}
+                </Text>
+              </View>
+
+              <Image
+                style={{ width: 144, height: 59 }}
+                source={require("../../assets/icons/tooltip-image.png")}
+              />
+            </View>
+          </Animated.View>
+        </View>
+      ) : (
+        <View style={[styles.missionListContainer, { height: 90 }]}>
+          {item?.secondaryIcon ? <SecondaryIconComponent item={item} /> : null}
+          <View
+            style={[
+              styles.circularBarRoundBox,
+              {
                 position: "absolute",
                 left: `${item.position}%` as DimensionValue,
                 top: 0,
                 transform: [{ translateX: -item.position }],
-              }}
-            >
-              {(fill) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    dispatch(
-                      updateMission({
-                        ...missionData,
-                        index: index + 1,
-                      })
-                    );
-                    navigation.navigate("MissionStart", {
-                      id: extraData?.id,
-                    });
-                  }}
-                  style={styles.circularBarRoundBox}
-                >
-                  <CustomSvgImageComponent
-                    width={42}
-                    height={42}
-                    Component={MessageIcon}
-                    // Component={item.icon}
-                  />
-                </TouchableOpacity>
-              )}
-            </AnimatedCircularProgress>
-
-            <Animated.View
-              style={{
-                position: "absolute",
-                top: -42,
-                left: `${+item.position - 7}%`,
-                transform: [
-                  {
-                    translateY: bounceValue.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0, -20],
-                    }),
-                  },
-                  { translateX: -item.position },
-                ],
-              }}
-            >
-              <View style={{ position: "relative" }}>
-                <View style={[styles.tooltipContainer]}>
-                  <Text
-                    style={[
-                      styles.defaultFontFamilySemiBold,
-                      { color: "#F58C39", fontSize: 16 },
-                    ]}
-                  >
-                    {listIndex ? "CONTINUE" : "START HERE"}
-                  </Text>
-                </View>
-
-                <Image
-                  style={{ width: 144, height: 59 }}
-                  source={require("../../assets/icons/tooltip-image.png")}
-                />
-              </View>
-            </Animated.View>
+              },
+            ]}
+          >
+            <CustomSvgImageComponent
+              width={42}
+              height={42}
+              Component={LockIcon}
+            />
           </View>
-        ) : (
-          <View style={[styles.missionListContainer, { height: 90 }]}>
-            {item?.secondaryIcon ? (
-              <SecondaryIconComponent item={item} />
-            ) : null}
-            <View
-              style={[
-                styles.circularBarRoundBox,
-                {
-                  position: "absolute",
-                  left: `${item.position}%` as DimensionValue,
-                  top: 0,
-                  transform: [{ translateX: -item.position }],
-                },
-              ]}
-            >
-              <CustomSvgImageComponent
-                width={42}
-                height={42}
-                Component={LockIcon}
-              />
-            </View>
-          </View>
-        )
-      }
+        </View>
+      )}
     </>
   );
 };

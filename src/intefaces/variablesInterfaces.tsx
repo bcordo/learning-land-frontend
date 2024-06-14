@@ -116,3 +116,9 @@ export interface MissionHistoryDataInterface {
   correct_user_phrases: [];
   mission_state: StringInterface;
 }
+export interface TimerSliceInterface {
+  totalSeconds: NumberInterface;
+  minutes: NumberInterface;
+  seconds: NumberInterface;
+  pauseTimmer: BooleanInterface;
+}

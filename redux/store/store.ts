@@ -16,10 +16,14 @@ import user_goalsApi from '../services/user_goals'
 
 export const store = configureStore({
   reducer: {
+
+    // Slices 
     timmerSlice,
     missionSlice,
     userSettingsSlice,
     missionHistorySlice,
+
+    // APIS 
     
     [helpfulPharasesApi.reducerPath]: helpfulPharasesApi.reducer,
     [translateApi.reducerPath]: translateApi.reducer,

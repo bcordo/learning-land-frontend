@@ -29,7 +29,7 @@ import {
 const HomeTab: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
-  const [selectedItem, setSelectedItem] = useState<StringInterface>("home");
+  const [selectedItem, setSelectedItem] = useState<StringInterface>("Home");
   const [currentItemIndex, setCurrentItemIndex] = useState<NumberInterface>(0);
   const scrollViewRef = useRef<any>(null);
   const [componentHeights, setComponentHeights] =
@@ -56,7 +56,8 @@ const HomeTab: React.FC<NavigationInterface> = ({
       cumulativeHeight += componentHeights[index] - 100;
       index++;
     }
-    setCurrentItemIndex(index);
+    if (index <= 0) index = 1;
+    setCurrentItemIndex(index - 1);
   };
 
   const handleComponentLayout = (
@@ -115,7 +116,7 @@ const HomeTab: React.FC<NavigationInterface> = ({
                     ]}
                   >
                     {allWorlds &&
-                      allWorlds[currentItemIndex ? currentItemIndex - 1 : 0]
+                      allWorlds[currentItemIndex ? currentItemIndex : 0]
                         ?.title}{" "}
                   </Text>
 
@@ -126,11 +127,10 @@ const HomeTab: React.FC<NavigationInterface> = ({
                         styles.missionDetailsTxtSmall,
                       ]}
                     >
-                      {(allWorlds &&
+                      {allWorlds &&
                         !fetchingWorlds &&
                         allWorlds[currentItemIndex ? currentItemIndex - 1 : 0]
-                          ?.description) ||
-                        `Learn to flirt and basic greetings`}
+                          ?.description}
                     </Text>
                   )}
                 </View>
@@ -164,7 +164,13 @@ const HomeTab: React.FC<NavigationInterface> = ({
                     onPress={() => setSelectedItem(e.label)}
                     style={[
                       styles.missionDetailsFixedFooterList,
-                      { borderTopWidth: selectedItem === e.label ? 2 : 0 },
+                      {
+                        borderTopWidth:
+                          selectedItem.toLocaleLowerCase() ===
+                          e.label.toLocaleLowerCase()
+                            ? 2
+                            : 0,
+                      },
                     ]}
                   >
                     <CustomSvgImageComponent
@@ -178,7 +184,10 @@ const HomeTab: React.FC<NavigationInterface> = ({
                         styles.missionDetailsFixedFooterTxt,
                         {
                           color:
-                            selectedItem === e.label ? "#F58C39" : "#171717",
+                            selectedItem.toLocaleLowerCase() ===
+                            e.label.toLocaleLowerCase()
+                              ? "#F58C39"
+                              : "#171717",
                         },
                       ]}
                     >

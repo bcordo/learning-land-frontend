@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
 import CustomSvgImageComponent from "../../components/CustomComponents/Image";
 import ChevronDown from "../../assets/icons/chevronDown.svg";
-
-import { AnimatedCircularProgress } from "react-native-circular-progress";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  updatePauseTimmer,
-  updateTime,
-} from "../../../redux/slices/timmerSlice";
+import { useDispatch } from "react-redux";
+import { updatePauseTimmer } from "../../../redux/slices/timmerSlice";
 import CustomDropdown from "../../components/CustomDropdown/CustomDropdown";
 import { updateUserSettings } from "../../../redux/slices/userSetingsSlice";
 import { CharacterChatNavbarProps } from "../../intefaces/componentsInterfaces";
 import { NumberInterface } from "../../intefaces/variablesInterfaces";
+import CustomTimerComponent from "../../components/CustomTimerComponent/CustomTimerComponent";
 
 const CharacterChatNavbar: React.FC<CharacterChatNavbarProps> = ({
   navigation,
@@ -21,7 +17,7 @@ const CharacterChatNavbar: React.FC<CharacterChatNavbarProps> = ({
 }): React.JSX.Element => {
   const completedGoals = 0;
   const [id, setId] = useState<NumberInterface>(completedGoals);
-  // const { data: userGoals } = useGetUserGoalsByUserMissionIdQuery("");
+  console.log("hell");
 
   const dispatch = useDispatch();
   const totalGoals = 3;
@@ -31,27 +27,6 @@ const CharacterChatNavbar: React.FC<CharacterChatNavbarProps> = ({
     { id: 2, value: "Get her number", subVal: "Get her telephone number" },
     { id: 3, value: "Setup date", subVal: "Setup a date to meet her later" },
   ];
-
-  const { totalSeconds, minutes, seconds, pauseTimmer } = useSelector(
-    (state) => state.timmerSlice
-  );
-
-  useEffect(() => {
-    if (pauseTimmer) return;
-    const interval = setInterval(() => {
-      if (totalSeconds >= 0) {
-        dispatch(
-          updateTime({
-            minutes: Math.floor(totalSeconds / 60),
-            seconds: totalSeconds % 60,
-            totalSeconds: totalSeconds - 1,
-          })
-        );
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [totalSeconds, pauseTimmer]);
 
   const renderItem = (item) => {
     return (
@@ -162,28 +137,7 @@ const CharacterChatNavbar: React.FC<CharacterChatNavbarProps> = ({
           ))}
         </View>
       </View>
-      <View style={styles.wrapper}>
-        <AnimatedCircularProgress
-          size={40}
-          width={2}
-          fill={(5 * 60 - totalSeconds) * (100 / (5 * 60))}
-          tintColor="#7DDFDE"
-          backgroundColor="#F1F5F9"
-          lineCap="round"
-          rotation={0}
-        >
-          {(fill) => (
-            <View style={styles.wrapper2}>
-              <View style={styles.wrapper3}>
-                <Text style={[styles.defaultFontFamilyBold, styles.timer]}>
-                  {minutes < 10 ? `0${minutes}` : minutes}:
-                  {seconds < 10 ? `0${seconds}` : seconds}
-                </Text>
-              </View>
-            </View>
-          )}
-        </AnimatedCircularProgress>
-      </View>
+      <CustomTimerComponent />
     </View>
   );
 };
