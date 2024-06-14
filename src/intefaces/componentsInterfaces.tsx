@@ -141,6 +141,7 @@ export interface HelpfulActionsContainerProps {
   heading: StringInterface;
   navigation: AnyInterface;
   navigationRoute: StringInterface;
+  handleButton?: () => void;
 }
 export interface HelphulPharasesCompProps {
   title: StringInterface;

@@ -27,22 +27,29 @@ import CustomGoalListComponent from "../../components/CustomGaolListComp/CustomG
 import { useLazyGetUserMissionByUserMissionIdQuery } from "../../../redux/services/missions";
 import { useSelector } from "react-redux";
 import { NavigationInterface } from "../../intefaces/componentsInterfaces";
-import { StringInterface } from "../../intefaces/variablesInterfaces";
-interface aa {
-  value: string;
-  icon: any;
-  color: string;
-  score: string | number;
-  key: string;
-}
+import {
+  ReviewBoxListInterface,
+  StringInterface,
+} from "../../intefaces/variablesInterfaces";
+import CustomShimmer from "../../components/CustomShimmer/CustomShimmer";
+import { useLazyGetGoalsByMissionIdQuery } from "../../../redux/services/user_goals";
+
 const MissionEnd: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
-  const [reviewBoxList, setReviewBoxList] = useState<aa[]>([]);
+  const [reviewBoxList, setReviewBoxList] = useState<ReviewBoxListInterface[]>(
+    []
+  );
+  const [howManyShowTranscript, setHowManyShowTranscript] = useState(0);
   const [
     getchMissionByMissionId,
     { data: missionDetails, isLoading: fetchingMission },
   ] = useLazyGetUserMissionByUserMissionIdQuery();
+  const [
+    getUserGoals,
+    { data: userGoalsDetails, isLoading: loadingUserGoals },
+  ] = useLazyGetGoalsByMissionIdQuery();
+
   useEffect(() => {
     if (!missionDetails) return;
     setReviewBoxList([
@@ -68,6 +75,8 @@ const MissionEnd: React.FC<NavigationInterface> = ({
         key: "incorrect_phrases",
       },
     ]);
+    setHowManyShowTranscript(4);
+    getUserGoals({ mission_id: missionDetails?.id });
   }, [missionDetails]);
 
   const { id } = useSelector((state) => state.missionSlice.mission);
@@ -75,30 +84,6 @@ const MissionEnd: React.FC<NavigationInterface> = ({
   useEffect(() => {
     getchMissionByMissionId({ user_mission_id: id });
   }, []);
-
-  // const reviewBoxList = [
-  //   {
-  //     value: "PHRASES",
-  //     icon: MessageIcon,
-  //     color: "#1717171",
-  //     score: `+${missionDetails?.all_user_phrases?.length}`,
-  //     key: "total_phrases",
-  //   },
-  //   {
-  //     value: "CORRECT",
-  //     icon: CheckIcon,
-  //     color: "#7DDFDE",
-  //     score: 18,
-  //     key: "correct_phrases",
-  //   },
-  //   {
-  //     value: "INCORRECT",
-  //     icon: XCrossIcon,
-  //     color: "#FF8B67",
-  //     score: 4,
-  //     key: "incorrect_phrases",
-  //   },
-  // ];
 
   const goalsList = [
     {
@@ -113,65 +98,6 @@ const MissionEnd: React.FC<NavigationInterface> = ({
     },
     { title: "Third goal", description: "Third goal description", icon: Tick },
   ];
-  const incorrectPharases = [
-    {
-      title: "Ich möchte einen Kaffee bitte.  ",
-      description: "Ish mushta ein cafe bitter.  ",
-      showDescriptionIcons: true,
-    },
-    {
-      title: "Ich möchte einen Kaffee bitte.  ",
-      description: "Ish mushta ein cafe bitter.  ",
-      showDescriptionIcons: true,
-    },
-    {
-      title: "Ich möchte einen Kaffee bitte.  ",
-      description: "Ish mushta ein cafe bitter.  ",
-      showDescriptionIcons: true,
-    },
-  ];
-  const correctPharases = [
-    {
-      title: "Ich möchte einen Kaffee bitte.  ",
-      text_language: "DE",
-    },
-    {
-      title: "I need a tour guide. Do you know anyone? ;)",
-      text_language: "DE",
-    },
-    {
-      title: "I would like your phone number",
-      text_language: "DE",
-    },
-  ];
-  const transcriptList = [
-    {
-      title: "Ich möchte einen Kaffee bitte.ss",
-      description: "Ich möchte einen Kaffee bitte.",
-      type: "character-response",
-      showDescriptionIcons: false,
-    },
-    {
-      title: "Ich möchte einen Kaffee bitte.",
-      description: "Ich möchte einen Kaffee bitte.",
-      descriptionColor: "#7DDFDE",
-      isRight: true,
-      type: "user-response",
-      showDescriptionIcons: false,
-    },
-    {
-      title: "Ich möchte einen Kaffee bitte.",
-      description: "Ich möchte einen Kaffee bitte.",
-      type: "character-response",
-      showDescriptionIcons: false,
-    },
-    {
-      title: "Ich möchte einen Kaffee bitte.",
-      isRight: false,
-      type: "user-response",
-      hideDescriptionText: true,
-    },
-  ];
 
   const renderItem = ({
     item,
@@ -180,12 +106,12 @@ const MissionEnd: React.FC<NavigationInterface> = ({
       title: string;
       description: string;
 
-      icon: any;
+      icon?: any;
     };
   }) => {
     return (
       <CustomGoalListComponent
-        icon={item.icon}
+        icon={item.icon || Tick}
         title={item.title}
         description={item.description}
       />
@@ -194,6 +120,7 @@ const MissionEnd: React.FC<NavigationInterface> = ({
 
   const renderHelpfulPharases = ({
     item,
+    index,
   }: {
     item: {
       native_text: StringInterface;
@@ -207,13 +134,17 @@ const MissionEnd: React.FC<NavigationInterface> = ({
     index: number;
   }) => {
     return (
-      <HelphulPharasesComp
-        title={item.native_text || item?.utterance}
-        description={item?.translated_text}
-        text_language={item?.native_text_language}
-        interaction_type={item?.interaction_type}
-        showDescriptionIcons={item?.showDescriptionIcons}
-      />
+      <>
+        {index <= howManyShowTranscript ? (
+          <HelphulPharasesComp
+            title={item.native_text || item?.utterance}
+            description={item?.translated_text}
+            text_language={item?.native_text_language}
+            interaction_type={item?.interaction_type}
+            showDescriptionIcons={item?.showDescriptionIcons}
+          />
+        ) : null}
+      </>
     );
   };
   function calculateResult(arr: [], completed_goals: number) {
@@ -230,220 +161,247 @@ const MissionEnd: React.FC<NavigationInterface> = ({
       <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
       <SafeAreaView style={[styles.mainContainer]}>
         <ScrollView style={styles.container}>
-          <TouchableOpacity
-            style={styles.header}
-            onPress={() => {
-              navigation.goBack();
-            }}
-          >
-            <CustomSvgImageComponent
-              width={20}
-              height={20}
-              Component={LeftIcon}
-            />
-
-            <Text
-              style={[
-                styles.defaultFontFamilyBold,
-                styles.scenarioCompletedTxt,
-              ]}
-            >
-              Scenario Complete!
-            </Text>
-          </TouchableOpacity>
-
-          <View style={{ alignItems: "center" }}>
-            <View style={styles.scoreContainer}>
-              <AnimatedCircularProgress
-                size={250}
-                width={12}
-                fill={calculateResult(
-                  missionDetails?.user_goals,
-                  missionDetails?.number_of_goals_completed
-                )}
-                tintColor="#F1F5F9"
-                backgroundColor="#d8e1ee"
-                lineCap="round"
-                rotation={-135}
-                style={{
-                  borderRadius: 20,
-                  shadowColor: "#3282ce9c",
-                  shadowOffset: {
-                    width: 0,
-                    height: 2,
-                  },
-                  shadowOpacity: 0.25,
-                  shadowRadius: 3.84,
-                  elevation: 5,
+          {fetchingMission ? (
+            <>
+              <CustomShimmer
+                styleProps={{
+                  width: "80%",
+                  height: 10,
+                  backgroundColor: "#9e9e9e",
+                }}
+              />
+              <CustomShimmer
+                styleProps={{
+                  width: "60%",
+                  height: 10,
+                  backgroundColor: "#9e9e9e",
+                  marginTop: 8,
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <TouchableOpacity
+                style={styles.header}
+                onPress={() => {
+                  navigation.goBack();
                 }}
               >
-                {(fill) => (
-                  <View style={styles.scoretxtContainer}>
-                    <View style={{ flexDirection: "row" }}>
-                      <Text
-                        style={[
-                          styles.defaultFontFamilyBold,
-                          styles.scoretxt,
-                          styles.scoretxtXL,
-                        ]}
-                      >
-                        {missionDetails?.number_of_goals_completed}
-                      </Text>
+                <CustomSvgImageComponent
+                  width={20}
+                  height={20}
+                  Component={LeftIcon}
+                />
+
+                <Text
+                  style={[
+                    styles.defaultFontFamilyBold,
+                    styles.scenarioCompletedTxt,
+                  ]}
+                >
+                  Scenario Complete!
+                </Text>
+              </TouchableOpacity>
+
+              <View style={{ alignItems: "center" }}>
+                <View style={styles.scoreContainer}>
+                  <AnimatedCircularProgress
+                    size={250}
+                    width={12}
+                    fill={calculateResult(
+                      missionDetails?.user_goals,
+                      missionDetails?.number_of_goals_completed
+                    )}
+                    tintColor="#F1F5F9"
+                    backgroundColor="#d8e1ee"
+                    lineCap="round"
+                    rotation={-135}
+                    style={{
+                      borderRadius: 20,
+                      shadowColor: "#3282ce9c",
+                      shadowOffset: {
+                        width: 0,
+                        height: 2,
+                      },
+                      shadowOpacity: 0.25,
+                      shadowRadius: 3.84,
+                      elevation: 5,
+                    }}
+                  >
+                    {(fill) => (
+                      <View style={styles.scoretxtContainer}>
+                        <View style={{ flexDirection: "row" }}>
+                          <Text
+                            style={[
+                              styles.defaultFontFamilyBold,
+                              styles.scoretxt,
+                              styles.scoretxtXL,
+                            ]}
+                          >
+                            {missionDetails?.number_of_goals_completed}
+                          </Text>
+                          <Text
+                            style={[
+                              styles.defaultFontFamilySemiBold,
+                              styles.scoretxt,
+                              styles.scoretxtXL,
+                            ]}
+                          >
+                            /
+                          </Text>
+                          <Text
+                            style={[
+                              styles.defaultFontFamilyBold,
+                              styles.scoretxt,
+                              styles.scoretxtXL,
+                            ]}
+                          >
+                            {missionDetails?.user_goals?.length}
+                          </Text>
+                        </View>
+
+                        <Text
+                          style={[
+                            styles.defaultFontFamilySemiBold,
+                            styles.scoretxt,
+                          ]}
+                        >
+                          GOALS COMPLETE{" "}
+                        </Text>
+                      </View>
+                    )}
+                  </AnimatedCircularProgress>
+
+                  <View style={styles.starContainer}>
+                    <View style={styles.starBox1}>
+                      <CustomSvgImageComponent
+                        width={42}
+                        height={40}
+                        Component={StarIcon}
+                      />
+                    </View>
+
+                    <View style={[styles.starBox1, styles.starBox2]}>
+                      <CustomSvgImageComponent
+                        width={42}
+                        height={40}
+                        Component={StarIcon}
+                      />
+                    </View>
+                    <View style={[styles.starBox1, styles.starBox3]}>
+                      <CustomSvgImageComponent
+                        width={42}
+                        height={40}
+                        Component={GrayStarIcon}
+                      />
+                    </View>
+                  </View>
+                </View>
+              </View>
+
+              <View style={styles.reviewContainer}>
+                {reviewBoxList.map((item, i) => {
+                  return (
+                    <View style={styles.reviewBox}>
                       <Text
                         style={[
                           styles.defaultFontFamilySemiBold,
-                          styles.scoretxt,
-                          styles.scoretxtXL,
+                          styles.reviewTxt,
+                          { color: item.color || "" },
                         ]}
                       >
-                        /
+                        {item.value}
                       </Text>
-                      <Text
-                        style={[
-                          styles.defaultFontFamilyBold,
-                          styles.scoretxt,
-                          styles.scoretxtXL,
-                        ]}
-                      >
-                        {missionDetails?.user_goals?.length}
-                      </Text>
+                      <View style={styles.reviewScoreContainer}>
+                        <CustomSvgImageComponent
+                          width={30}
+                          height={30}
+                          Component={item.icon}
+                        />
+                        <Text
+                          style={[
+                            styles.defaultFontFamilySemiBold,
+                            styles.reviewScore,
+                            { color: item.color || "" },
+                          ]}
+                        >
+                          {item?.score}
+                        </Text>
+                      </View>
                     </View>
-
-                    <Text
-                      style={[
-                        styles.defaultFontFamilySemiBold,
-                        styles.scoretxt,
-                      ]}
-                    >
-                      GOALS COMPLETE{" "}
-                    </Text>
-                  </View>
-                )}
-              </AnimatedCircularProgress>
-
-              <View style={styles.starContainer}>
-                <View style={styles.starBox1}>
-                  <CustomSvgImageComponent
-                    width={42}
-                    height={40}
-                    Component={StarIcon}
-                  />
-                </View>
-
-                <View style={[styles.starBox1, styles.starBox2]}>
-                  <CustomSvgImageComponent
-                    width={42}
-                    height={40}
-                    Component={StarIcon}
-                  />
-                </View>
-                <View style={[styles.starBox1, styles.starBox3]}>
-                  <CustomSvgImageComponent
-                    width={42}
-                    height={40}
-                    Component={GrayStarIcon}
-                  />
-                </View>
+                  );
+                })}
               </View>
-            </View>
-          </View>
 
-          <View style={styles.reviewContainer}>
-            {reviewBoxList.map((item, i) => {
-              return (
-                <View style={styles.reviewBox}>
-                  <Text
-                    style={[
-                      styles.defaultFontFamilySemiBold,
-                      styles.reviewTxt,
-                      { color: item.color || "" },
-                    ]}
-                  >
-                    {item.value}
-                  </Text>
-                  <View style={styles.reviewScoreContainer}>
-                    <CustomSvgImageComponent
-                      width={30}
-                      height={30}
-                      Component={item.icon}
-                    />
-                    <Text
-                      style={[
-                        styles.defaultFontFamilySemiBold,
-                        styles.reviewScore,
-                        { color: item.color || "" },
-                      ]}
-                    >
-                      {item?.score}
-                    </Text>
-                  </View>
-                </View>
-              );
-            })}
-          </View>
+              <View style={styles.goalsContainer}>
+                <Text
+                  style={[styles.goalsTxt, styles.defaultFontFamilySemiBold]}
+                >
+                  Goals Review
+                </Text>
+                <FlatList data={userGoalsDetails} renderItem={renderItem} />
+              </View>
 
-          <View style={styles.goalsContainer}>
-            <Text style={[styles.goalsTxt, styles.defaultFontFamilySemiBold]}>
-              Goals Review
-            </Text>
-            <FlatList data={goalsList} renderItem={renderItem} />
-          </View>
+              <HelpfulActionsContainer
+                list={missionDetails?.incorrect_user_phrases?.map((element) => {
+                  return {
+                    ...element,
+                    showDescriptionIcons: true,
+                  };
+                })}
+                renderItem={renderHelpfulPharases}
+                buttonText={` See all ${missionDetails?.incorrect_user_phrases?.length} mistakes`}
+                heading={"Incorrect Phrases"}
+                navigation={navigation}
+                navigationRoute={"HelpfulPharases"}
+              />
+              <HelpfulActionsContainer
+                list={missionDetails?.correct_user_phrases}
+                renderItem={renderHelpfulPharases}
+                buttonText={`See all ${missionDetails?.correct_user_phrases?.length}`}
+                heading={"Correct Phrases"}
+                navigation={navigation}
+                navigationRoute={"HelpfulPharases"}
+              />
 
-          <HelpfulActionsContainer
-            list={missionDetails?.incorrect_user_phrases?.map((element) => {
-              return {
-                ...element,
-                showDescriptionIcons: true,
-              };
-            })}
-            renderItem={renderHelpfulPharases}
-            buttonText={` See all ${missionDetails?.incorrect_user_phrases?.length} mistakes`}
-            heading={"Incorrect Phrases"}
-            navigation={navigation}
-            navigationRoute={"HelpfulPharases"}
-          />
-          <HelpfulActionsContainer
-            list={missionDetails?.correct_user_phrases}
-            renderItem={renderHelpfulPharases}
-            buttonText={`See all ${missionDetails?.correct_user_phrases?.length}`}
-            heading={"Correct Phrases"}
-            navigation={navigation}
-            navigationRoute={"HelpfulPharases"}
-          />
+              <HelpfulActionsContainer
+                list={missionDetails?.interactions}
+                renderItem={renderHelpfulPharases}
+                buttonText={`See full transcript`}
+                heading={"Transcript"}
+                navigation={navigation}
+                navigationRoute={"HelpfulPharases"}
+                handleButton={() =>
+                  setHowManyShowTranscript(missionDetails?.interactions?.length)
+                }
+              />
 
-          <HelpfulActionsContainer
-            list={missionDetails?.interactions}
-            renderItem={renderHelpfulPharases}
-            buttonText={`See full transcript`}
-            heading={"Transcript"}
-            navigation={navigation}
-            navigationRoute={"HelpfulPharases"}
-          />
+              <View style={styles.buttonContainer}>
+                <CustomButtom
+                  textStyle={[
+                    styles.alreadyHaveAccountButtonText,
+                    styles.defaultFontFamilySemiBold,
+                  ]}
+                  buttonStyle={styles.alreadyHaveAnAccount}
+                  onPress={() => {
+                    navigation.navigate("MissionHistory");
+                  }}
+                  buttonTxt={"PRACTICE MISTAKES"}
+                  icon={DumbleIcon}
+                />
 
-          <View style={styles.buttonContainer}>
-            <CustomButtom
-              textStyle={[
-                styles.alreadyHaveAccountButtonText,
-                styles.defaultFontFamilySemiBold,
-              ]}
-              buttonStyle={styles.alreadyHaveAnAccount}
-              onPress={() => {
-                navigation.navigate("MissionHistory");
-              }}
-              buttonTxt={"PRACTICE MISTAKES"}
-              icon={DumbleIcon}
-            />
-
-            <CustomButtom
-              textStyle={[
-                styles.getStartedButtonText,
-                styles.defaultFontFamilySemiBold,
-              ]}
-              buttonStyle={styles.getStarted}
-              onPress={() => {}}
-              buttonTxt={"CONTINUE"}
-            />
-          </View>
+                <CustomButtom
+                  textStyle={[
+                    styles.getStartedButtonText,
+                    styles.defaultFontFamilySemiBold,
+                  ]}
+                  buttonStyle={styles.getStarted}
+                  onPress={() => {}}
+                  buttonTxt={"CONTINUE"}
+                />
+              </View>
+            </>
+          )}
         </ScrollView>
       </SafeAreaView>
     </>

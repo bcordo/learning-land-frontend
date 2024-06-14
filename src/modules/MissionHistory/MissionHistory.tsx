@@ -29,16 +29,14 @@ import { BlurView } from "@react-native-community/blur";
 import CustomGoalListComponent from "../../components/CustomGaolListComp/CustomGaolListComp";
 import { useGetUserMissionHistoryQuery } from "../../../redux/services/missions";
 import {
-  AnyInterface,
+  MissionHistoryDataInterface,
   NumberInterface,
   RenderMissionHistoryItemInterface,
-  StringInterface,
+  ScoreListInterface,
 } from "../../intefaces/variablesInterfaces";
-interface ScoreInterface {
-  type: StringInterface;
-  icon: any;
-  score: StringInterface | string;
-}
+import CustomShimmer from "../../components/CustomShimmer/CustomShimmer";
+import { formatDate } from "../../assets/reusableFunctions";
+
 const MissionHistory: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
@@ -47,47 +45,43 @@ const MissionHistory: React.FC<NavigationInterface> = ({
     Dimensions.get("window").height
   );
 
-  const [scoreList, setScoreList] = useState<
-    [
-      {
-        type: StringInterface;
-        icon: AnyInterface;
-        score: StringInterface | NumberInterface;
-      }
-    ][]
-  >([]);
+  const [scoreList, setScoreList] = useState<[ScoreListInterface][]>([]);
 
-  const { data } = useGetUserMissionHistoryQuery({ user_mission_id: 119 });
+  const { data, isFetching } = useGetUserMissionHistoryQuery({
+    user_mission_id: 119,
+  });
 
   useEffect(() => {
     if (!data) return;
 
-    const newData = data.map(
-      (element: {
-        number_of_goals_completed: number;
-        user_goals: [];
-        incorrect_user_phrases: [];
-        correct_user_phrases: [];
-      }) => {
-        return [
-          {
-            type: "user_goals",
-            icon: Goal,
-            score: `${element?.number_of_goals_completed}/${element?.user_goals?.length}`,
-          },
-          {
-            type: "incorrect_user_phrases",
-            icon: XCiexle,
-            score: `${element?.incorrect_user_phrases?.length}`,
-          },
-          {
-            type: "correct_user_phrases",
-            icon: Message,
-            score: `${element?.correct_user_phrases?.length}`,
-          },
-        ];
-      }
-    );
+    const newData = data.map((element: MissionHistoryDataInterface) => {
+      return [
+        {
+          type: "user_goals",
+          icon: Goal,
+          score:
+            element?.mission_state === "INACTIVE"
+              ? "-"
+              : `${element?.number_of_goals_completed}/${element?.user_goals?.length}`,
+        },
+        {
+          type: "incorrect_user_phrases",
+          icon: XCiexle,
+          score:
+            element?.mission_state === "INACTIVE"
+              ? "-"
+              : `${element?.incorrect_user_phrases?.length}`,
+        },
+        {
+          type: "correct_user_phrases",
+          icon: Message,
+          score:
+            element?.mission_state === "INACTIVE"
+              ? "-"
+              : `${element?.correct_user_phrases?.length}`,
+        },
+      ];
+    });
 
     setScoreList([...newData]);
   }, [data]);
@@ -145,31 +139,6 @@ const MissionHistory: React.FC<NavigationInterface> = ({
     );
   };
 
-  function formatDate(inputDate: string) {
-    const months = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-    const date = new Date(inputDate);
-
-    const day = date.getDate();
-    const monthIndex = date.getMonth();
-    const year = date.getFullYear();
-
-    const formattedDate = `${day} ${months[monthIndex]} ${year}`;
-
-    return formattedDate;
-  }
   const renderMissionHistory = ({
     item,
     index,
@@ -273,7 +242,12 @@ const MissionHistory: React.FC<NavigationInterface> = ({
           >
             <View style={styles.missionHistoryContaier}>
               <View style={styles.missionHistorySubContaier}>
-                <View style={styles.scenarioHistoryContainer}>
+                <View
+                  style={[
+                    styles.scenarioHistoryContainer,
+                    { borderBottomWidth: isFetching ? 0 : 1 },
+                  ]}
+                >
                   <CustomSvgImageComponent
                     width={20}
                     height={20}
@@ -289,9 +263,38 @@ const MissionHistory: React.FC<NavigationInterface> = ({
                   </Text>
                 </View>
 
-                <View style={{ marginBottom: 60 }}>
-                  <FlatList data={data} renderItem={renderMissionHistory} />
-                </View>
+                {isFetching ? (
+                  <>
+                    <CustomShimmer
+                      styleProps={{
+                        width: "90%",
+                        height: 10,
+                        backgroundColor: "#9e9e9e",
+                      }}
+                    />
+                    <CustomShimmer
+                      styleProps={{
+                        width: "70%",
+                        height: 10,
+                        marginTop: 8,
+                        backgroundColor: "#9e9e9e",
+                      }}
+                    />
+                    <CustomShimmer
+                      styleProps={{
+                        width: "50%",
+                        height: 10,
+                        backgroundColor: "#9e9e9e",
+                        marginTop: 8,
+                        marginBottom: 60,
+                      }}
+                    />
+                  </>
+                ) : (
+                  <View style={{ marginBottom: 60 }}>
+                    <FlatList data={data} renderItem={renderMissionHistory} />
+                  </View>
+                )}
               </View>
               <View></View>
             </View>

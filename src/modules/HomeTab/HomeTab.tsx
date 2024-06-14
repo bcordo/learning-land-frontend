@@ -31,7 +31,7 @@ const HomeTab: React.FC<NavigationInterface> = ({
 }): React.JSX.Element => {
   const [selectedItem, setSelectedItem] = useState<StringInterface>("home");
   const [currentItemIndex, setCurrentItemIndex] = useState<NumberInterface>(0);
-  const scrollViewRef = useRef<NumberInterface>(null);
+  const scrollViewRef = useRef<any>(null);
   const [componentHeights, setComponentHeights] =
     useState<ComponentHeightsObjInterface>({});
 

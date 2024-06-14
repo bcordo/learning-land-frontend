@@ -21,8 +21,11 @@ const user_goals = createApi({
           
       
     }),
+    getGoalsByMissionId:builder.query({
+      query:({mission_id})=>`/api/v1/missions/${mission_id}/goals`
+    })
   }),
 });
 
-export const { useGetUserGoalsByUserMissionIdQuery } = user_goals;
+export const { useGetUserGoalsByUserMissionIdQuery ,useLazyGetGoalsByMissionIdQuery} = user_goals;
 export default user_goals;

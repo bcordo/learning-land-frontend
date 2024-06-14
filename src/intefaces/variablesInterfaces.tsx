@@ -90,3 +90,29 @@ export interface RenderMissionHistoryItemInterface {
   user_mission_current_time: StringInterface;
   world_id: NumberInterface;
 }
+export interface RefNumberInterface {
+  current: number | null;
+}
+
+export interface RefNullInterface {
+  current: null;
+}
+export interface ReviewBoxListInterface {
+  value: string;
+  icon: any;
+  color: string;
+  score: string | number;
+  key: string;
+}
+export interface ScoreListInterface {
+  type: StringInterface;
+  icon: AnyInterface;
+  score: StringInterface | NumberInterface;
+}
+export interface MissionHistoryDataInterface {
+  number_of_goals_completed: number;
+  user_goals: [];
+  incorrect_user_phrases: [];
+  correct_user_phrases: [];
+  mission_state: StringInterface;
+}

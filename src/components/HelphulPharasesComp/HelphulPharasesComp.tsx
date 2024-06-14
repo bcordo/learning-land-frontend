@@ -37,7 +37,7 @@ const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({
     <View
       style={{
         alignItems:
-          interaction_type === "USER_UTTERANCE" ? "flex-end" : "flex-start",
+          interaction_type === "USER_RESPONSE" ? "flex-end" : "flex-start",
       }}
     >
       <View

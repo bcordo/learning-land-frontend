@@ -18,6 +18,7 @@ const worldsApi = createApi({
     getAllWorlds: builder.query({
       query: () => `/api/v1/worlds/`
     }),
+    
   }), 
 });
 

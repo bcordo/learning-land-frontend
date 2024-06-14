@@ -100,6 +100,9 @@ const CharacterChat: React.FC<NavigationInterface> = ({
   const closeDrawer = () => {
     drawerRef.current.close();
   };
+  const user_id = useSelector(
+    (state: { missionSlice: { mission: any } }) => state.missionSlice.mission
+  );
 
   useEffect(() => {
     setChatMessages((messages) => [
@@ -112,7 +115,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
     ]);
 
     connectWebSocket();
-    getUserSettings(14);
+    getUserSettings(user_id);
 
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
@@ -169,11 +172,6 @@ const CharacterChat: React.FC<NavigationInterface> = ({
 
   const connectWebSocket = async () => {
     const token = await AsyncStorage.getItem("token");
-    const websocketOptions = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
     const websocketUrlWithToken = `${WEBSOCKET_URL}?token=${token}`;
     const newWS = new WebSocket(websocketUrlWithToken);
     setWS(newWS);
@@ -183,6 +181,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
       console.log("WebSocket connected");
     };
     newWS.onmessage = (event) => {
+      console.log("Message Arrived");
       isSendingAudio(false);
       setSpeakStatus("Start speaking");
       handleServerMessage(event.data);
@@ -509,7 +508,6 @@ const CharacterChat: React.FC<NavigationInterface> = ({
       }
     }
   };
-
   const sendMessage = async (message: any, metadata = {}) => {
     if (WS && WS.readyState === WebSocket.OPEN) {
       if (message.content_type === ContentType.AUDIO) isSendingAudio(true);
@@ -517,14 +515,14 @@ const CharacterChat: React.FC<NavigationInterface> = ({
         let messageWithMetadata = {};
         if (
           Platform.OS === "ios" &&
-          message?.content_type !== ContentType.AUDIO
+          message?.content_type === ContentType.AUDIO
         ) {
           messageWithMetadata = {
             ...message,
             metadata: {
               ...metadata,
-              user_mission_id: 119,
-              user_id: 14,
+              user_mission_id: 1,
+              user_id: 1,
               file_extension: "m4a",
             },
           };
@@ -533,8 +531,8 @@ const CharacterChat: React.FC<NavigationInterface> = ({
             ...message,
             metadata: {
               ...metadata,
-              user_mission_id: 119,
-              user_id: 14,
+              user_mission_id: 1,
+              user_id: 1,
             },
           };
         }

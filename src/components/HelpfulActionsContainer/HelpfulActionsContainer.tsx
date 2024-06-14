@@ -10,6 +10,7 @@ const HelpfulActionsContainer: React.FC<HelpfulActionsContainerProps> = ({
   heading,
   navigation,
   navigationRoute,
+  handleButton,
 }): React.JSX.Element => {
   return (
     <View style={styles.incorrectPhaseContainer}>
@@ -19,7 +20,11 @@ const HelpfulActionsContainer: React.FC<HelpfulActionsContainerProps> = ({
         >
           {heading}
         </Text>
-        <TouchableOpacity onPress={() => navigation.navigate(navigationRoute)}>
+        <TouchableOpacity
+          onPress={() =>
+            handleButton ? handleButton() : navigation.navigate(navigationRoute)
+          }
+        >
           <Text style={[styles.seeAllPharasesTxt, styles.defaultFontFamily]}>
             {buttonText}
           </Text>
