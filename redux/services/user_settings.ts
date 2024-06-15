@@ -16,7 +16,7 @@ const userSettingsApi = createApi({
    }),
   endpoints: (builder) => ({
     getUserSettings: builder.query({
-      query: (user_id) =>   `/api/v1/user_settings/${user_id}`,
+      query: ({user_id}) =>   `/api/v1/user_settings/${user_id}`,
     }),
     updateUserSettings: builder.mutation({
       query: ({user_id, body}) => ({

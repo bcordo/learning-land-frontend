@@ -57,7 +57,6 @@ const CustomMissionCircleComponent: React.FC<
             {(fill) => (
               <TouchableOpacity
                 onPress={() => {
-                  console.log("okmissionData123", missionData);
                   dispatch(
                     updateMission({
                       ...missionData,

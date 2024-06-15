@@ -14,29 +14,27 @@ import {
 import { styles } from "./styles";
 import CustomSvgImageComponent from "../CustomComponents/Image";
 import HelphulPharasesComp from "../HelphulPharasesComp/HelphulPharasesComp";
-import { useLazyGetPharasesQuery } from "../../../redux/services/helpfulPharases";
 import { NavigationInterface } from "../../intefaces/componentsInterfaces";
-import { pharsesInterface } from "../../intefaces/variablesInterfaces";
+import {
+  RenderHelpfulPharasesInterface,
+  pharsesInterface,
+} from "../../intefaces/variablesInterfaces";
+import { useSelector } from "react-redux";
 
 const HelpfulPharasesListContainer: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
   const [inputText, setInputText] = useState<string>("");
   const [pharasesList, setPharasesList] = useState<pharsesInterface[]>([]);
-
-  const [fetchPharases, { data: pharases }] = useLazyGetPharasesQuery();
+  const allMissions = useSelector(
+    (state: { missionSlice: any }) => state.missionSlice.mission
+  );
 
   useEffect(() => {
-    if (!pharases) fetchPharases(1);
-    if (pharases) setPharasesList(pharases);
-  }, [pharases]);
+    setPharasesList(allMissions?.phrases);
+  }, []);
 
-  const renderHelpfulPharases = ({
-    item,
-  }: {
-    item: pharsesInterface;
-    index: number;
-  }) => {
+  const renderHelpfulPharases = ({ item }: RenderHelpfulPharasesInterface) => {
     return (
       <HelphulPharasesComp
         title={item.text}
@@ -47,8 +45,9 @@ const HelpfulPharasesListContainer: React.FC<NavigationInterface> = ({
 
   const handleInputChange = (text: string) => {
     setInputText(text);
-    const filterdPharases = pharases.filter((pharase: pharsesInterface) =>
-      pharase?.text?.toLowerCase().includes(text?.toLowerCase())
+    const filterdPharases = allMissions?.phrases?.filter(
+      (pharase: pharsesInterface) =>
+        pharase?.text?.toLowerCase().includes(text?.toLowerCase())
     );
     setPharasesList([...filterdPharases]);
   };

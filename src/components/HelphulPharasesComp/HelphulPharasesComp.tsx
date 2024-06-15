@@ -9,6 +9,7 @@ import CustomShimmer from "../CustomShimmer/CustomShimmer";
 import XSvg from "../../assets/icons/x.svg";
 import Tick from "../../assets/icons/check-tick.svg";
 import { HelphulPharasesCompProps } from "../../intefaces/componentsInterfaces";
+import { useSelector } from "react-redux";
 
 const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({
   title,

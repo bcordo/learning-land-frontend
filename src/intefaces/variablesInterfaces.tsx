@@ -122,3 +122,7 @@ export interface TimerSliceInterface {
   seconds: NumberInterface;
   pauseTimmer: BooleanInterface;
 }
+export interface RenderHelpfulPharasesInterface {
+  item: pharsesInterface;
+  index: NumberInterface;
+}

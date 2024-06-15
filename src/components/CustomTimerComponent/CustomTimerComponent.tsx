@@ -5,8 +5,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { TimerSliceInterface } from "../../intefaces/variablesInterfaces";
 import { updateTime } from "../../../redux/slices/timmerSlice";
 import { styles } from "./styles";
+import { NavigationInterface } from "../../intefaces/componentsInterfaces";
 
-const CustomTimerComponent = () => {
+const CustomTimerComponent: React.FC<NavigationInterface> = ({
+  navigation,
+}) => {
   const { totalSeconds, minutes, seconds, pauseTimmer } = useSelector(
     (state: { timmerSlice: TimerSliceInterface }) => state.timmerSlice
   );
@@ -14,6 +17,7 @@ const CustomTimerComponent = () => {
   useEffect(() => {
     if (pauseTimmer) return;
     const interval = setInterval(() => {
+      if (totalSeconds <= 0) return navigation.navigate("MissionEnd");
       if (totalSeconds >= 0) {
         dispatch(
           updateTime({
@@ -27,12 +31,16 @@ const CustomTimerComponent = () => {
 
     return () => clearInterval(interval);
   }, [totalSeconds, pauseTimmer]);
+
   return (
     <View style={styles.wrapper}>
       <AnimatedCircularProgress
         size={40}
         width={2}
-        fill={(5 * 60 - totalSeconds) * (100 / (5 * 60))}
+        fill={
+          (minutes * 60 + seconds - totalSeconds) *
+          (100 / (minutes * 60 + seconds))
+        }
         tintColor="#7DDFDE"
         backgroundColor="#F1F5F9"
         lineCap="round"
