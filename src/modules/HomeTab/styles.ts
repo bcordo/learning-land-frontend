@@ -94,6 +94,16 @@ export const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+  },
+  loaderContainer:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center', 
+  },
+  loader:{
+    display:'flex',
+    alignItems:'center',
+    height:100,
   }
 
 });

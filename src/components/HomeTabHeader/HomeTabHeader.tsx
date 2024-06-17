@@ -32,10 +32,10 @@ const HomeTabHeader: React.FC<HomeTabHeaderProps> = (): React.JSX.Element => {
           </Text>
         </View>
       </View>
-      <View style={styles.homeTabScoreBox}>
+      <View style={styles.searchIconWrapper}>
         <CustomSvgImageComponent
-          width={27}
-          height={28}
+          width={45}
+          height={45}
           Component={CircleIcon}
         />
       </View>

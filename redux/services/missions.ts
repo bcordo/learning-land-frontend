@@ -25,11 +25,17 @@ const missionsApi = createApi({
     getMissionByWorldId: builder.query({
       query: ({id}) =>   `/api/v1/worlds/${id}/missions`,
     }), 
+    // getUserMissionByMissionIds: builder.query({
+    //   query: ({ missionsIds }) => `api/v1/user_missions/?mission_ids=${missionsIds.join('&mission_ids=')}`,
+    // }), 
     getUserMissionByMissionIds: builder.query({
-      query: ({ missionsIds }) => `api/v1/user_missions/?mission_ids=${missionsIds.join('&mission_ids=')}`,
-    }), 
+      query: ({ missionsIds }) => {
+        const queryString = missionsIds.map((id:any) => `mission_ids=${id}`).join('&');
+        return `/api/v1/user_missions/?${queryString}`;
+      },
+    }),
     getUserMissionHistory: builder.query({
-      query: ({user_mission_id}) =>   `/api/v1/user_missions/${user_mission_id}/history`,
+      query: ({user_mission_id}) =>   `/api/v1/mission/${user_mission_id}/history`,
     }), 
     getUserMissionByUserMissionId: builder.query({
       query: ({user_mission_id}) =>   `/api/v1/user_missions/${user_mission_id}`,

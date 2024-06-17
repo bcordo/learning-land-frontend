@@ -55,8 +55,8 @@ export interface CustomButtomProps {
 }
 export interface CustomSvgImageComponentInterface {
   Component: React.ComponentType<AnyInterface>;
-  width: NumberInterface;
-  height: NumberInterface;
+  width?: NumberInterface;
+  height?: NumberInterface;
 }
 export interface CustomDropdownProps {
   list: {}[];
@@ -115,6 +115,7 @@ export interface FadedDividerProps {
 }
 export interface FadedDividerMiddleTextProps {
   text: StringInterface;
+  loaderSate?: BooleanInterface;
 }
 export interface FadedDividerTextProps {
   fadedDividerTextColor?: {};
@@ -174,6 +175,7 @@ export interface ContainerProps {
   currentItemIndex: NumberInterface;
   world_id: NumberInterface;
   onLayout?: (event: AnyInterface) => void;
+  loaderSate?: BooleanInterface;
   missions: [
     {
       assistant_id: NumberInterface;

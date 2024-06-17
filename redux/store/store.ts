@@ -3,6 +3,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import timmerSlice from '../slices/timmerSlice'
 import userSettingsSlice from '../slices/userSetingsSlice'
 import missionSlice  from '../slices/missionSlice'
+import loaderSlice from '../slices/loaderSlice';
 import missionHistorySlice  from '../slices/missionHistory'
 import helpfulPharasesApi from '../services/helpfulPharases'
 import translateApi from '../services/translate'
@@ -22,7 +23,7 @@ export const store = configureStore({
     missionSlice,
     userSettingsSlice,
     missionHistorySlice,
-
+    loaderSlice,
     // APIS 
     
     [helpfulPharasesApi.reducerPath]: helpfulPharasesApi.reducer,

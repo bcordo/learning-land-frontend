@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Animated, View } from "react-native";
+import { ActivityIndicator, Animated, View } from "react-native";
 import FadedDividerMiddleText from "../FadedDividerMiddleText/FadedDividerMiddleText";
 import LockIcon from "../../assets/icons/lock-closed.svg";
 import GiftIcon from "../../assets/icons/gift.svg";
@@ -14,6 +14,8 @@ import {
   MissionItemInterface,
   NumberInterface,
 } from "../../intefaces/variablesInterfaces";
+import { useDispatch } from "react-redux";
+import { updateLoader } from "../../../redux/slices/loaderSlice";
 
 const CustomMissionHomeTabComponent: React.FC<ContainerProps> = ({
   navigation,
@@ -23,7 +25,10 @@ const CustomMissionHomeTabComponent: React.FC<ContainerProps> = ({
   currentItemIndex,
   missions,
   onLayout,
+  loaderSate,
 }) => {
+  const dispatch = useDispatch();
+
   const [fetchMissionsByMissionIds, { data: missionsdata, isLoading }] =
     useLazyGetUserMissionByMissionIdsQuery();
   useEffect(() => {
@@ -32,7 +37,9 @@ const CustomMissionHomeTabComponent: React.FC<ContainerProps> = ({
     if (!world_id) return;
     fetchMissionsByMissionIds({ missionsIds });
   }, [world_id]);
-
+  useEffect(() => {
+    dispatch(updateLoader(isLoading));
+  }, [isLoading]);
   const bounceValue = useRef(new Animated.Value(0)).current;
 
   function generateData(length: NumberInterface) {

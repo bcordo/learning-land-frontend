@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 import {
+  ActivityIndicator,
   SafeAreaView,
   ScrollView,
   Text,
@@ -11,10 +12,6 @@ import { styles } from "./styles";
 import Coffee from "../../assets/icons/coffee.svg";
 import CustomSvgImageComponent from "../../components/CustomComponents/Image";
 import HomeTabHeader from "../../components/HomeTabHeader/HomeTabHeader";
-import DumbleBlackIcon from "../../assets/icons/dumbell-black.svg";
-import GlobeIcon from "../../assets/icons/globe-alt-orange.svg";
-import UsersIcon from "../../assets/icons/user-group.svg";
-import UserIcon from "../../assets/icons/user.svg";
 import CustomShimmer from "../../components/CustomShimmer/CustomShimmer";
 import { useLazyGetAllWorldsQuery } from "../../../redux/services/worldsApi";
 import CustomMissionHomeTabComponent from "../../components/CustomMissionsHomeTab/CustomMissionsHomeTab";
@@ -25,6 +22,11 @@ import {
   StringInterface,
   WorldInterface,
 } from "../../intefaces/variablesInterfaces";
+import HomeFooter from "../../assets/icons/MySvgComponents/HomeFooter";
+import DumbelSvg from "../../assets/icons/MySvgComponents/DumbelSvg";
+import GroupSvg from "../../assets/icons/MySvgComponents/GroupSvg";
+import UserSvg from "../../assets/icons/MySvgComponents/UserSvg";
+import { useSelector } from "react-redux";
 
 const HomeTab: React.FC<NavigationInterface> = ({
   navigation,
@@ -34,17 +36,20 @@ const HomeTab: React.FC<NavigationInterface> = ({
   const scrollViewRef = useRef<any>(null);
   const [componentHeights, setComponentHeights] =
     useState<ComponentHeightsObjInterface>({});
-
+  const loading = useSelector(
+    (state: { loaderSlice: any }) => state.loaderSlice
+  );
   const [fetchWorlds, { data: allWorlds, isLoading: fetchingWorlds }] =
     useLazyGetAllWorldsQuery();
   useEffect(() => {
     fetchWorlds("");
   }, []);
+
   const footerList = [
-    { label: "Home", icon: GlobeIcon },
-    { label: "Training", icon: DumbleBlackIcon },
-    { label: "Multiplayer", icon: UsersIcon },
-    { label: "Profile", icon: UserIcon },
+    { label: "Home", IconComponent: HomeFooter },
+    { label: "Training", IconComponent: DumbelSvg },
+    { label: "Multiplayer", IconComponent: GroupSvg },
+    { label: "Profile", IconComponent: UserSvg },
   ];
 
   const handleScroll = (event: any) => {
@@ -81,24 +86,15 @@ const HomeTab: React.FC<NavigationInterface> = ({
         {
           <View style={[styles.container, { paddingHorizontal: 24 }]}>
             <HomeTabHeader />
-            {fetchingWorlds ? (
+            {fetchingWorlds || loading?.worldLoader ? (
               <>
-                <CustomShimmer
-                  styleProps={{
-                    width: "80%",
-                    height: 10,
-                    backgroundColor: "#9e9e9e",
-                    marginTop: 12,
-                  }}
-                />
-                <CustomShimmer
-                  styleProps={{
-                    width: "50%",
-                    height: 10,
-                    backgroundColor: "#9e9e9e",
-                    marginTop: 8,
-                  }}
-                />
+                <View style={styles.loaderContainer}>
+                  <ActivityIndicator
+                    size="large"
+                    style={styles.loader}
+                    color={"#F58C39"}
+                  />
+                </View>
               </>
             ) : (
               <View style={styles.missionDetailsContainer}>
@@ -152,6 +148,7 @@ const HomeTab: React.FC<NavigationInterface> = ({
                       world_id={element?.id}
                       onLayout={(event) => handleComponentLayout(idx, event)}
                       currentItemIndex={currentItemIndex}
+                      loaderSate={loading?.worldLoader}
                     />
                   );
                 }
@@ -173,10 +170,13 @@ const HomeTab: React.FC<NavigationInterface> = ({
                       },
                     ]}
                   >
-                    <CustomSvgImageComponent
-                      width={20}
-                      height={20}
-                      Component={e.icon}
+                    <e.IconComponent
+                      stroke={
+                        selectedItem.toLocaleLowerCase() ===
+                        e.label.toLocaleLowerCase()
+                          ? "#F58C39"
+                          : "#171717"
+                      }
                     />
                     <Text
                       style={[
