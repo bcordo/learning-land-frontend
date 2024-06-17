@@ -2,7 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  worldLoader:true,
+  worldLoader:false,
 };
 
 const loaderSlice = createSlice({
