@@ -15,10 +15,18 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 12,
   },
+  topContainer:{
+    paddingHorizontal: 10,
+    paddingTop: 40,
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     paddingBottom: 30,
+  },
+  drawerHeader:{
+    flexDirection: "row",
+    justifyContent: "flex-end",
   },
   missiontxtContainer: {
     alignItems: "center",
@@ -134,7 +142,7 @@ export const styles = StyleSheet.create({
   },
 
   missionHistoryContaier: {
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
     width: "100%",
     height: "100%",
     padding: 25,

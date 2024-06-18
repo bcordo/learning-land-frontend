@@ -57,15 +57,15 @@ const CustomMissionCircleComponent: React.FC<
             {(fill) => (
               <TouchableOpacity
                 onPress={() => {
+                  navigation.navigate("MissionStart", {
+                    id: extraData?.id,
+                  });
                   dispatch(
                     updateMission({
                       ...missionData,
                       index: index + 1,
                     })
                   );
-                  navigation.navigate("MissionStart", {
-                    id: extraData?.id,
-                  });
                 }}
                 style={styles.circularBarRoundBox}
               >

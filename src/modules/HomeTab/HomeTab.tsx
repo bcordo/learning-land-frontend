@@ -58,7 +58,7 @@ const HomeTab: React.FC<NavigationInterface> = ({
     let index = 0;
     let cumulativeHeight = 0;
     while (cumulativeHeight <= offsetY && index < allWorlds.length) {
-      cumulativeHeight += componentHeights[index] - 100;
+      cumulativeHeight += componentHeights[index];
       index++;
     }
     if (index <= 0) index = 1;
@@ -125,7 +125,7 @@ const HomeTab: React.FC<NavigationInterface> = ({
                     >
                       {allWorlds &&
                         !fetchingWorlds &&
-                        allWorlds[currentItemIndex ? currentItemIndex - 1 : 0]
+                        allWorlds[currentItemIndex ? currentItemIndex : 0]
                           ?.description}
                     </Text>
                   )}

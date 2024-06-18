@@ -15,6 +15,7 @@ import {
 import { styles } from "./styles";
 import LeftIcon from "../../assets/icons/arrow-left-black.svg";
 import Timer from "../../assets/icons/reload-timer.svg";
+import CrossIcon from "../../assets/icons/crossIcon.svg";
 import Goal from "../../assets/icons/goal-black.svg";
 import XCiexle from "../../assets/icons/x-circle-black.svg";
 import Message from "../../assets/icons/message-gray.svg";
@@ -241,6 +242,17 @@ const MissionHistory: React.FC<NavigationInterface> = ({
             reducedTransparencyFallbackColor="transparent"
           >
             <View style={styles.missionHistoryContaier}>
+              <View style={styles.topContainer}>
+                <View style={styles.drawerHeader}>
+                  <TouchableOpacity onPress={() => navigation.goBack()}>
+                    <CustomSvgImageComponent
+                      width={20}
+                      height={20}
+                      Component={CrossIcon}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
               <View style={styles.missionHistorySubContaier}>
                 <View
                   style={[
@@ -296,7 +308,6 @@ const MissionHistory: React.FC<NavigationInterface> = ({
                   </View>
                 )}
               </View>
-              <View></View>
             </View>
           </BlurView>
         }
