@@ -122,6 +122,11 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
           styles.menuListItem,
           {
             borderBottomWidth: i !== menuList.length - 1 ? 1 : 0,
+            borderTopWidth: i === 0 ? 1 : 0,
+            borderTopLeftRadius: i === 0 ? 10 : 0,
+            borderTopRightRadius: i === 0 ? 10 : 0,
+            borderBottomLeftRadius: i === menuList.length - 1 ? 10 : 0,
+            borderBottomRightRadius: i === menuList.length - 1 ? 10 : 0,
           },
         ]}
       >

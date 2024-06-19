@@ -139,6 +139,7 @@ export interface HelpfulActionsContainerProps {
   ];
   renderItem: FunctionInterface;
   buttonText: StringInterface;
+  buttonTextCheck: StringInterface;
   heading: StringInterface;
   navigation: AnyInterface;
   navigationRoute: StringInterface;

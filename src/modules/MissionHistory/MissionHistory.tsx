@@ -242,7 +242,14 @@ const MissionHistory: React.FC<NavigationInterface> = ({
             reducedTransparencyFallbackColor="transparent"
           >
             <View style={styles.missionHistoryContaier}>
-              <View style={styles.topContainer}>
+              <View
+                style={[
+                  styles.topContainer,
+                  {
+                    paddingTop: Platform.OS === "ios" ? 40 : 0,
+                  },
+                ]}
+              >
                 <View style={styles.drawerHeader}>
                   <TouchableOpacity onPress={() => navigation.goBack()}>
                     <CustomSvgImageComponent

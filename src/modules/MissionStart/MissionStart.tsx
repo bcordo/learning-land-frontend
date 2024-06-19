@@ -135,24 +135,6 @@ const MissionStart: React.FC<NavigationInterface> = ({
               />
             </TouchableOpacity>
 
-            <View
-              style={{
-                overflow: "hidden",
-                transform: [{ scaleY: 1.35 }],
-                paddingVertical: 20,
-              }}
-            >
-              <Image
-                source={require("../../assets/icons/profile-image-mission-start.png")}
-                style={{
-                  width: 134,
-                  height: 128,
-                  borderRadius,
-                }}
-                resizeMode="stretch"
-              />
-            </View>
-
             <TouchableOpacity
               onPress={() => navigation.navigate("MissionHistory")}
             >
@@ -166,9 +148,20 @@ const MissionStart: React.FC<NavigationInterface> = ({
           <ScrollView
             style={{
               height:
-                Platform.OS === "ios" ? screenHeight - 390 : screenHeight - 310,
+                Platform.OS === "ios" ? screenHeight - 210 : screenHeight - 130,
             }}
           >
+            <View style={styles.imageContainer}>
+              <Image
+                source={require("../../assets/icons/profile-image-mission-start.png")}
+                style={{
+                  width: 134,
+                  height: 128,
+                  borderRadius,
+                }}
+                resizeMode="stretch"
+              />
+            </View>
             <View style={styles.missiontxtContainer}>
               <Text style={(styles.missionTxt, styles.defaultFontFamily)}>
                 World {allMissions?.index}, Mission 1

@@ -354,6 +354,7 @@ const MissionEnd: React.FC<NavigationInterface> = ({
                 heading={"Incorrect Phrases"}
                 navigation={navigation}
                 navigationRoute={"HelpfulPharases"}
+                buttonTextCheck={missionDetails?.incorrect_user_phrases?.length}
               />
               <HelpfulActionsContainer
                 list={missionDetails?.correct_user_phrases}
@@ -362,6 +363,7 @@ const MissionEnd: React.FC<NavigationInterface> = ({
                 heading={"Correct Phrases"}
                 navigation={navigation}
                 navigationRoute={"HelpfulPharases"}
+                buttonTextCheck={missionDetails?.correct_user_phrases?.length}
               />
 
               <HelpfulActionsContainer
@@ -371,6 +373,7 @@ const MissionEnd: React.FC<NavigationInterface> = ({
                 heading={"Transcript"}
                 navigation={navigation}
                 navigationRoute={"HelpfulPharases"}
+                buttonTextCheck={`See full transcript`}
                 handleButton={() =>
                   setHowManyShowTranscript(missionDetails?.interactions?.length)
                 }

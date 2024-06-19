@@ -69,12 +69,12 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingHorizontal: 20,
+    paddingHorizontal: 5,
     paddingVertical: 15,
   },
   optionSubTitle: {
     color: "#525252",
-    fontSize: 12,
+    fontSize: 11,
     lineHeight: 20,
   },
   timerContainer: {

@@ -17,7 +17,8 @@ export const styles = StyleSheet.create({
   },
   topContainer:{
     paddingHorizontal: 10,
-    paddingTop: 40,
+    width:'100%',
+    height:70,
   },
   header: {
     flexDirection: "row",
@@ -27,6 +28,7 @@ export const styles = StyleSheet.create({
   drawerHeader:{
     flexDirection: "row",
     justifyContent: "flex-end",
+    width:'100%'
   },
   missiontxtContainer: {
     alignItems: "center",

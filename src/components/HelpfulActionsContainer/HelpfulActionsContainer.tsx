@@ -11,6 +11,7 @@ const HelpfulActionsContainer: React.FC<HelpfulActionsContainerProps> = ({
   navigation,
   navigationRoute,
   handleButton,
+  buttonTextCheck,
 }): React.JSX.Element => {
   return (
     <View style={styles.incorrectPhaseContainer}>
@@ -25,9 +26,11 @@ const HelpfulActionsContainer: React.FC<HelpfulActionsContainerProps> = ({
             handleButton ? handleButton() : navigation.navigate(navigationRoute)
           }
         >
-          <Text style={[styles.seeAllPharasesTxt, styles.defaultFontFamily]}>
-            {buttonText}
-          </Text>
+          {buttonTextCheck && (
+            <Text style={[styles.seeAllPharasesTxt, styles.defaultFontFamily]}>
+              {buttonText}
+            </Text>
+          )}
         </TouchableOpacity>
       </View>
       <View style={styles.helpfulPharasesListContainer}>

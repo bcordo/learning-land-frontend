@@ -11,11 +11,11 @@ export const styles = StyleSheet.create({
     backgroundColor: "#F1F5F9",
     paddingHorizontal: 24,
     paddingTop: 12,
+    justifyContent:'space-between'
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingBottom: 30,
   },
   missiontxtContainer: {
     alignItems: "center",
@@ -131,4 +131,11 @@ export const styles = StyleSheet.create({
     fontStyle: "normal",
     lineHeight: 28,
   },
+  imageContainer:{
+    overflow: "hidden",
+    transform: [{ scaleY: 1.35 }],
+    paddingTop:30,
+    paddingBottom: 50,
+    alignItems: "center",
+  }
 });

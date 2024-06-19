@@ -140,7 +140,7 @@ const TimerPaused: React.FC<NavigationInterface> = ({
             {item?.subTitle ? (
               <Text style={[styles.optionSubTitle, styles.defaultFontFamily]}>
                 {" "}
-                {item.title}
+                {item.subTitle}
               </Text>
             ) : null}
           </View>

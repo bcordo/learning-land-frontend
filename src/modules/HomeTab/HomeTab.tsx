@@ -86,7 +86,7 @@ const HomeTab: React.FC<NavigationInterface> = ({
         {
           <View style={[styles.container, { paddingHorizontal: 24 }]}>
             <HomeTabHeader />
-            {fetchingWorlds || loading?.worldLoader ? (
+            {fetchingWorlds ? (
               <>
                 <View style={styles.loaderContainer}>
                   <ActivityIndicator

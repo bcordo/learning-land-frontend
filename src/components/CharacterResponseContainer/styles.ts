@@ -20,7 +20,6 @@ export const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-
     elevation: 5,
     padding: 20,
     marginBottom: 20,
@@ -88,12 +87,14 @@ export const styles = StyleSheet.create({
    
   },
   menuListItem: {
-    padding: 10,
+    paddingHorizontal: 15,
+    paddingVertical:15,
     flexDirection: 'row',
     alignItems: 'center',
     gap:10,
     borderColor:'#E5E5E5',
-  
+    backgroundColor:'#F1F5F9',
+    borderRadius:10,
   },
   
 
@@ -114,10 +115,11 @@ export const styles = StyleSheet.create({
   dropdownMenuStyle:{
 borderRadius:10,
 borderWidth:1,
-borderColor:'#D4D4D4'
+borderColor:'#D4D4D4',
+backgroundColor:'#F1F5F9',
   },
   dropdownTxtContainer:{
-    width:190,
+    width:210,
     alignItems:'flex-end',
   }
 });
