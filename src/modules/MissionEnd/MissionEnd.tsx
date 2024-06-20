@@ -28,6 +28,7 @@ import { useLazyGetUserMissionByUserMissionIdQuery } from "../../../redux/servic
 import { useSelector } from "react-redux";
 import { NavigationInterface } from "../../intefaces/componentsInterfaces";
 import {
+  BooleanInterface,
   ReviewBoxListInterface,
   StringInterface,
 } from "../../intefaces/variablesInterfaces";
@@ -40,6 +41,7 @@ const MissionEnd: React.FC<NavigationInterface> = ({
   const [reviewBoxList, setReviewBoxList] = useState<ReviewBoxListInterface[]>(
     []
   );
+  const [isPlaying, setIsPlaying] = useState<BooleanInterface>(false); // State to track if the audio is playing
   const [howManyShowTranscript, setHowManyShowTranscript] = useState(0);
   const [
     getchMissionByMissionId,
@@ -142,6 +144,8 @@ const MissionEnd: React.FC<NavigationInterface> = ({
             text_language={item?.native_text_language}
             interaction_type={item?.interaction_type}
             showDescriptionIcons={item?.showDescriptionIcons}
+            isPlaying={isPlaying}
+            setIsPlaying={setIsPlaying}
           />
         ) : null}
       </>

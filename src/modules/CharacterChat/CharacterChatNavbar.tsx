@@ -20,18 +20,75 @@ const CharacterChatNavbar: React.FC<CharacterChatNavbarProps> = ({
   const [userGoals, setUserGoals] = useState([]);
 
   const user_mission = useSelector((state) => state.missionSlice.mission);
-
+  let aa = [
+    {
+      created_at: "2024-06-18T17:34:34.077631",
+      description: "Description for goal 1 in mission 1, world 1",
+      goal_id: 1,
+      goal_index: 1,
+      goal_type: "MAIN",
+      id: 1,
+      mission_id: 1,
+      state: "INACTIVE",
+      title: "Goal 1 for mission 1 in world 1",
+      updated_at: "2024-06-18T17:35:41.513050",
+      user_id: 26,
+      user_mission_id: 704,
+    },
+    {
+      created_at: "2024-06-18T17:34:34.077631",
+      description: "Description for goal 2 in mission 1, world 1",
+      goal_id: 2,
+      goal_index: 2,
+      goal_type: "BONUS",
+      id: 2,
+      mission_id: 1,
+      state: "INACTIVE",
+      title: "Goal 2 for mission 1 in world 1",
+      updated_at: "2024-06-18T17:35:41.513050",
+      user_id: 26,
+      user_mission_id: 704,
+    },
+    {
+      created_at: "2024-06-18T17:34:34.077631",
+      description: "Description for goal 3 in mission 1, world 1",
+      goal_id: 3,
+      goal_index: 3,
+      goal_type: "MAIN",
+      id: 3,
+      mission_id: 1,
+      state: "INACTIVE",
+      title: "Goal 3 for mission 1 in world 1",
+      updated_at: "2024-06-18T17:35:41.513050",
+      user_id: 26,
+      user_mission_id: 704,
+    },
+    {
+      created_at: "2024-06-19T13:25:29.138860",
+      description: "string",
+      goal_id: 301,
+      goal_index: 0,
+      goal_type: "MAIN",
+      id: 301,
+      mission_id: 1,
+      state: "INACTIVE",
+      title: "string",
+      updated_at: "2024-06-19T13:43:24.239549",
+      user_id: 26,
+      user_mission_id: 704,
+    },
+  ];
   useEffect(() => {
     if (!user_mission) return;
     const goals = [...user_mission?.goals];
     const user_goals = [...user_mission?.user_goals];
 
     if (!goals?.length && !user_goals?.length) return;
-
     const goalsWithStatus: any = [];
-
     goals?.forEach((goal) => {
-      const filterUserGoal = user_goals?.find((item) => item?.id === goal?.id);
+      const filterUserGoal = user_goals?.find(
+        (item) => item?.goal_id === goal?.id
+      );
       if (filterUserGoal) {
         goalsWithStatus.push({
           ...filterUserGoal,
@@ -155,7 +212,7 @@ const CharacterChatNavbar: React.FC<CharacterChatNavbarProps> = ({
                   />
                 )}
               </View>
-              {i !== 2 && (
+              {i !== userGoals?.length - 1 && (
                 <View
                   style={[
                     styles.stepLine,

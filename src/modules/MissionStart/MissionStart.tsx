@@ -24,17 +24,21 @@ import CustomGoalListComponent from "../../components/CustomGaolListComp/CustomG
 import { LIGHT_BLACK_FADED_COLOR } from "../../assets/constant";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigationInterface } from "../../intefaces/componentsInterfaces";
-import { updateTime } from "../../../redux/slices/timmerSlice";
+import {
+  updateInitialTimmer,
+  updateTime,
+} from "../../../redux/slices/timmerSlice";
+import { BooleanInterface } from "../../intefaces/variablesInterfaces";
 
 const MissionStart: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
   const dispatch = useDispatch();
+  const [isPlaying, setIsPlaying] = useState<BooleanInterface>(false); // State to track if the audio is playing
 
   const allMissions = useSelector(
     (state: { missionSlice: any }) => state.missionSlice.mission
   );
-
   const [screenHeight, setScreenHeight] = useState(
     Dimensions.get("window").height
   );
@@ -116,6 +120,8 @@ const MissionStart: React.FC<NavigationInterface> = ({
       <HelphulPharasesComp
         title={item.text}
         text_language={item?.text_language}
+        isPlaying={isPlaying}
+        setIsPlaying={setIsPlaying}
         // isFetching={fetchingMissions}
       />
     ) : null;
@@ -164,7 +170,7 @@ const MissionStart: React.FC<NavigationInterface> = ({
             </View>
             <View style={styles.missiontxtContainer}>
               <Text style={(styles.missionTxt, styles.defaultFontFamily)}>
-                World {allMissions?.index}, Mission 1
+                World {allMissions?.index}, Mission {allMissions?.mission_index}
               </Text>
               <View style={styles.coffeeShopTxtContainer}>
                 <Text
@@ -249,6 +255,7 @@ const MissionStart: React.FC<NavigationInterface> = ({
                   totalSeconds: 300,
                 })
               );
+              dispatch(updateInitialTimmer({ initialTotalSeconds: 300 }));
               navigation.navigate("CharacterChat");
             }}
           >

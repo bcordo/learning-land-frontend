@@ -97,7 +97,9 @@ const CharacterChatFooter: React.FC<CharacterChatFooterProps> = ({
                       onStopRecord(false);
                       setIsRecording(false);
                     }
-                  : () => {}
+                  : () => {
+                      openDrawer();
+                    }
               }
             >
               {isRecording ? (

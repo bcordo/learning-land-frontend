@@ -19,10 +19,11 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
   isTyping,
   profileIconContainerStyle,
   message,
+  isPlaying,
+  setIsPlaying = () => {},
 }): React.JSX.Element => {
   const [isTranslateEnabled, setIsTranslateEnabled] = useState<boolean>(false);
   const [translatedText, setTranslatedText] = useState<string>("");
-
   useEffect(() => {
     if (!translatedText) return;
     setIsTranslateEnabled(false);
@@ -46,6 +47,7 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
   ];
 
   const speakText = async (text: string) => {
+    setIsPlaying(true);
     try {
       const response = await RNFetchBlob.fetch(
         "POST",
@@ -62,9 +64,11 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
         playAudioChunk(base64Data);
       } else {
         console.error("Text-to-speech error:", response.info().status);
+        setIsPlaying(false);
       }
     } catch (error) {
       console.error("Text-to-speech error:", error);
+      setIsPlaying(false);
     }
   };
 
@@ -78,10 +82,12 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
         const sound = new Sound(audioFilePath, "", (error) => {
           if (error) {
             console.error("Error loading sound:", error);
+            setIsPlaying(false);
             return;
           }
 
           sound.play((success) => {
+            setIsPlaying(false);
             if (success) {
               console.log("Sound played successfully");
             } else {
@@ -92,6 +98,7 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
       }
     } catch (error) {
       console.error("Error playing audio:", error);
+      setIsPlaying(false);
     }
   };
   const handleTranslateClick = async (message: string) => {
@@ -167,7 +174,10 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
           </Text>
           <View style={styles.translateContainer}>
             <View style={styles.translateRightContainer}>
-              <TouchableOpacity onPress={() => speakText(message)}>
+              <TouchableOpacity
+                onPress={() => speakText(message)}
+                disabled={isPlaying}
+              >
                 <CustomSvgImageComponent
                   width={18}
                   height={18}

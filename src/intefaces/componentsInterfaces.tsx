@@ -45,6 +45,8 @@ export interface CharacterResponseContainerProps {
   isTyping?: BooleanInterface;
   profileIconContainerStyle?: {};
   message?: StringInterface;
+  isPlaying: BooleanInterface;
+  setIsPlaying: (isPlaying: BooleanInterface) => void;
 }
 export interface CustomButtomProps {
   buttonStyle: {};
@@ -155,6 +157,8 @@ export interface HelphulPharasesCompProps {
   isRight?: BooleanInterface;
   showDescriptionIcons?: BooleanInterface;
   isFetching?: BooleanInterface;
+  isPlaying?: BooleanInterface;
+  setIsPlaying?: (isPlaying: BooleanInterface) => void;
 }
 export interface HomeTabHeaderProps {}
 export interface ProfileContainerProps {

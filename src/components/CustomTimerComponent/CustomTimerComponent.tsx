@@ -10,14 +10,17 @@ import { NavigationInterface } from "../../intefaces/componentsInterfaces";
 const CustomTimerComponent: React.FC<NavigationInterface> = ({
   navigation,
 }) => {
-  const { totalSeconds, minutes, seconds, pauseTimmer } = useSelector(
-    (state: { timmerSlice: TimerSliceInterface }) => state.timmerSlice
-  );
+  const { initialTotalSeconds, totalSeconds, minutes, seconds, pauseTimmer } =
+    useSelector(
+      (state: { timmerSlice: TimerSliceInterface }) => state.timmerSlice
+    );
   const dispatch = useDispatch();
   useEffect(() => {
     if (pauseTimmer) return;
     const interval = setInterval(() => {
-      if (totalSeconds <= 0) return navigation.navigate("MissionEnd");
+      if (totalSeconds <= 0) {
+        navigation.navigate("MissionEnd");
+      }
       if (totalSeconds >= 0) {
         dispatch(
           updateTime({
@@ -32,15 +35,15 @@ const CustomTimerComponent: React.FC<NavigationInterface> = ({
     return () => clearInterval(interval);
   }, [totalSeconds, pauseTimmer]);
 
+  const progressFill =
+    ((initialTotalSeconds - totalSeconds) / initialTotalSeconds) * 100;
+
   return (
     <View style={styles.wrapper}>
       <AnimatedCircularProgress
         size={40}
         width={2}
-        fill={
-          (minutes * 60 + seconds - totalSeconds) *
-          (100 / (minutes * 60 + seconds))
-        }
+        fill={progressFill}
         tintColor="#7DDFDE"
         backgroundColor="#F1F5F9"
         lineCap="round"

@@ -118,6 +118,7 @@ export interface MissionHistoryDataInterface {
 }
 export interface TimerSliceInterface {
   totalSeconds: NumberInterface;
+  initialTotalSeconds: NumberInterface;
   minutes: NumberInterface;
   seconds: NumberInterface;
   pauseTimmer: BooleanInterface;

@@ -26,10 +26,12 @@ const HelpfulActionsContainer: React.FC<HelpfulActionsContainerProps> = ({
             handleButton ? handleButton() : navigation.navigate(navigationRoute)
           }
         >
-          {buttonTextCheck && (
+          {buttonTextCheck ? (
             <Text style={[styles.seeAllPharasesTxt, styles.defaultFontFamily]}>
               {buttonText}
             </Text>
+          ) : (
+            ""
           )}
         </TouchableOpacity>
       </View>

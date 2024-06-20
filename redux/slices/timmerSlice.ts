@@ -5,6 +5,7 @@ const initialState = {
   seconds: 0,
   totalSeconds: 0,
   pauseTimmer: false,
+  initialTotalSeconds:0,
 };
 
 const timmerSlice = createSlice({
@@ -19,9 +20,12 @@ const timmerSlice = createSlice({
     updatePauseTimmer: (state, { payload }) => {
       state.pauseTimmer = payload;
     },
+    updateInitialTimmer: (state, { payload }) => {
+      state.initialTotalSeconds = payload.initialTotalSeconds;
+    },
   },
 });
 
-export const { updateTime, updatePauseTimmer } = timmerSlice.actions;
+export const { updateTime, updatePauseTimmer,updateInitialTimmer } = timmerSlice.actions;
 
 export default timmerSlice.reducer;

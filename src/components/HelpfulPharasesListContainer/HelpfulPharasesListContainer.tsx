@@ -16,6 +16,7 @@ import CustomSvgImageComponent from "../CustomComponents/Image";
 import HelphulPharasesComp from "../HelphulPharasesComp/HelphulPharasesComp";
 import { NavigationInterface } from "../../intefaces/componentsInterfaces";
 import {
+  BooleanInterface,
   RenderHelpfulPharasesInterface,
   pharsesInterface,
 } from "../../intefaces/variablesInterfaces";
@@ -26,6 +27,7 @@ const HelpfulPharasesListContainer: React.FC<NavigationInterface> = ({
 }): React.JSX.Element => {
   const [inputText, setInputText] = useState<string>("");
   const [pharasesList, setPharasesList] = useState<pharsesInterface[]>([]);
+  const [isPlaying, setIsPlaying] = useState<BooleanInterface>(false); // State to track if the audio is playing
   const allMissions = useSelector(
     (state: { missionSlice: any }) => state.missionSlice.mission
   );
@@ -39,6 +41,8 @@ const HelpfulPharasesListContainer: React.FC<NavigationInterface> = ({
       <HelphulPharasesComp
         title={item.text}
         text_language={item?.text_language}
+        isPlaying={isPlaying}
+        setIsPlaying={setIsPlaying}
       />
     );
   };
