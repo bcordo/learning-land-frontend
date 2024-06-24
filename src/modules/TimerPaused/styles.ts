@@ -130,14 +130,14 @@ export const styles = StyleSheet.create({
   modalBackground: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center",
+    // alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalView: {
     margin: 40,
     borderRadius: 20,
     padding: 35,
-    alignItems: "center",
+    // alignItems: "center",
     backgroundColor: "#F1F5F9",
     shadowColor: "#3282ce9c",
     shadowOffset: {
@@ -151,12 +151,13 @@ export const styles = StyleSheet.create({
   },
   modalText: {
     marginBottom: 24,
-    textAlign: "center",
+    // textAlign: "center",
+    color:'#171717'
   },
   modalButtonContainer: {
     width: "100%",
     flexDirection: "row",
-    justifyContent: "space-between",
+    gap:10,
   },
   modalConfirmButton: {
     backgroundColor: "#F58C39",

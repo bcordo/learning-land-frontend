@@ -3,6 +3,7 @@ import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "./styles";
 import {
+  ActivityIndicator,
   FlatList,
   ScrollView,
   Text,
@@ -58,7 +59,7 @@ const MissionEnd: React.FC<NavigationInterface> = ({
       {
         value: "PHRASES",
         icon: MessageIcon,
-        color: "#1717171",
+        color: "#171717",
         score: `+${missionDetails?.all_user_phrases?.length}`,
         key: "total_phrases",
       },
@@ -132,6 +133,8 @@ const MissionEnd: React.FC<NavigationInterface> = ({
       interaction_type?: string;
       showDescriptionIcons?: boolean;
       utterance: StringInterface;
+      thought?: StringInterface;
+      action?: StringInterface;
     };
     index: number;
   }) => {
@@ -139,8 +142,8 @@ const MissionEnd: React.FC<NavigationInterface> = ({
       <>
         {index <= howManyShowTranscript ? (
           <HelphulPharasesComp
-            title={item.native_text || item?.utterance}
-            description={item?.translated_text}
+            title={item.native_text || item?.utterance || item?.action}
+            description={item?.translated_text || item?.thought}
             text_language={item?.native_text_language}
             interaction_type={item?.interaction_type}
             showDescriptionIcons={item?.showDescriptionIcons}
@@ -151,13 +154,9 @@ const MissionEnd: React.FC<NavigationInterface> = ({
       </>
     );
   };
-  function calculateResult(arr: [], completed_goals: number) {
-    const completionPercentage = (completed_goals || 0 / arr?.length) * 100;
-    let result = (completionPercentage / 100) * 70;
-    result = Math.min(result, 70);
-    result = Math.max(result, 0);
-
-    return result;
+  function calculateResult(arr: [], completed_goals: number = 0) {
+    const completionPercentage = (completed_goals / arr?.length) * 100;
+    return completionPercentage;
   }
 
   return (
@@ -167,21 +166,23 @@ const MissionEnd: React.FC<NavigationInterface> = ({
         <ScrollView style={styles.container}>
           {fetchingMission ? (
             <>
-              <CustomShimmer
-                styleProps={{
-                  width: "80%",
-                  height: 10,
-                  backgroundColor: "#9e9e9e",
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
-              />
-              <CustomShimmer
-                styleProps={{
-                  width: "60%",
-                  height: 10,
-                  backgroundColor: "#9e9e9e",
-                  marginTop: 8,
-                }}
-              />
+              >
+                <ActivityIndicator
+                  size="large"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    height: 200,
+                  }}
+                  color={"#F58C39"}
+                />
+              </View>
             </>
           ) : (
             <>
@@ -216,13 +217,15 @@ const MissionEnd: React.FC<NavigationInterface> = ({
                       missionDetails?.user_goals,
                       missionDetails?.number_of_goals_completed
                     )}
-                    tintColor="#F1F5F9"
+                    tintColor="#f1f5f9e0"
                     backgroundColor="#d8e1ee"
                     lineCap="round"
-                    rotation={-135}
+                    rotation={-120}
+                    arcSweepAngle={240}
                     style={{
                       borderRadius: 20,
-                      shadowColor: "#3282ce9c",
+
+                      shadowColor: "#F1F5F9",
                       shadowOffset: {
                         width: 0,
                         height: 2,
@@ -277,28 +280,27 @@ const MissionEnd: React.FC<NavigationInterface> = ({
                   </AnimatedCircularProgress>
 
                   <View style={styles.starContainer}>
-                    <View style={styles.starBox1}>
-                      <CustomSvgImageComponent
-                        width={42}
-                        height={40}
-                        Component={StarIcon}
-                      />
-                    </View>
-
-                    <View style={[styles.starBox1, styles.starBox2]}>
-                      <CustomSvgImageComponent
-                        width={42}
-                        height={40}
-                        Component={StarIcon}
-                      />
-                    </View>
-                    <View style={[styles.starBox1, styles.starBox3]}>
-                      <CustomSvgImageComponent
-                        width={42}
-                        height={40}
-                        Component={GrayStarIcon}
-                      />
-                    </View>
+                    {[...Array(3)].map((_, index) => (
+                      <View
+                        key={index}
+                        style={[
+                          styles.starBox1,
+                          index === 0 && styles.starBox1,
+                          index === 1 && styles.starBox2,
+                          index === 2 && styles.starBox3,
+                        ]}
+                      >
+                        <CustomSvgImageComponent
+                          width={42}
+                          height={40}
+                          Component={
+                            index < missionDetails?.number_of_goals_completed
+                              ? StarIcon
+                              : GrayStarIcon
+                          }
+                        />
+                      </View>
+                    ))}
                   </View>
                 </View>
               </View>
@@ -346,42 +348,54 @@ const MissionEnd: React.FC<NavigationInterface> = ({
                 <FlatList data={userGoalsDetails} renderItem={renderItem} />
               </View>
 
-              <HelpfulActionsContainer
-                list={missionDetails?.incorrect_user_phrases?.map((element) => {
-                  return {
-                    ...element,
-                    showDescriptionIcons: true,
-                  };
-                })}
-                renderItem={renderHelpfulPharases}
-                buttonText={` See all ${missionDetails?.incorrect_user_phrases?.length} mistakes`}
-                heading={"Incorrect Phrases"}
-                navigation={navigation}
-                navigationRoute={"HelpfulPharases"}
-                buttonTextCheck={missionDetails?.incorrect_user_phrases?.length}
-              />
-              <HelpfulActionsContainer
-                list={missionDetails?.correct_user_phrases}
-                renderItem={renderHelpfulPharases}
-                buttonText={`See all ${missionDetails?.correct_user_phrases?.length}`}
-                heading={"Correct Phrases"}
-                navigation={navigation}
-                navigationRoute={"HelpfulPharases"}
-                buttonTextCheck={missionDetails?.correct_user_phrases?.length}
-              />
+              {missionDetails?.incorrect_user_phrases?.length ? (
+                <HelpfulActionsContainer
+                  list={missionDetails?.incorrect_user_phrases?.map(
+                    (element) => {
+                      return {
+                        ...element,
+                        showDescriptionIcons: true,
+                      };
+                    }
+                  )}
+                  renderItem={renderHelpfulPharases}
+                  buttonText={` See all ${missionDetails?.incorrect_user_phrases?.length} mistakes`}
+                  heading={"Incorrect Phrases"}
+                  navigation={navigation}
+                  navigationRoute={"HelpfulPharases"}
+                  buttonTextCheck={
+                    missionDetails?.incorrect_user_phrases?.length
+                  }
+                />
+              ) : null}
+              {missionDetails?.correct_user_phrases?.length ? (
+                <HelpfulActionsContainer
+                  list={missionDetails?.correct_user_phrases}
+                  renderItem={renderHelpfulPharases}
+                  buttonText={`See all ${missionDetails?.correct_user_phrases?.length}`}
+                  heading={"Correct Phrases"}
+                  navigation={navigation}
+                  navigationRoute={"HelpfulPharases"}
+                  buttonTextCheck={missionDetails?.correct_user_phrases?.length}
+                />
+              ) : null}
 
-              <HelpfulActionsContainer
-                list={missionDetails?.interactions}
-                renderItem={renderHelpfulPharases}
-                buttonText={`See full transcript`}
-                heading={"Transcript"}
-                navigation={navigation}
-                navigationRoute={"HelpfulPharases"}
-                buttonTextCheck={`See full transcript`}
-                handleButton={() =>
-                  setHowManyShowTranscript(missionDetails?.interactions?.length)
-                }
-              />
+              {missionDetails?.interactions?.length ? (
+                <HelpfulActionsContainer
+                  list={missionDetails?.interactions}
+                  renderItem={renderHelpfulPharases}
+                  buttonText={`See full transcript`}
+                  heading={"Transcript"}
+                  navigation={navigation}
+                  navigationRoute={"HelpfulPharases"}
+                  buttonTextCheck={`See full transcript`}
+                  handleButton={() =>
+                    setHowManyShowTranscript(
+                      missionDetails?.interactions?.length
+                    )
+                  }
+                />
+              ) : null}
 
               <View style={styles.buttonContainer}>
                 <CustomButtom

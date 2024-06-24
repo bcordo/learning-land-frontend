@@ -31,7 +31,7 @@ const userSettingsSlice = createSlice({
    },
    updateUserSettingsByType(state, { payload }) {
     const { type, value } = payload;
-  (state as any)[type ] = value;
+  (state as any)[type] = value;
   },
    
     

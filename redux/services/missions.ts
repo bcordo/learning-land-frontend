@@ -35,7 +35,7 @@ const missionsApi = createApi({
       },
     }),
     getUserMissionHistory: builder.query({
-      query: ({user_mission_id}) =>   `/api/v1/mission/${user_mission_id}/history`,
+      query: ({user_mission_id}) =>   `/api/v1/missions/${user_mission_id}/history`,
     }), 
     getUserMissionByUserMissionId: builder.query({
       query: ({user_mission_id}) =>   `/api/v1/user_missions/${user_mission_id}`,

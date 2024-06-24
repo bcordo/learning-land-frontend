@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
     bottom: -10,
     flexDirection: "row",
     gap: 8,
-    backgroundColor: "#F1F5F9",
+    // backgroundColor: "#F1F5F9",
     height: 85,
     alignItems: "flex-end",
     borderRadius: 20,
@@ -128,6 +128,7 @@ export const styles = StyleSheet.create({
   goalsTxt: {
     fontSize: 18,
     paddingVertical: 10,
+    color: "#171717",
   },
   goalsList: {
     paddingVertical: 16,

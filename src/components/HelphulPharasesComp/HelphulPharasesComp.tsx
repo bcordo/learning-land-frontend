@@ -109,11 +109,7 @@ const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({
           onPress={() => {
             interaction_type === "user-response" && !isRight
               ? () => {}
-              : speakText(
-                  `${title || ""} ${
-                    description ? description : translatedText?.text || ""
-                  }`
-                );
+              : speakText(`${title || ""}`);
           }}
           disabled={isPlaying}
         >

@@ -138,7 +138,9 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
         ]}
       >
         <Image source={item.icon} />
-        <Text style={styles.defaultFontFamily}>{item.value}</Text>
+        <Text style={[styles.defaultFontFamily, styles.menuListText]}>
+          {item.value}
+        </Text>
       </View>
     );
   };

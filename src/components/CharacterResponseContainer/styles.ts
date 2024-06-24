@@ -121,5 +121,8 @@ backgroundColor:'#F1F5F9',
   dropdownTxtContainer:{
     width:210,
     alignItems:'flex-end',
+  },
+  menuListText:{
+    color:'#171717'
   }
 });

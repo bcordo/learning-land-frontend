@@ -145,12 +145,16 @@ export const styles = StyleSheet.create({
 
   missionHistoryContaier: {
     justifyContent: "space-between",
+    alignContent:'space-between',
     width: "100%",
     height: "100%",
     padding: 25,
+    backgroundColor: "transparent"
   },
   missionHistorySubContaier: {
     width: "100%",
+    height:'auto',
+    // backgroundColor:'red'
   },
   scenarioHistoryContainer: {
     flexDirection: "row",
@@ -162,6 +166,8 @@ export const styles = StyleSheet.create({
   },
   scenarioHistoryTxt: {
     fontSize: 16,
+    color:'#171717',
+    fontWeight:'600',
   },
   missionHistoryDetailsListContainer: {
     flexDirection: "row",
