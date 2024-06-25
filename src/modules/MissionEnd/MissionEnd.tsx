@@ -217,14 +217,13 @@ const MissionEnd: React.FC<NavigationInterface> = ({
                       missionDetails?.user_goals,
                       missionDetails?.number_of_goals_completed
                     )}
-                    tintColor="#f1f5f9e0"
+                    tintColor="#eaedf0"
                     backgroundColor="#d8e1ee"
                     lineCap="round"
                     rotation={-120}
                     arcSweepAngle={240}
                     style={{
                       borderRadius: 20,
-
                       shadowColor: "#F1F5F9",
                       shadowOffset: {
                         width: 0,
