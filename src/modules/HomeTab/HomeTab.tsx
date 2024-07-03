@@ -57,8 +57,8 @@ const HomeTab: React.FC<NavigationInterface> = ({
     const offsetY = contentOffset.y;
     let index = 0;
     let cumulativeHeight = 0;
-    while (cumulativeHeight <= offsetY && index < allWorlds.length) {
-      cumulativeHeight += componentHeights[index];
+    while (cumulativeHeight <= offsetY && index < allWorlds?.length) {
+      cumulativeHeight += componentHeights?.[index];
       index++;
     }
     if (index <= 0) index = 1;
@@ -97,7 +97,7 @@ const HomeTab: React.FC<NavigationInterface> = ({
                 </View>
               </>
             ) : (
-              <View style={[styles.missionDetailsContainer,{backgroundColor:colors[currentItemIndex?currentItemIndex % colors.length:0]}]}>
+              <View style={[styles.missionDetailsContainer,{backgroundColor:colors[currentItemIndex?currentItemIndex % colors?.length:0]}]}>
                 <CustomSvgImageComponent
                   width={60}
                   height={55}
