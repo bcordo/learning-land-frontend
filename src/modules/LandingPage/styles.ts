@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform,StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   defaultFontFamily: {
@@ -64,5 +64,8 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 24,
     letterSpacing: -0.36,
+    // fontWeight:'500',
+    fontWeight: Platform.OS === 'ios' ? '500' : '600',
+
   },
 });

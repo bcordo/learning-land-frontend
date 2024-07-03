@@ -345,18 +345,12 @@ const MissionHistory: React.FC<NavigationInterface> = ({
                 styles.topContainer,
                 {
                   paddingTop: Platform.OS === "ios" ? 40 : 0,
-                  // backgroundColor: "red",
                 },
               ]}
             >
               <View style={styles.drawerHeader}>
                 <TouchableOpacity
                   onPress={() => navigation.goBack()}
-                  // style={{
-                  //   // backgroundColor: "red",
-                  //   width: 20,
-                  //   height: 20,
-                  // }}
                 >
                   <CustomSvgImageComponent
                     width={20}

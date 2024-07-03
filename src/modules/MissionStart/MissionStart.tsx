@@ -14,7 +14,6 @@ import {
 } from "react-native";
 import { styles } from "./styles";
 import LeftIcon from "../../assets/icons/arrow-left-black.svg";
-import Timer from "../../assets/icons/reload-timer.svg";
 import Star from "../../assets/icons/golder-star.svg";
 import PlayIcon from "../../assets/icons/white-play-Icon.svg";
 import CustomSvgImageComponent from "../../components/CustomComponents/Image";
@@ -26,9 +25,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavigationInterface } from "../../intefaces/componentsInterfaces";
 import {
   updateInitialTimmer,
+  updatePauseTimmer,
   updateTime,
 } from "../../../redux/slices/timmerSlice";
 import { BooleanInterface } from "../../intefaces/variablesInterfaces";
+import HistorySvg from "../../assets/icons/MySvgComponents/HistorySvg";
 
 const MissionStart: React.FC<NavigationInterface> = ({
   navigation,
@@ -143,12 +144,15 @@ const MissionStart: React.FC<NavigationInterface> = ({
 
             <TouchableOpacity
               onPress={() => navigation.navigate("MissionHistory")}
+              disabled={!allMissions?.has_history}
             >
-              <CustomSvgImageComponent
-                width={20}
-                height={20}
-                Component={Timer}
-              />
+               <HistorySvg
+                      color={
+                        !allMissions?.has_history
+                          ? "gray"
+                          : "#171717"
+                      }
+                    />
             </TouchableOpacity>
           </View>
           <ScrollView
@@ -169,7 +173,7 @@ const MissionStart: React.FC<NavigationInterface> = ({
               />
             </View>
             <View style={styles.missiontxtContainer}>
-              <Text style={(styles.missionTxt, styles.defaultFontFamily)}>
+              <Text style={[styles.missionTxt, styles.defaultFontFamily]}>
                 World {allMissions?.index}, Mission {allMissions?.mission_index}
               </Text>
               <View style={styles.coffeeShopTxtContainer}>
@@ -256,6 +260,7 @@ const MissionStart: React.FC<NavigationInterface> = ({
                 })
               );
               dispatch(updateInitialTimmer({ initialTotalSeconds: 300 }));
+              dispatch(updatePauseTimmer(false));
               navigation.navigate("CharacterChat");
             }}
           >

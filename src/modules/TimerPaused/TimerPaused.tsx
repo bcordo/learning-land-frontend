@@ -150,7 +150,7 @@ const TimerPaused: React.FC<NavigationInterface> = ({
             trackColor={{ false: "#fff", true: "#F58C39" }}
             thumbColor={"#fff"}
             value={userSettings ? userSettings[item.name] : false}
-            style={{ transform: [{ scaleX: 0.7 }, { scaleY: 0.7 }] }}
+            style={{ transform: [{ scaleX: 1 }, { scaleY: 1 }] }}
             name={item.name}
             onValueChange={async () => {
               try {

@@ -52,7 +52,23 @@ const MissionEnd: React.FC<NavigationInterface> = ({
     getUserGoals,
     { data: userGoalsDetails, isLoading: loadingUserGoals },
   ] = useLazyGetGoalsByMissionIdQuery();
+  
+ 
+const goalsReviewArray = (
+) => {
 
+  let finalArray:[] = [];
+
+  userGoalsDetails?.forEach((item:any) => {
+    let object:any = missionDetails?.user_goals?.find(
+      (ele:any) => ele?.goal_id === item?.id
+    );
+    finalArray.push({ ...item, ...object });
+  });
+
+  return finalArray || [];
+};
+  
   useEffect(() => {
     if (!missionDetails) return;
     setReviewBoxList([
@@ -79,7 +95,7 @@ const MissionEnd: React.FC<NavigationInterface> = ({
       },
     ]);
     setHowManyShowTranscript(4);
-    getUserGoals({ mission_id: missionDetails?.id });
+    getUserGoals({ mission_id: missionDetails?.mission_id });
   }, [missionDetails]);
 
   const { id } = useSelector((state) => state.missionSlice.mission);
@@ -108,13 +124,13 @@ const MissionEnd: React.FC<NavigationInterface> = ({
     item: {
       title: string;
       description: string;
-
+      state?:string;
       icon?: any;
     };
   }) => {
     return (
       <CustomGoalListComponent
-        icon={item.icon || Tick}
+        icon={item?.state === "COMPLETED" ? Tick:XSvg}
         title={item.title}
         description={item.description}
       />
@@ -188,15 +204,15 @@ const MissionEnd: React.FC<NavigationInterface> = ({
             <>
               <TouchableOpacity
                 style={styles.header}
-                onPress={() => {
-                  navigation.goBack();
-                }}
+                // onPress={() => {
+                //   navigation.goBack();
+                // }}
               >
-                <CustomSvgImageComponent
+                {/* <CustomSvgImageComponent
                   width={20}
                   height={20}
                   Component={LeftIcon}
-                />
+                /> */}
 
                 <Text
                   style={[
@@ -204,7 +220,10 @@ const MissionEnd: React.FC<NavigationInterface> = ({
                     styles.scenarioCompletedTxt,
                   ]}
                 >
-                  Scenario Complete!
+                  Scenario{" "}
+                  {missionDetails?.user_goals?.every((item:any)=>item?.state==="COMPLETED")
+                    ? "Complete!"
+                    : "Failed"}
                 </Text>
               </TouchableOpacity>
 
@@ -338,14 +357,46 @@ const MissionEnd: React.FC<NavigationInterface> = ({
                 })}
               </View>
 
-              <View style={styles.goalsContainer}>
-                <Text
-                  style={[styles.goalsTxt, styles.defaultFontFamilySemiBold]}
-                >
-                  Goals Review
-                </Text>
-                <FlatList data={userGoalsDetails} renderItem={renderItem} />
-              </View>
+              {loadingUserGoals ? (
+                <>
+                  <CustomShimmer
+                    styleProps={{
+                      width: "80%",
+                      height: 10,
+                      backgroundColor: "#9e9e9e",
+                      marginTop: 12,
+                    }}
+                  />
+                  <CustomShimmer
+                    styleProps={{
+                      width: "60%",
+                      height: 10,
+                      backgroundColor: "#9e9e9e",
+                      marginTop: 8,
+                      marginBottom: 12,
+                    }}
+                  />
+                </>
+              ) : (
+                <>
+                  {userGoalsDetails?.length ? (
+                    <View style={styles.goalsContainer}>
+                      <Text
+                        style={[
+                          styles.goalsTxt,
+                          styles.defaultFontFamilySemiBold,
+                        ]}
+                      >
+                        Goals Review
+                      </Text>
+                      <FlatList
+                        data={goalsReviewArray()}
+                        renderItem={renderItem}
+                      />
+                    </View>
+                  ) : null}
+                </>
+              )}
 
               {missionDetails?.incorrect_user_phrases?.length ? (
                 <HelpfulActionsContainer
@@ -397,7 +448,7 @@ const MissionEnd: React.FC<NavigationInterface> = ({
               ) : null}
 
               <View style={styles.buttonContainer}>
-                <CustomButtom
+                {/* <CustomButtom
                   textStyle={[
                     styles.alreadyHaveAccountButtonText,
                     styles.defaultFontFamilySemiBold,
@@ -406,7 +457,7 @@ const MissionEnd: React.FC<NavigationInterface> = ({
                   onPress={() => {}}
                   buttonTxt={"PRACTICE MISTAKES"}
                   icon={DumbleIcon}
-                />
+                /> */}
 
                 <CustomButtom
                   textStyle={[

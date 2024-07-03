@@ -32,9 +32,10 @@ export const styles = StyleSheet.create({
     width:'75%'
   },
   missionDetailsTxt: {
-    fontSize: 16,
+    fontSize: 18,
     lineHeight: 24,
     color: "#DD6100",
+    fontWeight:'500',
   },
   missionDetailsTxtSmall: {
     fontSize: 12,

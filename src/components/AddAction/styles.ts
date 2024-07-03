@@ -54,7 +54,7 @@ export const styles = StyleSheet.create({
   input:{
     width:'85%',
     backgroundColor:'#FFFFFF',
-    paddingHorizontal:8,
+    paddingHorizontal:12,
     paddingVertical:12,
     borderRadius:20,
     shadowColor: "#3282ce9c",
@@ -70,6 +70,7 @@ export const styles = StyleSheet.create({
     width:'100%',
     flexDirection:'row',
     justifyContent:'space-between',
+    alignItems:'center',
     paddingTop:15
   }
 });

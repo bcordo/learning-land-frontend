@@ -60,7 +60,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
 }): React.JSX.Element => {
   const [inputText, setInputText] = useState<StringInterface>("");
   const [isPlaying, setIsPlaying] = useState<BooleanInterface>(false);
-  const [playingAudio, setPlayingAudio] = useState<BooleanInterface>(false);
+  const [playingAudio, setPlayingAudio] = useState<NumberInterface>(2);
 
   const [enableRecording, setEnableRecording] =
     useState<BooleanInterface>(false);
@@ -86,7 +86,6 @@ const CharacterChat: React.FC<NavigationInterface> = ({
   const [chatMessages, setChatMessages] = React.useState<
     chatMessagesInterface[]
   >([]);
-
   const user_mission = useSelector((state) => state.missionSlice.mission);
   const [getUserSettings, { data: userSettings, isLoading }] =
     useLazyGetUserSettingsQuery();
@@ -340,7 +339,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
     }
   };
 
-  const handleMissionStatusMessage = (message) => {
+  const handleMissionStatusMessage = (message:any) => {
     if (
       message.content_type === ContentType.JSON ||
       message.content_type === ContentType.TEXT
@@ -629,14 +628,15 @@ const CharacterChat: React.FC<NavigationInterface> = ({
   };
   useEffect(() => {
     if (
-      chatMessages?.length === 2 &&
-      chatMessages?.[0]?.type === InteractionType?.CHARACTER_UTTERANCE &&
-      !playingAudio
+      // chatMessages?.length === 2 && 
+     chatMessages?.length === playingAudio &&
+      chatMessages?.[chatMessages?.length-2]?.type === InteractionType?.CHARACTER_UTTERANCE 
       // &&
       // chatMessages?.[1]?.type === InteractionType?.CHARACTER_ACTION
     ) {
-      speakText(chatMessages?.[0]?.text);
-      setPlayingAudio(true);
+      console.log('hello adio')
+      speakText(chatMessages?.[chatMessages?.length-2]?.text);
+      setPlayingAudio(chatMessages?.length+1);
     }
   }, [chatMessages]);
   return (

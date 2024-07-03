@@ -36,6 +36,7 @@ const AddAction: React.FC<AddActionProps> = ({
     { title: "Shake hands", value: "Shake hands", custom: false },
     { title: "Custom Action", value: "Custom Action", custom: true },
   ];
+  let customCheck = selectedAction === 'Custom Action';
   const renderActionList = ({ item }: { item: RenderActionListItem }) => {
     return (
       <View
@@ -68,7 +69,7 @@ const AddAction: React.FC<AddActionProps> = ({
               placeholderTextColor="#D4D4D4"
               onChangeText={(text) => {
                 setInputText(text);
-                setSelectedAction(text);
+                // setSelectedAction(text);
               }}
               value={inputText}
             />
@@ -90,13 +91,13 @@ const AddAction: React.FC<AddActionProps> = ({
       message_type: MessageType.FULL,
       interaction_type: InteractionType.USER_ACTION,
       content_type: ContentType.TEXT,
-      data: selectedAction,
+      data: customCheck?inputText:selectedAction,
     });
     setChatMessages((messages: any) => [
       ...messages,
       {
         type: InteractionType.USER_ACTION,
-        text: selectedAction,
+        text: customCheck?inputText:selectedAction,
       },
     ]);
     setSelectedAction("");
@@ -121,12 +122,12 @@ const AddAction: React.FC<AddActionProps> = ({
           <TouchableOpacity
             style={[
               styles.addActionButton,
-              { backgroundColor: selectedAction ? "#F58C39" : "#E5E5E5" },
+              { backgroundColor: customCheck && (inputText?.length>0)|| (!customCheck &&selectedAction) ? "#F58C39" : "#E5E5E5" },
             ]}
             onPress={() => {
               handleSendAction();
             }}
-            disabled={!selectedAction}
+            disabled={customCheck?!(inputText?.length>0):!selectedAction}
           >
             <Text
               style={[styles.addActionButtonTxt, styles.defaultFontFamilyBold]}

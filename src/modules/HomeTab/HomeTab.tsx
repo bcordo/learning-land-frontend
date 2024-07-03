@@ -78,7 +78,7 @@ const HomeTab: React.FC<NavigationInterface> = ({
       [index]: height,
     }));
   };
-
+  const colors = ['#FFD6B6','#7DDFDE','#FF8B67','#1077C2','#FFC171'];
   return (
     <>
       <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
@@ -97,7 +97,7 @@ const HomeTab: React.FC<NavigationInterface> = ({
                 </View>
               </>
             ) : (
-              <View style={styles.missionDetailsContainer}>
+              <View style={[styles.missionDetailsContainer,{backgroundColor:colors[currentItemIndex?currentItemIndex % colors.length:0]}]}>
                 <CustomSvgImageComponent
                   width={60}
                   height={55}
