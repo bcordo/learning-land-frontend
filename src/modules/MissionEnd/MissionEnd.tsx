@@ -149,6 +149,7 @@ const goalsReviewArray = (
       interaction_type?: string;
       showDescriptionIcons?: boolean;
       utterance: StringInterface;
+      user_phrase?:any;
       thought?: StringInterface;
       action?: StringInterface;
     };
@@ -158,7 +159,7 @@ const goalsReviewArray = (
       <>
         {index <= howManyShowTranscript ? (
           <HelphulPharasesComp
-            title={item.native_text || item?.utterance || item?.action}
+            title={item.native_text || item?.utterance || item?.action|| item?.user_phrase?.native_text }
             description={item?.translated_text || item?.thought}
             text_language={item?.native_text_language}
             interaction_type={item?.interaction_type}

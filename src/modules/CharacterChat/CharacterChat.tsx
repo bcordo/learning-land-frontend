@@ -316,7 +316,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
         ...messages,
         {
           type: "assistant-hint",
-          text: hint.utterance,
+          text: hint?.user_phrase?.native_text,
         },
       ]);
     } catch (error) {
@@ -331,7 +331,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
         ...messages,
         {
           type: "assistant-correction",
-          text: correction.utterance,
+          text: correction?.user_phrase?.native_text,
         },
       ]);
     } catch (error) {
@@ -347,10 +347,10 @@ const CharacterChat: React.FC<NavigationInterface> = ({
       try {
         const missionStatusData = JSON.parse(message.data);
 
-        setMissionState(missionStatusData.mission_state);
-        setGoals(missionStatusData.goals || []);
+        setMissionState(missionStatusData?.user_mission_state);
+        setGoals(missionStatusData?.user_goals || []);
 
-        if (missionStatusData.mission_state === UserMissionState.COMPLETED) {
+        if (missionStatusData?.user_mission_state === UserMissionState.COMPLETED) {
           setChatState("completed");
           setChatMessages([
             { type: "state", text: "Mission completed successfully!" },
@@ -361,7 +361,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
           ]);
           // setChatMessages((messages) => [...messages, { type: 'state', text: 'Mission completed successfully!!' }]);
         } else if (
-          missionStatusData.mission_state === UserMissionState.FAILED
+          missionStatusData?.user_mission_state === UserMissionState.FAILED
         ) {
           setChatState("failed");
           setChatMessages([{ type: "state", text: "Mission failed" }]);
@@ -371,11 +371,11 @@ const CharacterChat: React.FC<NavigationInterface> = ({
           ]);
           // setChatMessages((messages) => [...messages, { type: 'state', text: 'Mission failed' }]);
         } else if (
-          missionStatusData.mission_state === UserMissionState.ACTIVE
+          missionStatusData?.user_mission_state === UserMissionState.ACTIVE
         ) {
           setChatState("active");
         } else if (
-          missionStatusData.mission_state === UserMissionState.PAUSED
+          missionStatusData?.user_mission_state === UserMissionState.PAUSED
         ) {
           setChatState("paused");
         }
@@ -629,14 +629,15 @@ const CharacterChat: React.FC<NavigationInterface> = ({
   useEffect(() => {
     if (
       // chatMessages?.length === 2 && 
-     chatMessages?.length === playingAudio &&
+    //  chatMessages?.length === playingAudio &&
+    !isPlaying &&
       chatMessages?.[chatMessages?.length-2]?.type === InteractionType?.CHARACTER_UTTERANCE 
       // &&
       // chatMessages?.[1]?.type === InteractionType?.CHARACTER_ACTION
     ) {
       console.log('hello adio')
       speakText(chatMessages?.[chatMessages?.length-2]?.text);
-      setPlayingAudio(chatMessages?.length+1);
+      // setPlayingAudio(chatMessages?.length);
     }
   }, [chatMessages]);
   return (
