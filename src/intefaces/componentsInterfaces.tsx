@@ -47,6 +47,7 @@ export interface CharacterResponseContainerProps {
   message?: StringInterface;
   isPlaying: BooleanInterface;
   setIsPlaying: (isPlaying: BooleanInterface) => void;
+  loader?:BooleanInterface;
 }
 export interface CustomButtomProps {
   buttonStyle: {};

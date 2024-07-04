@@ -51,6 +51,7 @@ import {
 } from "../../intefaces/variablesInterfaces";
 import RNFetchBlob from "rn-fetch-blob";
 import Sound from "react-native-sound";
+import ProfileContainer from "../../components/ProfileContainer/ProfileContainer";
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 audioRecorderPlayer.setSubscriptionDuration(0.09);
@@ -61,6 +62,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
   const [inputText, setInputText] = useState<StringInterface>("");
   const [isPlaying, setIsPlaying] = useState<BooleanInterface>(false);
   const [playingAudio, setPlayingAudio] = useState<NumberInterface>(2);
+  const [loader, setLoader] = useState<BooleanInterface>(false);
 
   const [enableRecording, setEnableRecording] =
     useState<BooleanInterface>(false);
@@ -187,12 +189,14 @@ const CharacterChat: React.FC<NavigationInterface> = ({
       isSendingAudio(false);
       setSpeakStatus("Start speaking");
       handleServerMessage(event.data);
+      setLoader(false);
     };
 
     newWS.onclose = () => {
       isSendingAudio(false);
       console.log("WebSocket disconnected");
       setWS(null);
+      setLoader(false);
     };
   };
 
@@ -339,7 +343,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
     }
   };
 
-  const handleMissionStatusMessage = (message:any) => {
+  const handleMissionStatusMessage = (message: any) => {
     if (
       message.content_type === ContentType.JSON ||
       message.content_type === ContentType.TEXT
@@ -350,7 +354,9 @@ const CharacterChat: React.FC<NavigationInterface> = ({
         setMissionState(missionStatusData?.user_mission_state);
         setGoals(missionStatusData?.user_goals || []);
 
-        if (missionStatusData?.user_mission_state === UserMissionState.COMPLETED) {
+        if (
+          missionStatusData?.user_mission_state === UserMissionState.COMPLETED
+        ) {
           setChatState("completed");
           setChatMessages([
             { type: "state", text: "Mission completed successfully!" },
@@ -385,12 +391,21 @@ const CharacterChat: React.FC<NavigationInterface> = ({
     }
   };
 
-  const renderChatMessage = (message: any) => {
+  const renderChatMessage = (message: any, index: NumberInterface) => {
     switch (message.type) {
       case "user-action":
         return <></>;
       case "user":
-        return <UserResponseContainer message={message.text} />;
+        return (
+          <>
+            <UserResponseContainer message={message.text} />
+            {index === chatMessages?.length-1 ? (
+              <ProfileContainer isTyping={loader} />
+            ) : (
+              ""
+            )}
+          </>
+        );
       case InteractionType.CHARACTER_UTTERANCE:
         return (
           <>
@@ -402,8 +417,28 @@ const CharacterChat: React.FC<NavigationInterface> = ({
             />
           </>
         );
-      case InteractionType.CHARACTER_ACTION:
       case InteractionType.USER_ACTION:
+        return (
+          <>
+            <View>
+              {message.text && (
+                <FadedDividerText
+                  key={uuid.v4().toString()}
+                  idx={uuid.v4()}
+                  text={message.text}
+                  color={LIGHT_BLACK_FADED_COLOR}
+                  showIcon={false}
+                />
+              )}
+            </View>
+            {index === chatMessages?.length - 1 ? (
+              <ProfileContainer isTyping={loader} />
+            ) : (
+              ""
+            )}
+          </>
+        );
+      case InteractionType.CHARACTER_ACTION:
       case InteractionType.CHARACTER_NARRATION:
         return (
           <View>
@@ -543,14 +578,17 @@ const CharacterChat: React.FC<NavigationInterface> = ({
         console.log(messageWithMetadata, "messageWithMetadata");
         await WS.send(JSON.stringify(messageWithMetadata));
         console.log("Message Sent");
+        setLoader(true);
       } catch (err) {
         console.log(err, "Error");
+        setLoader(false);
       }
     } else {
       console.error(
         "WebSocket is not connected. Cannot send message:",
         message
       );
+      setLoader(false);
     }
   };
   const handleInputEnter = () => {
@@ -628,15 +666,16 @@ const CharacterChat: React.FC<NavigationInterface> = ({
   };
   useEffect(() => {
     if (
-      // chatMessages?.length === 2 && 
-    //  chatMessages?.length === playingAudio &&
-    !isPlaying &&
-      chatMessages?.[chatMessages?.length-2]?.type === InteractionType?.CHARACTER_UTTERANCE 
+      // chatMessages?.length === 2 &&
+      //  chatMessages?.length === playingAudio &&
+      !isPlaying &&
+      chatMessages?.[chatMessages?.length - 2]?.type ===
+        InteractionType?.CHARACTER_UTTERANCE
       // &&
       // chatMessages?.[1]?.type === InteractionType?.CHARACTER_ACTION
     ) {
-      console.log('hello adio')
-      speakText(chatMessages?.[chatMessages?.length-2]?.text);
+      console.log("hello adio");
+      speakText(chatMessages?.[chatMessages?.length - 2]?.text);
       // setPlayingAudio(chatMessages?.length);
     }
   }, [chatMessages]);
@@ -686,7 +725,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
           </View>
           <View>
             {chatMessages.map((message, index) => (
-              <View key={index}>{renderChatMessage(message)}</View>
+              <View key={index}>{renderChatMessage(message, index)}</View>
             ))}
           </View>
         </ScrollView>
