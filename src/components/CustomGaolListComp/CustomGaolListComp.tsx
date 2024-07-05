@@ -43,4 +43,4 @@ const CustomGoalListComponent: React.FC<CustomGoalListComponentProps> = ({
   );
 };
 
-export default CustomGoalListComponent;
+export default React.memo(CustomGoalListComponent);

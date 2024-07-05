@@ -229,4 +229,21 @@ export const styles = StyleSheet.create({
       },
     }),
   },
+  aiTyping: {
+    marginTop:12
+  },
+  profileIconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  profileIcon: {
+    width: 29,
+    height: 29,
+  },
+  estherText: {
+    color: '#737373',
+    fontSize: 14,
+    lineHeight:20,
+    letterSpacing:0
+  },
 });

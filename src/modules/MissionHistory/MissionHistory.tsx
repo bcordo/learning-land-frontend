@@ -37,6 +37,7 @@ import {
 } from "../../intefaces/variablesInterfaces";
 import CustomShimmer from "../../components/CustomShimmer/CustomShimmer";
 import { formatDate } from "../../assets/reusableFunctions";
+import { useSelector } from "react-redux";
 
 const MissionHistory: React.FC<NavigationInterface> = ({
   navigation,
@@ -45,17 +46,19 @@ const MissionHistory: React.FC<NavigationInterface> = ({
   const [screenHeight, setScreenHeight] = useState(
     Dimensions.get("window").height
   );
-
+  const allMissions = useSelector(
+    (state: { missionSlice: any }) => state.missionSlice.mission
+  );
   const [scoreList, setScoreList] = useState<[ScoreListInterface][]>([]);
 
   const { data, isFetching } = useGetUserMissionHistoryQuery({
-    user_mission_id: 119,
+    user_mission_id: allMissions?.mission_id,
   });
 
   useEffect(() => {
     if (!data) return;
 
-    const newData = data.map((element: MissionHistoryDataInterface) => {
+    const newData = data?.map((element: MissionHistoryDataInterface) => {
       return [
         {
           type: "user_goals",
@@ -63,7 +66,7 @@ const MissionHistory: React.FC<NavigationInterface> = ({
           score:
             element?.mission_state === "INACTIVE"
               ? "-"
-              : `${element?.number_of_goals_completed}/${element?.user_goals?.length}`,
+              : `${element?.number_of_goals_completed||''}/${element?.user_goals?.length||''}`,
         },
         {
           type: "incorrect_user_phrases",
@@ -71,7 +74,7 @@ const MissionHistory: React.FC<NavigationInterface> = ({
           score:
             element?.mission_state === "INACTIVE"
               ? "-"
-              : `${element?.incorrect_user_phrases?.length}`,
+              : `${element?.incorrect_user_phrases?.length||''}`,
         },
         {
           type: "correct_user_phrases",
@@ -79,7 +82,7 @@ const MissionHistory: React.FC<NavigationInterface> = ({
           score:
             element?.mission_state === "INACTIVE"
               ? "-"
-              : `${element?.correct_user_phrases?.length}`,
+              : `${element?.correct_user_phrases?.length||''}`,
         },
       ];
     });
@@ -151,7 +154,7 @@ const MissionHistory: React.FC<NavigationInterface> = ({
       <View style={styles.missionHistoryDetailsListContainer}>
         <View style={styles.missionDateContainer}>
           <Text style={[styles.defaultFontFamily, styles.missionDate]}>
-            {formatDate(item?.user_mission_current_time)}
+            {formatDate(item?.user_mission_current_time||item?.created_at||'')}
           </Text>
           <View
             style={[
@@ -230,103 +233,6 @@ const MissionHistory: React.FC<NavigationInterface> = ({
   return (
     <>
       <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
-      {/* <Drawer
-        width={"100%"}
-        type="overlay"
-        // ref={drawerRef}
-        content={
-          <BlurView
-            style={[{ width: "100%", height: "100%" }]}
-            blurType="light"
-            blurAmount={15}
-            reducedTransparencyFallbackColor="transparent"
-          >
-            <View style={styles.missionHistoryContaier}>
-              <View
-                style={[
-                  styles.topContainer,
-                  {
-                    paddingTop: Platform.OS === "ios" ? 40 : 0,
-                    // backgroundColor: "red",
-                  },
-                ]}
-              >
-                <View style={styles.drawerHeader}>
-                  <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    // style={{
-                    //   // backgroundColor: "red",
-                    //   width: 20,
-                    //   height: 20,
-                    // }}
-                  >
-                    <CustomSvgImageComponent
-                      width={20}
-                      height={20}
-                      Component={CrossIcon}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <View style={styles.missionHistorySubContaier}>
-                <View
-                  style={[
-                    styles.scenarioHistoryContainer,
-                    { borderBottomWidth: isFetching ? 0 : 1 },
-                  ]}
-                >
-                  <CustomSvgImageComponent
-                    width={20}
-                    height={20}
-                    Component={Timer}
-                  />
-                  <Text
-                    style={[
-                      styles.defaultFontFamilySemiBold,
-                      styles.scenarioHistoryTxt,
-                    ]}
-                  >
-                    Scenario History
-                  </Text>
-                </View>
-
-                {isFetching ? (
-                  <>
-                    <CustomShimmer
-                      styleProps={{
-                        width: "90%",
-                        height: 10,
-                        backgroundColor: "#9e9e9e",
-                      }}
-                    />
-                    <CustomShimmer
-                      styleProps={{
-                        width: "70%",
-                        height: 10,
-                        marginTop: 8,
-                        backgroundColor: "#9e9e9e",
-                      }}
-                    />
-                    <CustomShimmer
-                      styleProps={{
-                        width: "50%",
-                        height: 10,
-                        backgroundColor: "#9e9e9e",
-                        marginTop: 8,
-                        marginBottom: 60,
-                      }}
-                    />
-                  </>
-                ) : (
-                  <View style={{ marginBottom: 60 }}>
-                    <FlatList data={data} renderItem={renderMissionHistory} />
-                  </View>
-                )}
-              </View>
-            </View>
-          </BlurView>
-        }
-      > */}
       <SafeAreaView>
         <BlurView
           blurType="light"
@@ -349,9 +255,7 @@ const MissionHistory: React.FC<NavigationInterface> = ({
               ]}
             >
               <View style={styles.drawerHeader}>
-                <TouchableOpacity
-                  onPress={() => navigation.goBack()}
-                >
+                <TouchableOpacity onPress={() => navigation.goBack()}>
                   <CustomSvgImageComponent
                     width={20}
                     height={20}
@@ -495,7 +399,6 @@ const MissionHistory: React.FC<NavigationInterface> = ({
           </TouchableOpacity>
         </View>
       </SafeAreaView>
-      {/* </Drawer> */}
     </>
   );
 };

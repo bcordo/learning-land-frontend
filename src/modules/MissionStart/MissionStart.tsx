@@ -66,6 +66,10 @@ const MissionStart: React.FC<NavigationInterface> = ({
     };
   }, []);
 
+  const handleOpenBlur = () => {
+    navigation.navigate("MissionHistory");
+  };
+
   const borderRadius = Math.min(134, 168) / 2;
 
   const renderItem = ({
@@ -143,16 +147,14 @@ const MissionStart: React.FC<NavigationInterface> = ({
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => navigation.navigate("MissionHistory")}
+              onPress={() => {
+                handleOpenBlur();
+              }}
               disabled={!allMissions?.has_history}
             >
-               <HistorySvg
-                      color={
-                        !allMissions?.has_history
-                          ? "gray"
-                          : "#171717"
-                      }
-                    />
+              <HistorySvg
+                color={!allMissions?.has_history ? "gray" : "#171717"}
+              />
             </TouchableOpacity>
           </View>
           <ScrollView

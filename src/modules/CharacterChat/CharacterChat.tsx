@@ -7,6 +7,7 @@ import {
   ScrollView,
   Text,
   View,
+  Image
 } from "react-native";
 import CharacterResponseContainer from "../../components/CharacterResponseContainer/CharacterResponseContainer";
 import FadedDividerText from "../../components/FadedDividerText/FadedDividerText";
@@ -61,7 +62,6 @@ const CharacterChat: React.FC<NavigationInterface> = ({
 }): React.JSX.Element => {
   const [inputText, setInputText] = useState<StringInterface>("");
   const [isPlaying, setIsPlaying] = useState<BooleanInterface>(false);
-  const [playingAudio, setPlayingAudio] = useState<NumberInterface>(2);
   const [loader, setLoader] = useState<BooleanInterface>(false);
 
   const [enableRecording, setEnableRecording] =
@@ -432,7 +432,29 @@ const CharacterChat: React.FC<NavigationInterface> = ({
               )}
             </View>
             {index === chatMessages?.length - 1 ? (
+              <>
+             {loader? <View
+               style={[
+                styles.aiTyping,
+                     ]}
+            >
+             <View 
+              style={[styles.profileIconContainer]}
+               >
+          <Image
+            source={require("../../assets/icons/profileAvatar.png")}
+            style={styles.profileIcon}
+          />
+
+             <Text 
+                 style={[styles.defaultFontFamily, styles.estherText]}
+               >
+            Esther
+          </Text>
+        </View>
+      </View>:''}
               <ProfileContainer isTyping={loader} />
+              </>
             ) : (
               ""
             )}
@@ -666,17 +688,12 @@ const CharacterChat: React.FC<NavigationInterface> = ({
   };
   useEffect(() => {
     if (
-      // chatMessages?.length === 2 &&
-      //  chatMessages?.length === playingAudio &&
       !isPlaying &&
       chatMessages?.[chatMessages?.length - 2]?.type ===
         InteractionType?.CHARACTER_UTTERANCE
-      // &&
-      // chatMessages?.[1]?.type === InteractionType?.CHARACTER_ACTION
     ) {
       console.log("hello adio");
       speakText(chatMessages?.[chatMessages?.length - 2]?.text);
-      // setPlayingAudio(chatMessages?.length);
     }
   }, [chatMessages]);
   return (
