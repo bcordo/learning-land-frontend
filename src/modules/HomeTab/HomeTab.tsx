@@ -27,6 +27,7 @@ import DumbelSvg from "../../assets/icons/MySvgComponents/DumbelSvg";
 import GroupSvg from "../../assets/icons/MySvgComponents/GroupSvg";
 import UserSvg from "../../assets/icons/MySvgComponents/UserSvg";
 import { useSelector } from "react-redux";
+import MissionsLoader from "../../components/MissionsLoader/MissionsLoader";
 
 const HomeTab: React.FC<NavigationInterface> = ({
   navigation,
@@ -88,13 +89,21 @@ const HomeTab: React.FC<NavigationInterface> = ({
             <HomeTabHeader />
             {fetchingWorlds ? (
               <>
+               <ScrollView
+              scrollEventThrottle={24}
+              ref={scrollViewRef}
+              onScroll={handleScroll}
+              showsVerticalScrollIndicator={false}
+            >
                 <View style={styles.loaderContainer}>
-                  <ActivityIndicator
-                    size="large"
-                    style={styles.loader}
-                    color={"#F58C39"}
-                  />
+                  <CustomShimmer styleProps={{height:100,width:'100%',borderRadius:20,}}/>
+                  <View style={{marginTop:15}}>
+
+                  <MissionsLoader/>
+                  </View>
+
                 </View>
+                </ScrollView>
               </>
             ) : (
               <View style={[styles.missionDetailsContainer,{backgroundColor:colors[currentItemIndex?currentItemIndex % colors?.length:0]}]}>

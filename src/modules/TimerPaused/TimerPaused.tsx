@@ -207,7 +207,7 @@ const TimerPaused: React.FC<NavigationInterface> = ({
             list={dropdownList}
             renderButton={(selectedItem, isOpened) => {
               return (
-                <View style={styles.dropdownButtonStyle}>
+                <View style={[styles.dropdownButtonStyle,{backgroundColor:'red'}]}>
                   <View style={styles.dropdownButtonStyle2}>
                     <Text style={styles.dropdownButtonTxtStyle}>
                       {userSettings ? userSettings[item.name] : "Select"}
@@ -222,7 +222,7 @@ const TimerPaused: React.FC<NavigationInterface> = ({
               );
             }}
             renderItem={renderDropdownItem}
-            dropdownStyle={styles.dropdownMenuStyle}
+            dropdownStyle={[styles.dropdownMenuStyle,{backgroundColor:'red'}]}
           />
         ) : null}
       </View>

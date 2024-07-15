@@ -448,7 +448,11 @@ const goalsReviewArray = (
                 />
               ) : null}
 
-              <View style={styles.buttonContainer}>
+             
+            </>
+          )}
+        </ScrollView>
+       {!fetchingMission? <View style={styles.buttonContainer}>
                 {/* <CustomButtom
                   textStyle={[
                     styles.alreadyHaveAccountButtonText,
@@ -471,10 +475,7 @@ const goalsReviewArray = (
                   }}
                   buttonTxt={"CONTINUE"}
                 />
-              </View>
-            </>
-          )}
-        </ScrollView>
+              </View>:null}
       </SafeAreaView>
     </>
   );

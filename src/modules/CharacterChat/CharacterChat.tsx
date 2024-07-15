@@ -53,6 +53,7 @@ import {
 import RNFetchBlob from "rn-fetch-blob";
 import Sound from "react-native-sound";
 import ProfileContainer from "../../components/ProfileContainer/ProfileContainer";
+import { updatePauseTimmer } from "../../../redux/slices/timmerSlice";
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 audioRecorderPlayer.setSubscriptionDuration(0.09);
@@ -103,9 +104,11 @@ const CharacterChat: React.FC<NavigationInterface> = ({
 
   const openDrawer = () => {
     drawerRef.current.open();
+    dispatch(updatePauseTimmer(true));
   };
   const closeDrawer = () => {
     drawerRef.current.close();
+    dispatch(updatePauseTimmer(false));
   };
 
   useEffect(() => {

@@ -162,6 +162,7 @@ const MissionStart: React.FC<NavigationInterface> = ({
               height:
                 Platform.OS === "ios" ? screenHeight - 210 : screenHeight - 130,
             }}
+            showsVerticalScrollIndicator={false}
           >
             <View style={styles.imageContainer}>
               <Image

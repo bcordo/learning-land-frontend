@@ -182,8 +182,9 @@ export const styles = StyleSheet.create({
   buttonContainer: {
     width: "100%",
     gap: 10,
-    paddingBottom: 24,
-    paddingTop: 40,
+    padding:20,
+    // paddingBottom: 24,
+    // paddingTop: 40,
   },
   getStarted: {
     backgroundColor: "#F58C39",
