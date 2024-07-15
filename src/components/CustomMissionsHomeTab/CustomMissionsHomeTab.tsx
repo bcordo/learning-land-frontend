@@ -1,5 +1,10 @@
 import { useEffect, useRef } from "react";
-import { ActivityIndicator, Animated, View } from "react-native";
+import {
+  ActivityIndicator,
+  Animated,
+  DimensionValue,
+  View,
+} from "react-native";
 import FadedDividerMiddleText from "../FadedDividerMiddleText/FadedDividerMiddleText";
 import LockIcon from "../../assets/icons/lock-closed.svg";
 import GiftIcon from "../../assets/icons/gift.svg";
@@ -16,6 +21,8 @@ import {
 } from "../../intefaces/variablesInterfaces";
 import { useDispatch } from "react-redux";
 import { updateLoader } from "../../../redux/slices/loaderSlice";
+import CustomSvgImageComponent from "../CustomComponents/Image";
+import MissionsLoader from "../MissionsLoader/MissionsLoader";
 
 const CustomMissionHomeTabComponent: React.FC<ContainerProps> = ({
   navigation,
@@ -29,8 +36,10 @@ const CustomMissionHomeTabComponent: React.FC<ContainerProps> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const [fetchMissionsByMissionIds, { data: missionsdata, isLoading }] =
-    useLazyGetUserMissionByMissionIdsQuery();
+  const [
+    fetchMissionsByMissionIds,
+    { data: missionsdata, isLoading, isFetching },
+  ] = useLazyGetUserMissionByMissionIdsQuery();
   useEffect(() => {
     const missionsIds: number[] = [];
     missions?.map((e) => missionsIds.push(e?.id));
@@ -38,7 +47,7 @@ const CustomMissionHomeTabComponent: React.FC<ContainerProps> = ({
     fetchMissionsByMissionIds({ missionsIds });
   }, [world_id]);
   useEffect(() => {
-    dispatch(updateLoader(isLoading));
+    dispatch(updateLoader({isLoading,index}));
   }, [isLoading]);
   const bounceValue = useRef(new Animated.Value(0)).current;
 
@@ -84,25 +93,9 @@ const CustomMissionHomeTabComponent: React.FC<ContainerProps> = ({
   return (
     <>
       <FadedDividerMiddleText text={`WORLD ${index + 1}`} />
-      {isLoading ? (
+      {isLoading || isFetching || loaderSate?.[index] ? (
         <>
-          <CustomShimmer
-            styleProps={{
-              width: "80%",
-              height: 10,
-              backgroundColor: "#9e9e9e",
-              marginTop: 12,
-            }}
-          />
-          <CustomShimmer
-            styleProps={{
-              width: "60%",
-              height: 10,
-              backgroundColor: "#9e9e9e",
-              marginTop: 8,
-              marginBottom: 12,
-            }}
-          />
+         <MissionsLoader/>
         </>
       ) : (
         <View onLayout={handleLayout} style={{ paddingTop: 32 }}>

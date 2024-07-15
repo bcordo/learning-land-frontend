@@ -181,7 +181,7 @@ export interface ContainerProps {
   currentItemIndex: NumberInterface;
   world_id: NumberInterface;
   onLayout?: (event: AnyInterface) => void;
-  loaderSate?: BooleanInterface;
+  loaderSate?: any;
   missions: [
     {
       assistant_id: NumberInterface;

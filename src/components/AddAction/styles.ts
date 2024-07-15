@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   defaultFontFamily: {
@@ -9,10 +9,10 @@ export const styles = StyleSheet.create({
   },
   container: {
     width: "100%",
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
     height: "100%",
     backgroundColor: "#F1F5F9",
-    paddingVertical: 60,
+    paddingVertical: Platform.OS === "ios"?60:20,
     paddingHorizontal: 20,
   },
   addActionButtonContainer: {
@@ -52,7 +52,7 @@ export const styles = StyleSheet.create({
 
   },
   input:{
-    width:'85%',
+    width:'100%',
     backgroundColor:'#FFFFFF',
     paddingHorizontal:12,
     paddingVertical:12,
@@ -72,5 +72,9 @@ export const styles = StyleSheet.create({
     justifyContent:'space-between',
     alignItems:'center',
     paddingTop:15
-  }
+  }, drawerHeader:{
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    width:'100%',
+  },
 });

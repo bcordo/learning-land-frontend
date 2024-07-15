@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   FlatList,
+  Platform,
   Text,
   TextInput,
   TouchableOpacity,
@@ -10,6 +11,7 @@ import { styles } from "./styles";
 import StatusBarComp from "../StatusBarComp/StatusBarComp";
 import RunIcon from "../../assets/icons/run.svg";
 import ArrowUp from "../../assets/icons/arrow-up-circle-gray.svg";
+import CrossIcon from "../../assets/icons/crossIcon.svg";
 import CustomSvgImageComponent from "../CustomComponents/Image";
 import {
   ContentType,
@@ -36,7 +38,9 @@ const AddAction: React.FC<AddActionProps> = ({
     { title: "Shake hands", value: "Shake hands", custom: false },
     { title: "Custom Action", value: "Custom Action", custom: true },
   ];
-  let customCheck = selectedAction === 'Custom Action';
+  let customCheck = selectedAction === "Custom Action";
+  const inputCheck = inputText.length > 0;
+  const canAddAction = inputCheck || (selectedAction && !customCheck);
   const renderActionList = ({ item }: { item: RenderActionListItem }) => {
     return (
       <View
@@ -49,18 +53,22 @@ const AddAction: React.FC<AddActionProps> = ({
           },
         ]}
       >
-        <Text
-          onPress={() => setSelectedAction(item.value)}
-          style={[
-            item?.title === selectedAction
-              ? styles.defaultFontFamilyBold
-              : styles.defaultFontFamily,
-            styles.addActionTxtTitle,
-            { color: item?.title === selectedAction ? "#F58C39" : "#404040" },
-          ]}
-        >
-          {item.title}
-        </Text>
+        <TouchableOpacity onPress={() => setSelectedAction(item.value)}>
+          <Text
+            style={[
+              item?.title === selectedAction
+                ? styles.defaultFontFamilyBold
+                : styles.defaultFontFamily,
+              styles.addActionTxtTitle,
+              {
+                color: item?.title === selectedAction ? "#F58C39" : "#404040",
+                backgroundColor: "transparent",
+              },
+            ]}
+          >
+            {item.title}
+          </Text>
+        </TouchableOpacity>
         {item?.custom ? (
           <View style={styles.inputContainer}>
             <TextInput
@@ -73,13 +81,13 @@ const AddAction: React.FC<AddActionProps> = ({
               }}
               value={inputText}
             />
-            <TouchableOpacity onPress={handleSendAction}>
+            {/* <TouchableOpacity onPress={handleSendAction}>
               <CustomSvgImageComponent
                 width={36}
                 height={36}
                 Component={ArrowUp}
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         ) : null}
       </View>
@@ -91,13 +99,13 @@ const AddAction: React.FC<AddActionProps> = ({
       message_type: MessageType.FULL,
       interaction_type: InteractionType.USER_ACTION,
       content_type: ContentType.TEXT,
-      data: customCheck?inputText:selectedAction,
+      data: inputCheck ? inputText : selectedAction,
     });
     setChatMessages((messages: any) => [
       ...messages,
       {
         type: InteractionType.USER_ACTION,
-        text: customCheck?inputText:selectedAction,
+        text: inputCheck ? inputText : selectedAction,
       },
     ]);
     setSelectedAction("");
@@ -108,33 +116,59 @@ const AddAction: React.FC<AddActionProps> = ({
     <>
       <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
       <View style={styles.container}>
-        <View style={styles.addActionContainer}>
-          <CustomSvgImageComponent width={20} height={20} Component={RunIcon} />
-          <Text style={[styles.defaultFontFamilyBold, styles.addActionTxt]}>
-            Add Action
-          </Text>
+        <View
+          style={[
+            styles.drawerHeader,
+            {
+              paddingTop: Platform.OS === "ios" ? 10 : 0,
+              paddingRight: Platform.OS === "ios" ? 10 : 10,
+            },
+          ]}
+        >
+          <TouchableOpacity onPress={() => closeDrawer()}>
+            <CustomSvgImageComponent
+              width={20}
+              height={20}
+              Component={CrossIcon}
+            />
+          </TouchableOpacity>
         </View>
         <View>
-          <FlatList data={actionsList} renderItem={renderActionList} />
-        </View>
-
-        <View style={styles.addActionButtonContainer}>
-          <TouchableOpacity
-            style={[
-              styles.addActionButton,
-              { backgroundColor: customCheck && (inputText?.length>0)|| (!customCheck &&selectedAction) ? "#F58C39" : "#E5E5E5" },
-            ]}
-            onPress={() => {
-              handleSendAction();
-            }}
-            disabled={customCheck?!(inputText?.length>0):!selectedAction}
-          >
-            <Text
-              style={[styles.addActionButtonTxt, styles.defaultFontFamilyBold]}
-            >
-              ADD ACTION
+          <View style={styles.addActionContainer}>
+            <CustomSvgImageComponent
+              width={20}
+              height={20}
+              Component={RunIcon}
+            />
+            <Text style={[styles.defaultFontFamilyBold, styles.addActionTxt]}>
+              Add Action
             </Text>
-          </TouchableOpacity>
+          </View>
+          <View>
+            <FlatList data={actionsList} renderItem={renderActionList} />
+          </View>
+
+          <View style={styles.addActionButtonContainer}>
+            <TouchableOpacity
+              style={[
+                styles.addActionButton,
+                { backgroundColor: canAddAction ? "#F58C39" : "#E5E5E5" },
+              ]}
+              onPress={() => {
+                handleSendAction();
+              }}
+              disabled={!canAddAction}
+            >
+              <Text
+                style={[
+                  styles.addActionButtonTxt,
+                  styles.defaultFontFamilyBold,
+                ]}
+              >
+                ADD ACTION
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </>

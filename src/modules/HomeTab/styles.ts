@@ -97,9 +97,9 @@ export const styles = StyleSheet.create({
     shadowRadius: 3.84,
   },
   loaderContainer:{
-    flex: 1,
+    // flex: 1,
     justifyContent: 'center',
-    alignItems: 'center', 
+    // alignItems: 'center', 
   },
   loader:{
     display:'flex',

@@ -2,7 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  worldLoader:false,
+  worldLoader:[true],
 };
 
 const loaderSlice = createSlice({
@@ -10,9 +10,10 @@ const loaderSlice = createSlice({
   initialState,
   reducers: {
    updateLoader(state,{payload}){
-    state.worldLoader=payload
+    state.worldLoader[payload?.index]=payload?.isLoading
    },
   },
+
 });
 
 export const { updateLoader } = loaderSlice.actions;
