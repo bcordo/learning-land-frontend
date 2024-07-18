@@ -152,6 +152,7 @@ const goalsReviewArray = (
       user_phrase?:any;
       thought?: StringInterface;
       action?: StringInterface;
+      phrase?:any;
     };
     index: number;
   }) => {
@@ -159,7 +160,7 @@ const goalsReviewArray = (
       <>
         {index <= howManyShowTranscript ? (
           <HelphulPharasesComp
-            title={item.native_text || item?.utterance || item?.action|| item?.user_phrase?.native_text }
+            title={item.native_text || item?.utterance || item?.action|| item?.phrase?.text }
             description={item?.translated_text || item?.thought}
             text_language={item?.native_text_language}
             interaction_type={item?.interaction_type}

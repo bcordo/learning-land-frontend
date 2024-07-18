@@ -54,6 +54,7 @@ import RNFetchBlob from "rn-fetch-blob";
 import Sound from "react-native-sound";
 import ProfileContainer from "../../components/ProfileContainer/ProfileContainer";
 import { updatePauseTimmer } from "../../../redux/slices/timmerSlice";
+import Toast from "react-native-toast-message";
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 audioRecorderPlayer.setSubscriptionDuration(0.09);
@@ -176,7 +177,18 @@ const CharacterChat: React.FC<NavigationInterface> = ({
 
     return () => clearInterval(timer);
   }, [isRecording]);
-
+  const handleError = () => {
+    try {
+      throw new Error('Simulated error');
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Something went wrong!',
+        text2: 'Please try again later.',
+        position: 'top',
+      });
+    }
+  };
   const connectWebSocket = async () => {
     const token = await AsyncStorage.getItem("token");
     const websocketUrlWithToken = `${WEBSOCKET_URL}?token=${token}`;
@@ -184,7 +196,6 @@ const CharacterChat: React.FC<NavigationInterface> = ({
     setWS(newWS);
     newWS.onopen = () => {
       setSocketConnected(true);
-
       console.log("WebSocket connected");
     };
     newWS.onmessage = (event) => {
@@ -200,6 +211,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
       console.log("WebSocket disconnected");
       setWS(null);
       setLoader(false);
+      handleError();
     };
   };
 
@@ -323,7 +335,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
         ...messages,
         {
           type: "assistant-hint",
-          text: hint?.user_phrase?.native_text,
+          text: hint?.phrase?.text,
         },
       ]);
     } catch (error) {
@@ -338,7 +350,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
         ...messages,
         {
           type: "assistant-correction",
-          text: correction?.user_phrase?.native_text,
+          text: correction?.phrase?.text,
         },
       ]);
     } catch (error) {
@@ -613,6 +625,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
         "WebSocket is not connected. Cannot send message:",
         message
       );
+      handleError()
       setLoader(false);
     }
   };

@@ -10,7 +10,7 @@ import {
 import { styles } from "./styles";
 import StatusBarComp from "../StatusBarComp/StatusBarComp";
 import RunIcon from "../../assets/icons/run.svg";
-import ArrowUp from "../../assets/icons/arrow-up-circle-gray.svg";
+// import ArrowUp from "../../assets/icons/arrow-up-circle-gray.svg";
 import CrossIcon from "../../assets/icons/crossIcon.svg";
 import CustomSvgImageComponent from "../CustomComponents/Image";
 import {
@@ -53,7 +53,12 @@ const AddAction: React.FC<AddActionProps> = ({
           },
         ]}
       >
-        <TouchableOpacity onPress={() => setSelectedAction(item.value)}>
+        <TouchableOpacity
+          onPress={() => {
+            setSelectedAction(item.value);
+            setInputText("");
+          }}
+        >
           <Text
             style={[
               item?.title === selectedAction
@@ -77,7 +82,7 @@ const AddAction: React.FC<AddActionProps> = ({
               placeholderTextColor="#D4D4D4"
               onChangeText={(text) => {
                 setInputText(text);
-                // setSelectedAction(text);
+                setSelectedAction("Custom Action");
               }}
               value={inputText}
             />
@@ -125,7 +130,13 @@ const AddAction: React.FC<AddActionProps> = ({
             },
           ]}
         >
-          <TouchableOpacity onPress={() => closeDrawer()}>
+          <TouchableOpacity
+            onPress={() => {
+              closeDrawer();
+              setSelectedAction("");
+              setInputText("");
+            }}
+          >
             <CustomSvgImageComponent
               width={20}
               height={20}

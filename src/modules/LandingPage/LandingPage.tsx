@@ -32,7 +32,7 @@ const LandingPage: React.FC<NavigationInterface> = ({
           last_name: "string",
           phone_number: "string",
           age: 0,
-          gender: "M",
+          gender: "MALE",
           description: "string",
           language_level: "A1",
           learning_language: "BG",

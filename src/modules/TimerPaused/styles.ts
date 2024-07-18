@@ -84,7 +84,6 @@ export const styles = StyleSheet.create({
   dropdownButtonStyle: {
     width:100,
     flexDirection: "row",
-    gap: 4,
     alignItems: "center",
     justifyContent: "flex-end",
   },
@@ -95,6 +94,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#D9F5F5",
     borderRadius: 24,
+    marginRight:4
   },
   dropdownButtonTxtStyle: {
     color: "#7DDFDE",
@@ -110,7 +110,7 @@ export const styles = StyleSheet.create({
   dropdownMenuStyle: {
     borderRadius: 8,
   backgroundColor:'#F1F5F9',
-  marginTop:4
+  marginTop:4,
   },
   dropdownItemStyle: {
     width: "100%",
@@ -168,7 +168,6 @@ export const styles = StyleSheet.create({
   },
   modalConfirmButtonCancel: {
     backgroundColor: "#737373",
-
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 10,
@@ -181,4 +180,19 @@ export const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 12,
   },
+  easyOptionColor:{
+    color:'#7DDFDE',
+    backgroundColor:'#D9F5F5',
+    fontSize:11,
+  },
+  mediumOptionColor:{
+    color:'#ee9147',
+    backgroundColor:'#fdf0e5',
+    fontSize:11,
+  },
+  hardOptionColor:{
+    color:'#FF8B67',
+    backgroundColor:'#FEE2E2',
+    fontSize:11,
+  }
 });
