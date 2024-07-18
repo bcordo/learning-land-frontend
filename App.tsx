@@ -4,6 +4,8 @@ import { LogBox } from "react-native";
 import { store } from "./redux/store/store.ts";
 import { Provider } from "react-redux";
 import SplashScreen from "react-native-splash-screen";
+import { AudioPlayerProvider } from "./src/customHooks/AudioPlayerContext.tsx";
+import CustomToast from "./src/components/CustomToast/CustomToast.tsx";
 LogBox.ignoreLogs(["new NativeEventEmitter"]);
 LogBox.ignoreAllLogs();
 
@@ -13,7 +15,10 @@ function App(): React.JSX.Element {
   }, []);
   return (
     <Provider store={store}>
-      <Navigation />
+      <AudioPlayerProvider>
+        <Navigation />
+        <CustomToast />
+      </AudioPlayerProvider>
     </Provider>
   );
 }

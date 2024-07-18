@@ -33,6 +33,7 @@ import {
 import CustomShimmer from "../../components/CustomShimmer/CustomShimmer";
 import { NavigationInterface } from "../../intefaces/componentsInterfaces";
 import { ListItem } from "../../intefaces/variablesInterfaces";
+import DownArrowIcon from "../../assets/icons/MySvgComponents/DownArrowIcon";
 
 const TimerPaused: React.FC<NavigationInterface> = ({
   navigation,
@@ -96,6 +97,10 @@ const TimerPaused: React.FC<NavigationInterface> = ({
     { title: "MEDIUM", value: "medium" },
     { title: "HARD", value: "hard" },
   ];
+  const colorMap = {EASY:{ ...styles.easyOptionColor,svgColor:'#7DDFDE'},
+      MEDIUM: {...styles.mediumOptionColor,svgColor:'#ec9046'},
+      HARD: {...styles.hardOptionColor,svgColor:'#FF8B67'}
+    };
   const renderDropdownItem = (
     item: { title?: string },
     index: number | undefined,
@@ -168,7 +173,8 @@ const TimerPaused: React.FC<NavigationInterface> = ({
                   },
                 });
                 if (res?.data) {
-                  dispatch(updateUserSettings(res?.data));
+                  // dispatch(updateUserSettings(res?.data));
+                  dispatch(updateUserSettingsByType({type:item.name,value:res?.data?.[item.name]}))
                 }
               } catch (err) {
                 console.log(
@@ -207,22 +213,23 @@ const TimerPaused: React.FC<NavigationInterface> = ({
             list={dropdownList}
             renderButton={(selectedItem, isOpened) => {
               return (
-                <View style={[styles.dropdownButtonStyle,{backgroundColor:'red'}]}>
-                  <View style={styles.dropdownButtonStyle2}>
-                    <Text style={styles.dropdownButtonTxtStyle}>
+                <View style={[styles.dropdownButtonStyle]}>
+                  <View style={[styles.dropdownButtonStyle2,colorMap[userSettings[item.name]]]}>
+                    <Text style={[ colorMap[userSettings[item.name]]]}>
                       {userSettings ? userSettings[item.name] : "Select"}
                     </Text>
                   </View>
-                  <CustomSvgImageComponent
+                  {/* <CustomSvgImageComponent
                     width={16}
                     height={16}
                     Component={Right}
-                  />
+                  /> */}
+                  <DownArrowIcon color={colorMap?.[userSettings?.[item?.name]]?.svgColor}/>
                 </View>
               );
             }}
             renderItem={renderDropdownItem}
-            dropdownStyle={[styles.dropdownMenuStyle,{backgroundColor:'red'}]}
+            dropdownStyle={[styles.dropdownMenuStyle]}
           />
         ) : null}
       </View>
