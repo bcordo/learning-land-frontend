@@ -79,7 +79,14 @@ const HomeTab: React.FC<NavigationInterface> = ({
       [index]: height,
     }));
   };
-  const colors = ['#FFD6B6','#7DDFDE','#FF8B67','#1077C2','#FFC171'];
+  const colors = [
+    { backgroundColor: '#FFD6B6',titleColor:'#DD6100',descriptionColor:'#F58C39' },
+    { backgroundColor: '#7DDFDE',titleColor:'#00A4A2',descriptionColor:'#00A09E' },
+    { backgroundColor: '#FF8B67',titleColor:'red',descriptionColor:'' },
+    { backgroundColor: '#1077C2',titleColor:'red',descriptionColor:'' },
+    { backgroundColor: '#FFC171',titleColor:'red',descriptionColor:'' }
+  ]
+ let headerColors= colors[currentItemIndex?currentItemIndex % colors?.length:0];
   return (
     <>
       <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
@@ -106,7 +113,7 @@ const HomeTab: React.FC<NavigationInterface> = ({
                 </ScrollView>
               </>
             ) : (
-              <View style={[styles.missionDetailsContainer,{backgroundColor:colors[currentItemIndex?currentItemIndex % colors?.length:0]}]}>
+              <View style={[styles.missionDetailsContainer,{backgroundColor:headerColors?.backgroundColor}]}>
                 <CustomSvgImageComponent
                   width={60}
                   height={55}
@@ -117,7 +124,7 @@ const HomeTab: React.FC<NavigationInterface> = ({
                   <Text
                     style={[
                       styles.defaultFontFamilySemiBold,
-                      styles.missionDetailsTxt,
+                      styles.missionDetailsTxt,{color:headerColors?.titleColor}
                     ]}
                   >
                     {allWorlds &&
@@ -130,6 +137,7 @@ const HomeTab: React.FC<NavigationInterface> = ({
                       style={[
                         styles.defaultFontFamily,
                         styles.missionDetailsTxtSmall,
+                        {color:headerColors?.descriptionColor}
                       ]}
                     >
                       {allWorlds &&

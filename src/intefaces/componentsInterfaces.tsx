@@ -45,8 +45,6 @@ export interface CharacterResponseContainerProps {
   isTyping?: BooleanInterface;
   profileIconContainerStyle?: {};
   message?: StringInterface;
-  isPlaying: BooleanInterface;
-  setIsPlaying: (isPlaying: BooleanInterface) => void;
   loader?:BooleanInterface;
 }
 export interface CustomButtomProps {

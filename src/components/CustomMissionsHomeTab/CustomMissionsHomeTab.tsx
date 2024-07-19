@@ -46,6 +46,13 @@ const CustomMissionHomeTabComponent: React.FC<ContainerProps> = ({
     if (!world_id) return;
     fetchMissionsByMissionIds({ missionsIds });
   }, [world_id]);
+  useEffect(()=>{
+    const missionsIds: number[] = [];
+    missions?.map((e) => missionsIds.push(e?.id));
+    if(missionsdata?.length===0){
+      fetchMissionsByMissionIds({ missionsIds });
+    }
+  },[missionsdata,isLoading])
   useEffect(() => {
     dispatch(updateLoader({isLoading,index}));
   }, [isLoading]);

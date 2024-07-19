@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { Text, View } from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,10 +6,12 @@ import { TimerSliceInterface } from "../../intefaces/variablesInterfaces";
 import { updateTime } from "../../../redux/slices/timmerSlice";
 import { styles } from "./styles";
 import { NavigationInterface } from "../../intefaces/componentsInterfaces";
+import { AudioPlayerContext } from "../../customHooks/AudioPlayerContext";
 
 const CustomTimerComponent: React.FC<NavigationInterface> = ({
   navigation,
 }) => {
+  const audioPlayerContext = useContext(AudioPlayerContext);
   const { initialTotalSeconds, totalSeconds, minutes, seconds, pauseTimmer } =
     useSelector(
       (state: { timmerSlice: TimerSliceInterface }) => state.timmerSlice
@@ -20,6 +22,7 @@ const CustomTimerComponent: React.FC<NavigationInterface> = ({
     const interval = setInterval(() => {
       if (totalSeconds <= 0) {
         navigation.navigate("MissionEnd");
+        audioPlayerContext?.stopAudio();
       }
       if (totalSeconds >= 0) {
         dispatch(

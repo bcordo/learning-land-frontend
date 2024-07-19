@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   Keyboard,
@@ -15,7 +15,6 @@ import CharacterChatNavbar from "./CharacterChatNavbar";
 import { styles } from "./styles";
 import uuid from "react-native-uuid";
 import {
-  BASE_URL,
   Command,
   ContentType,
   InteractionType,
@@ -50,11 +49,10 @@ import {
   StringInterface,
   chatMessagesInterface,
 } from "../../intefaces/variablesInterfaces";
-import RNFetchBlob from "rn-fetch-blob";
-import Sound from "react-native-sound";
 import ProfileContainer from "../../components/ProfileContainer/ProfileContainer";
 import { updatePauseTimmer } from "../../../redux/slices/timmerSlice";
 import Toast from "react-native-toast-message";
+import { AudioPlayerContext } from "../../customHooks/AudioPlayerContext";
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 audioRecorderPlayer.setSubscriptionDuration(0.09);
@@ -62,8 +60,8 @@ audioRecorderPlayer.setSubscriptionDuration(0.09);
 const CharacterChat: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
+  const audioPlayerContext = useContext(AudioPlayerContext);
   const [inputText, setInputText] = useState<StringInterface>("");
-  const [isPlaying, setIsPlaying] = useState<BooleanInterface>(false);
   const [loader, setLoader] = useState<BooleanInterface>(false);
 
   const [enableRecording, setEnableRecording] =
@@ -90,7 +88,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
   const [chatMessages, setChatMessages] = React.useState<
     chatMessagesInterface[]
   >([]);
-  const user_mission = useSelector((state) => state.missionSlice.mission);
+  const user_mission = useSelector((state) => state?.missionSlice?.mission);
   const [getUserSettings, { data: userSettings, isLoading }] =
     useLazyGetUserSettingsQuery();
 
@@ -427,8 +425,6 @@ const CharacterChat: React.FC<NavigationInterface> = ({
             <CharacterResponseContainer
               isTyping={message?.isTyping}
               message={message.text}
-              isPlaying={isPlaying}
-              setIsPlaying={setIsPlaying}
             />
           </>
         );
@@ -647,69 +643,15 @@ const CharacterChat: React.FC<NavigationInterface> = ({
       setInputText("");
     }
   };
-  const speakText = async (text: string) => {
-    setIsPlaying(true);
-    try {
-      const response = await RNFetchBlob.fetch(
-        "POST",
-        `${BASE_URL}/api/v1/utils/text_to_speech/?text=${encodeURIComponent(
-          text
-        )}&voice=alloy`,
-        {
-          "Content-Type": "application/x-www-form-urlencoded",
-        }
-      );
-      if (response.info().status === 200) {
-        const base64Data = response.base64();
 
-        playAudioChunk(base64Data);
-      } else {
-        console.error("Text-to-speech error:", response.info().status);
-        setIsPlaying(false);
-      }
-    } catch (error) {
-      console.error("Text-to-speech error:", error);
-      setIsPlaying(false);
-    }
-  };
-
-  const playAudioChunk = async (audioChunk: string) => {
-    const audioFilePath = `${RNFetchBlob.fs.dirs.CacheDir}/audio.mp3`;
-
-    await RNFetchBlob.fs.writeFile(audioFilePath, audioChunk, "base64");
-
-    try {
-      if (audioFilePath) {
-        const sound = new Sound(audioFilePath, "", (error) => {
-          if (error) {
-            console.error("Error loading sound:", error);
-            setIsPlaying(false);
-            return;
-          }
-
-          sound.play((success) => {
-            setIsPlaying(false);
-            if (success) {
-              console.log("Sound played successfully");
-            } else {
-              console.error("Error playing sound");
-            }
-          });
-        });
-      }
-    } catch (error) {
-      console.error("Error playing audio:", error);
-      setIsPlaying(false);
-    }
-  };
   useEffect(() => {
     if (
-      !isPlaying &&
+      !audioPlayerContext?.isPlaying &&
       chatMessages?.[chatMessages?.length - 2]?.type ===
         InteractionType?.CHARACTER_UTTERANCE
     ) {
       console.log("hello adio");
-      speakText(chatMessages?.[chatMessages?.length - 2]?.text);
+      audioPlayerContext?.speakText(chatMessages?.[chatMessages?.length - 2]?.text||'');
     }
   }, [chatMessages]);
   return (

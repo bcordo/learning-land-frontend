@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import LeftIcon from "../../assets/icons/arrow-left-black.svg";
 import SearchIcon from "../../assets/icons/search-black.svg";
 import StatusBarComp from "../StatusBarComp/StatusBarComp";
@@ -16,18 +16,18 @@ import CustomSvgImageComponent from "../CustomComponents/Image";
 import HelphulPharasesComp from "../HelphulPharasesComp/HelphulPharasesComp";
 import { NavigationInterface } from "../../intefaces/componentsInterfaces";
 import {
-  BooleanInterface,
   RenderHelpfulPharasesInterface,
   pharsesInterface,
 } from "../../intefaces/variablesInterfaces";
 import { useSelector } from "react-redux";
+import { AudioPlayerContext } from "../../customHooks/AudioPlayerContext";
 
 const HelpfulPharasesListContainer: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
+  const audioPlayerContext = useContext(AudioPlayerContext);
   const [inputText, setInputText] = useState<string>("");
   const [pharasesList, setPharasesList] = useState<pharsesInterface[]>([]);
-  const [isPlaying, setIsPlaying] = useState<BooleanInterface>(false); // State to track if the audio is playing
   const allMissions = useSelector(
     (state: { missionSlice: any }) => state.missionSlice.mission
   );
@@ -41,8 +41,6 @@ const HelpfulPharasesListContainer: React.FC<NavigationInterface> = ({
       <HelphulPharasesComp
         title={item.text}
         text_language={item?.text_language}
-        isPlaying={isPlaying}
-        setIsPlaying={setIsPlaying}
       />
     );
   };
@@ -62,7 +60,9 @@ const HelpfulPharasesListContainer: React.FC<NavigationInterface> = ({
         <View style={styles.container}>
           <TouchableOpacity
             style={styles.header}
-            onPress={() => navigation.navigate("MissionStart")}
+            onPress={() => {navigation.navigate("MissionStart")
+            audioPlayerContext?.stopAudio();
+            }}
           >
             <CustomSvgImageComponent
               width={20}
