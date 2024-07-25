@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import ProfileContainer from "../ProfileContainer/ProfileContainer";
 import { styles } from "./styles";
@@ -10,18 +10,16 @@ import CustomSvgImageComponent from "../CustomComponents/Image";
 import { BASE_URL, Language } from "../../assets/constant";
 import CustomDropdown from "../CustomDropdown/CustomDropdown";
 import CustomShimmer from "../CustomShimmer/CustomShimmer";
-import RNFetchBlob from "rn-fetch-blob";
-import Sound from "react-native-sound";
 import { CharacterResponseContainerProps } from "../../intefaces/componentsInterfaces";
+import { AudioPlayerContext } from "../../customHooks/AudioPlayerContext";
 
 const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
   quoteText,
   isTyping,
   profileIconContainerStyle,
   message,
-  isPlaying,
-  setIsPlaying = () => {},
 }): React.JSX.Element => {
+  const audioPlayerContext = useContext(AudioPlayerContext);
   const [isTranslateEnabled, setIsTranslateEnabled] = useState<boolean>(false);
   const [translatedText, setTranslatedText] = useState<string>("");
   useEffect(() => {
@@ -46,61 +44,7 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
     },
   ];
 
-  const speakText = async (text: string) => {
-    setIsPlaying(true);
-    try {
-      const response = await RNFetchBlob.fetch(
-        "POST",
-        `${BASE_URL}/api/v1/utils/text_to_speech/?text=${encodeURIComponent(
-          text
-        )}&voice=alloy`,
-        {
-          "Content-Type": "application/x-www-form-urlencoded",
-        }
-      );
-      if (response.info().status === 200) {
-        const base64Data = response.base64();
 
-        playAudioChunk(base64Data);
-      } else {
-        console.error("Text-to-speech error:", response.info().status);
-        setIsPlaying(false);
-      }
-    } catch (error) {
-      console.error("Text-to-speech error:", error);
-      setIsPlaying(false);
-    }
-  };
-
-  const playAudioChunk = async (audioChunk: string) => {
-    const audioFilePath = `${RNFetchBlob.fs.dirs.CacheDir}/audio.mp3`;
-
-    await RNFetchBlob.fs.writeFile(audioFilePath, audioChunk, "base64");
-
-    try {
-      if (audioFilePath) {
-        const sound = new Sound(audioFilePath, "", (error) => {
-          if (error) {
-            console.error("Error loading sound:", error);
-            setIsPlaying(false);
-            return;
-          }
-
-          sound.play((success) => {
-            setIsPlaying(false);
-            if (success) {
-              console.log("Sound played successfully");
-            } else {
-              console.error("Error playing sound");
-            }
-          });
-        });
-      }
-    } catch (error) {
-      console.error("Error playing audio:", error);
-      setIsPlaying(false);
-    }
-  };
   const handleTranslateClick = async (message: string) => {
     try {
       setIsTranslateEnabled(true);
@@ -177,8 +121,8 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
           <View style={styles.translateContainer}>
             <View style={styles.translateRightContainer}>
               <TouchableOpacity
-                onPress={() => speakText(message)}
-                disabled={isPlaying}
+                onPress={() => audioPlayerContext?.speakText(message)}
+                disabled={audioPlayerContext?.isPlaying}
               >
                 <CustomSvgImageComponent
                   width={18}

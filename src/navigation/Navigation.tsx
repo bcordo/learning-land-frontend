@@ -15,7 +15,7 @@ const Stack = createNativeStackNavigator();
 
 const Navigation = (): React.JSX.Element => {
   return (
-    <NavigationContainer>
+    // <NavigationContainer>
       <Stack.Navigator initialRouteName="Landing">
         <Stack.Screen
           name="Splash"
@@ -63,7 +63,7 @@ const Navigation = (): React.JSX.Element => {
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
-    </NavigationContainer>
+    // </NavigationContainer>
   );
 };
 export default Navigation;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 import {
   Dimensions,
@@ -28,14 +28,14 @@ import {
   updatePauseTimmer,
   updateTime,
 } from "../../../redux/slices/timmerSlice";
-import { BooleanInterface } from "../../intefaces/variablesInterfaces";
 import HistorySvg from "../../assets/icons/MySvgComponents/HistorySvg";
+import { AudioPlayerContext } from "../../customHooks/AudioPlayerContext";
 
 const MissionStart: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
   const dispatch = useDispatch();
-  const [isPlaying, setIsPlaying] = useState<BooleanInterface>(false); // State to track if the audio is playing
+  const audioContext = useContext(AudioPlayerContext);
 
   const allMissions = useSelector(
     (state: { missionSlice: any }) => state.missionSlice.mission
@@ -68,6 +68,7 @@ const MissionStart: React.FC<NavigationInterface> = ({
 
   const handleOpenBlur = () => {
     navigation.navigate("MissionHistory");
+    audioContext?.stopAudio();
   };
 
   const borderRadius = Math.min(134, 168) / 2;
@@ -125,9 +126,6 @@ const MissionStart: React.FC<NavigationInterface> = ({
       <HelphulPharasesComp
         title={item.text}
         text_language={item?.text_language}
-        isPlaying={isPlaying}
-        setIsPlaying={setIsPlaying}
-        // isFetching={fetchingMissions}
       />
     ) : null;
   };
@@ -138,7 +136,9 @@ const MissionStart: React.FC<NavigationInterface> = ({
       <SafeAreaView>
         <View style={styles.container}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity onPress={() => {navigation.goBack()
+              audioContext?.stopAudio();
+            }}>
               <CustomSvgImageComponent
                 width={20}
                 height={20}
@@ -230,7 +230,9 @@ const MissionStart: React.FC<NavigationInterface> = ({
                     Helpful Phrases
                   </Text>
                   <TouchableOpacity
-                    onPress={() => navigation.navigate("HelpfulPharases")}
+                    onPress={() => {navigation.navigate("HelpfulPharases")
+                    audioContext?.stopAudio()
+                    }}
                   >
                     <Text
                       style={[
@@ -265,6 +267,7 @@ const MissionStart: React.FC<NavigationInterface> = ({
               dispatch(updateInitialTimmer({ initialTotalSeconds: 300 }));
               dispatch(updatePauseTimmer(false));
               navigation.navigate("CharacterChat");
+              audioContext?.stopAudio();
             }}
           >
             <CustomSvgImageComponent

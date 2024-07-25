@@ -1,6 +1,6 @@
 import LottieView from "lottie-react-native";
 import React from "react";
-import { TouchableOpacity, View, Text, TextInput } from "react-native";
+import { TouchableOpacity, View, Text, TextInput, Keyboard } from "react-native";
 import CustomSvgImageComponent from "../CustomComponents/Image";
 import Microphonesvg from "../../assets/icons/SvgMicrophone.svg";
 import PlusSvg from "../../assets/icons/plus.svg";
@@ -11,6 +11,7 @@ import XSvg from "../../assets/icons/x.svg";
 import XBlack from "../../assets/icons/blackX.svg";
 import { styles } from "./styles";
 import { CharacterChatFooterProps } from "../../intefaces/componentsInterfaces";
+import Spinner from "../../assets/animations/Spinner";
 
 const CharacterChatFooter: React.FC<CharacterChatFooterProps> = ({
   enableRecording,
@@ -28,6 +29,8 @@ const CharacterChatFooter: React.FC<CharacterChatFooterProps> = ({
   handleInputEnter,
   inputText,
   openDrawer,
+  websocketCheck,
+  handleError,
 }): React.JSX.Element => {
   return (
     <>
@@ -94,11 +97,13 @@ const CharacterChatFooter: React.FC<CharacterChatFooterProps> = ({
               onPress={
                 isRecording
                   ? () => {
-                      onStopRecord(false);
+                      onStopRecord(false, true);
                       setIsRecording(false);
+                      Keyboard.dismiss()
                     }
                   : () => {
                       openDrawer();
+                      Keyboard.dismiss()
                     }
               }
             >
@@ -118,20 +123,18 @@ const CharacterChatFooter: React.FC<CharacterChatFooterProps> = ({
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.startRecordButton}
-              disabled={sendingAudio}
+              disabled={sendingAudio || (isRecording && startSpeaking)}
               onPress={
-                isRecording
+                !websocketCheck
+                  ? ()=>handleError()
+                  : isRecording
                   ? () => onStopRecord(true)
                   : () => handleStartRecord()
               }
             >
               {isRecording ? (
                 startSpeaking ? (
-                  <CustomSvgImageComponent
-                    width={42}
-                    height={42}
-                    Component={ArrowUpGrey}
-                  />
+                  <Spinner />
                 ) : (
                   <CustomSvgImageComponent
                     width={42}
@@ -140,12 +143,7 @@ const CharacterChatFooter: React.FC<CharacterChatFooterProps> = ({
                   />
                 )
               ) : sendingAudio ? (
-                <LottieView
-                  style={{ width: 86, height: 86 }}
-                  source={require("../../assets/animations/loading.json")}
-                  autoPlay
-                  loop
-                />
+                <Spinner />
               ) : (
                 <CustomSvgImageComponent
                   width={42}
@@ -176,7 +174,9 @@ const CharacterChatFooter: React.FC<CharacterChatFooterProps> = ({
         <View style={styles.typeMessageContainer}>
           <TouchableOpacity
             style={styles.plusButton}
-            onPress={() => openDrawer()}
+            onPress={() => {openDrawer()
+          Keyboard.dismiss()
+            }}
           >
             <PlusSvg width={25} height={25} />
           </TouchableOpacity>

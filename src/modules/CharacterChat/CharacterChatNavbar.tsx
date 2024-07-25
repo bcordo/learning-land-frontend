@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
 import CustomSvgImageComponent from "../../components/CustomComponents/Image";
@@ -10,11 +10,13 @@ import { updateUserSettings } from "../../../redux/slices/userSetingsSlice";
 import { CharacterChatNavbarProps } from "../../intefaces/componentsInterfaces";
 import { NumberInterface } from "../../intefaces/variablesInterfaces";
 import CustomTimerComponent from "../../components/CustomTimerComponent/CustomTimerComponent";
+import { AudioPlayerContext } from "../../customHooks/AudioPlayerContext";
 
 const CharacterChatNavbar: React.FC<CharacterChatNavbarProps> = ({
   navigation,
   userSettings,
 }): React.JSX.Element => {
+  const audioPlayerContext = useContext(AudioPlayerContext);
   const [completedGoals, setCompletedGoals] = useState(0);
   const [id, setId] = useState<NumberInterface>(0);
   const [userGoals, setUserGoals] = useState([]);
@@ -23,14 +25,14 @@ const CharacterChatNavbar: React.FC<CharacterChatNavbarProps> = ({
   
   useEffect(() => {
     if (!user_mission) return;
-    const goals = [...user_mission?.goals];
-    const user_goals = [...user_mission?.user_goals];
+    const goals:any = [...user_mission?.goals];
+    const user_goals:any = [...user_mission?.user_goals];
 
     if (!goals?.length && !user_goals?.length) return;
     const goalsWithStatus: any = [];
-    goals?.forEach((goal) => {
+    goals?.forEach((goal:any) => {
       const filterUserGoal = user_goals?.find(
-        (item) => item?.goal_id === goal?.id
+        (item:any) => item?.goal_id === goal?.id
       );
       if (filterUserGoal) {
         goalsWithStatus.push({
@@ -109,6 +111,7 @@ const CharacterChatNavbar: React.FC<CharacterChatNavbarProps> = ({
             dispatch(updateUserSettings(userSettings));
             navigation.navigate("TimerPausedScreen");
             dispatch(updatePauseTimmer(true));
+            audioPlayerContext?.stopAudio();
           }}
         >
           <Image

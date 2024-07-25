@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import CustomSvgImageComponent from "../CustomComponents/Image";
 import { styles } from "./styles";
@@ -9,9 +9,9 @@ import CustomShimmer from "../CustomShimmer/CustomShimmer";
 import XSvg from "../../assets/icons/x.svg";
 import Tick from "../../assets/icons/check-tick.svg";
 import { HelphulPharasesCompProps } from "../../intefaces/componentsInterfaces";
-import { BASE_URL } from "../../assets/constant";
-import RNFetchBlob from "rn-fetch-blob";
-import Sound from "react-native-sound";
+
+import { AudioPlayerContext } from "../../customHooks/AudioPlayerContext";
+
 
 const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({
   title,
@@ -23,9 +23,8 @@ const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({
   hideDescriptionText,
   showDescriptionIcons,
   isFetching,
-  isPlaying,
-  setIsPlaying = () => {},
 }): React.JSX.Element => {
+  const audioPlayerContext = useContext(AudioPlayerContext);
   const [translateText, { data: translatedText, isLoading }] =
     useLazyGetTranslatedTextQuery();
 
@@ -37,61 +36,6 @@ const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({
       target_lang: "EN-US",
     });
   }, [title, text_language]);
-  const speakText = async (text: string) => {
-    setIsPlaying(true);
-    try {
-      const response = await RNFetchBlob.fetch(
-        "POST",
-        `${BASE_URL}/api/v1/utils/text_to_speech/?text=${encodeURIComponent(
-          text
-        )}&voice=alloy`,
-        {
-          "Content-Type": "application/x-www-form-urlencoded",
-        }
-      );
-      if (response.info().status === 200) {
-        const base64Data = response.base64();
-
-        playAudioChunk(base64Data);
-      } else {
-        console.error("Text-to-speech error:", response.info().status);
-        setIsPlaying(false);
-      }
-    } catch (error) {
-      console.error("Text-to-speech error:", error);
-      setIsPlaying(false);
-    }
-  };
-
-  const playAudioChunk = async (audioChunk: string) => {
-    const audioFilePath = `${RNFetchBlob.fs.dirs.CacheDir}/audio.mp3`;
-
-    await RNFetchBlob.fs.writeFile(audioFilePath, audioChunk, "base64");
-
-    try {
-      if (audioFilePath) {
-        const sound = new Sound(audioFilePath, "", (error) => {
-          if (error) {
-            console.error("Error loading sound:", error);
-            setIsPlaying(false);
-            return;
-          }
-          setIsPlaying(true);
-          sound.play((success) => {
-            setIsPlaying(false);
-            if (success) {
-              console.log("Sound played successfully");
-            } else {
-              console.error("Error playing sound");
-            }
-          });
-        });
-      }
-    } catch (error) {
-      setIsPlaying(false);
-      console.error("Error playing audio:", error);
-    }
-  };
   return (
     <View
       style={{
@@ -109,9 +53,9 @@ const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({
           onPress={() => {
             interaction_type === "user-response" && !isRight
               ? () => {}
-              : speakText(`${title || ""}`);
+              : audioPlayerContext?.speakText(title||'')
           }}
-          disabled={isPlaying}
+          disabled={audioPlayerContext?.isPlaying}
         >
           <CustomSvgImageComponent
             width={18}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   FlatList,
   Modal,
@@ -34,17 +34,18 @@ import CustomShimmer from "../../components/CustomShimmer/CustomShimmer";
 import { NavigationInterface } from "../../intefaces/componentsInterfaces";
 import { ListItem } from "../../intefaces/variablesInterfaces";
 import DownArrowIcon from "../../assets/icons/MySvgComponents/DownArrowIcon";
+import { AudioPlayerContext } from "../../customHooks/AudioPlayerContext";
 
 const TimerPaused: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
   const dispatch = useDispatch();
+  const audioPlayerContext = useContext(AudioPlayerContext);
   const [modalVisible, setModalVisible] = useState(false);
 
   const userSettings = useSelector(
     (state: { userSettingsSlice: {} }) => state.userSettingsSlice
   );
-
   const [updateUserSettingsAPI] = useUpdateUserSettingsMutation();
 
   const optionsList: ListItem[] = [
@@ -194,16 +195,22 @@ const TimerPaused: React.FC<NavigationInterface> = ({
                     value: selectedItem?.title,
                   })
                 );
+                if(userSettings?.mission_difficulty !== selectedItem?.title){
+                  
+                
                 const res = await updateUserSettingsAPI({
-                  user_id: userSettings.user_id,
+                  user_id: userSettings?.user_id,
                   body: {
                     ...userSettings,
                     [item.name]: selectedItem?.title,
                   },
                 });
                 if (res?.data) {
-                  dispatch(updateUserSettings(res?.data));
+                  // dispatch(updateUserSettings(res?.data));
+                  dispatch(updateUserSettingsByType({type:item.name,value:res?.data?.[item.name]}))
+
                 }
+              }
               } catch (err) {
                 console.log(
                   "getting error from onValueChange CustomSwitch " + err
@@ -288,7 +295,6 @@ const TimerPaused: React.FC<NavigationInterface> = ({
                         <TouchableOpacity
                           onPress={() => {
                             navigation.navigate("MissionEnd");
-
                             setModalVisible(false);
                           }}
                           style={styles.modalConfirmButton}

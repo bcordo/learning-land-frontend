@@ -1,6 +1,15 @@
 export const WEBSOCKET_URL:string= "wss://desolate-anchorage-97861-39db3837351f.herokuapp.com/api/v1/user_missions/chat"
 export const BASE_URL =`https://desolate-anchorage-97861-39db3837351f.herokuapp.com`
 
+import {Platform} from 'react-native';
+import {PERMISSIONS} from 'react-native-permissions';
+
+export const permission = {
+  camera:
+    Platform.OS === 'ios' ? PERMISSIONS.IOS.CAMERA : PERMISSIONS.ANDROID.CAMERA,
+  microphone: Platform.OS === 'ios' ? PERMISSIONS.IOS.MICROPHONE : PERMISSIONS.ANDROID.RECORD_AUDIO,
+};
+
 export const UserMissionState = {
     INACTIVE: "INACTIVE",
     ACTIVE: "ACTIVE",
