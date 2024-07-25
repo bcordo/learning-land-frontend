@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 import {
-  ActivityIndicator,
   SafeAreaView,
   ScrollView,
   Text,
@@ -45,7 +44,6 @@ const HomeTab: React.FC<NavigationInterface> = ({
   useEffect(() => {
     fetchWorlds("");
   }, []);
-
   const footerList = [
     { label: "Home", IconComponent: HomeFooter },
     { label: "Training", IconComponent: DumbelSvg },
@@ -82,9 +80,9 @@ const HomeTab: React.FC<NavigationInterface> = ({
   const colors = [
     { backgroundColor: '#FFD6B6',titleColor:'#DD6100',descriptionColor:'#F58C39' },
     { backgroundColor: '#7DDFDE',titleColor:'#00A4A2',descriptionColor:'#00A09E' },
-    { backgroundColor: '#FF8B67',titleColor:'red',descriptionColor:'' },
-    { backgroundColor: '#1077C2',titleColor:'red',descriptionColor:'' },
-    { backgroundColor: '#FFC171',titleColor:'red',descriptionColor:'' }
+    { backgroundColor: '#FF8B67',titleColor:'#a12802',descriptionColor:'#b8401d' },
+    { backgroundColor: '#1077C2',titleColor:'#013f72',descriptionColor:'#005699' },
+    { backgroundColor: '#FFC171',titleColor:'#bc6d0c',descriptionColor:'#c88228' }
   ]
  let headerColors= colors[currentItemIndex?currentItemIndex % colors?.length:0];
   return (

@@ -19,8 +19,7 @@ const userSettingsApi = createApi({
       query: ({user_id}) =>   `/api/v1/user_settings/${user_id}`,
     }),
     updateUserSettings: builder.mutation({
-      query: ({user_id, body}) => ({
-        
+      query: ({user_id, body}) => ({ 
         url: `/api/v1/user_settings/${user_id}`,
         method: 'PUT',
         body,

@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import {
   FlatList,
+  Keyboard,
+  KeyboardAvoidingView,
   Platform,
   Text,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { styles } from "./styles";
@@ -29,6 +32,8 @@ const AddAction: React.FC<AddActionProps> = ({
   closeDrawer,
   sendMessage,
   setChatMessages,
+  handleError,
+  websocketCheck
 }): React.JSX.Element => {
   const [inputText, setInputText] = useState<StringInterface>("");
   const [selectedAction, setSelectedAction] = useState<StringInterface>("");
@@ -76,6 +81,7 @@ const AddAction: React.FC<AddActionProps> = ({
         </TouchableOpacity>
         {item?.custom ? (
           <View style={styles.inputContainer}>
+             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <TextInput
               style={styles.input}
               placeholder="Kiss her on the cheek"
@@ -93,6 +99,7 @@ const AddAction: React.FC<AddActionProps> = ({
                 Component={ArrowUp}
               />
             </TouchableOpacity> */}
+            </TouchableWithoutFeedback>
           </View>
         ) : null}
       </View>
@@ -100,88 +107,99 @@ const AddAction: React.FC<AddActionProps> = ({
   };
 
   const handleSendAction = () => {
-    sendMessage({
-      message_type: MessageType.FULL,
-      interaction_type: InteractionType.USER_ACTION,
-      content_type: ContentType.TEXT,
-      data: inputCheck ? inputText : selectedAction,
-    });
-    setChatMessages((messages: any) => [
-      ...messages,
-      {
-        type: InteractionType.USER_ACTION,
-        text: inputCheck ? inputText : selectedAction,
-      },
-    ]);
+    Keyboard.dismiss()
+    if(websocketCheck){
+      sendMessage({
+        message_type: MessageType.FULL,
+        interaction_type: InteractionType.USER_ACTION,
+        content_type: ContentType.TEXT,
+        data: inputCheck ? inputText : selectedAction,
+      });
+      setChatMessages((messages: any) => [
+        ...messages,
+        {
+          type: InteractionType.USER_ACTION,
+          text: inputCheck ? inputText : selectedAction,
+        },
+      ]);
+    }else{
+      handleError();
+    }
+   
     setSelectedAction("");
     setInputText("");
     closeDrawer();
   };
   return (
     <>
-      <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
-      <View style={styles.container}>
-        <View
-          style={[
-            styles.drawerHeader,
-            {
-              paddingTop: Platform.OS === "ios" ? 10 : 0,
-              paddingRight: Platform.OS === "ios" ? 10 : 10,
-            },
-          ]}
-        >
-          <TouchableOpacity
-            onPress={() => {
-              closeDrawer();
-              setSelectedAction("");
-              setInputText("");
-            }}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : ""}
+      >
+        <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
+        <View style={styles.container}>
+          <View
+            style={[
+              styles.drawerHeader,
+              {
+                paddingTop: Platform.OS === "ios" ? 10 : 0,
+                paddingRight: Platform.OS === "ios" ? 10 : 10,
+              },
+            ]}
           >
-            <CustomSvgImageComponent
-              width={20}
-              height={20}
-              Component={CrossIcon}
-            />
-          </TouchableOpacity>
-        </View>
-        <View>
-          <View style={styles.addActionContainer}>
-            <CustomSvgImageComponent
-              width={20}
-              height={20}
-              Component={RunIcon}
-            />
-            <Text style={[styles.defaultFontFamilyBold, styles.addActionTxt]}>
-              Add Action
-            </Text>
-          </View>
-          <View>
-            <FlatList data={actionsList} renderItem={renderActionList} />
-          </View>
-
-          <View style={styles.addActionButtonContainer}>
             <TouchableOpacity
-              style={[
-                styles.addActionButton,
-                { backgroundColor: canAddAction ? "#F58C39" : "#E5E5E5" },
-              ]}
               onPress={() => {
-                handleSendAction();
+                closeDrawer();
+                setSelectedAction("");
+                setInputText("");
+                Keyboard.dismiss()
               }}
-              disabled={!canAddAction}
             >
-              <Text
-                style={[
-                  styles.addActionButtonTxt,
-                  styles.defaultFontFamilyBold,
-                ]}
-              >
-                ADD ACTION
-              </Text>
+              <CustomSvgImageComponent
+                width={20}
+                height={20}
+                Component={CrossIcon}
+              />
             </TouchableOpacity>
           </View>
+          <View>
+            <View style={styles.addActionContainer}>
+              <CustomSvgImageComponent
+                width={20}
+                height={20}
+                Component={RunIcon}
+              />
+              <Text style={[styles.defaultFontFamilyBold, styles.addActionTxt]}>
+                Add Action
+              </Text>
+            </View>
+            <View>
+              <FlatList data={actionsList} renderItem={renderActionList} />
+            </View>
+
+            <View style={styles.addActionButtonContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.addActionButton,
+                  { backgroundColor: canAddAction ? "#F58C39" : "#E5E5E5" },
+                ]}
+                onPress={() => {
+                  handleSendAction();
+                }}
+                disabled={!canAddAction}
+              >
+                <Text
+                  style={[
+                    styles.addActionButtonTxt,
+                    styles.defaultFontFamilyBold,
+                  ]}
+                >
+                  ADD ACTION
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </>
   );
 };

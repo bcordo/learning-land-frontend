@@ -3,13 +3,26 @@ import { useNavigation } from '@react-navigation/native';
 import Sound from 'react-native-sound';
 import RNFetchBlob from 'rn-fetch-blob';
 import { BASE_URL } from '../assets/constant';
+import Toast from 'react-native-toast-message';
 
 interface AudioPlayerContextProps {
   isPlaying: boolean;
   speakText: (text: string) => Promise<void>;
   stopAudio: () => void;
+  setIsPlaying:()=>void;
 }
-
+const handleError = () => {
+  try {
+    throw new Error('Simulated error');
+  } catch (error) {
+    Toast.show({
+      type: 'error',
+      text1: 'Something went wrong!',
+      text2: 'Please try again later.',
+      position: 'top',
+    });
+  }
+};
 const AudioPlayerContext = createContext<AudioPlayerContextProps | undefined>(undefined);
 
 interface AudioPlayerProviderProps {
@@ -21,8 +34,9 @@ const AudioPlayerProvider: React.FC<AudioPlayerProviderProps> = ({ children }) =
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentSound, setCurrentSound] = useState<Sound | null>(null);
 
-  const speakText = async (text: string): Promise<void> => {
+  const speakText = async (text: string,websokectCheck:boolean): Promise<void> => {
     if (isPlaying) return;
+    if(websokectCheck&& navigation?.getCurrentRoute()?.name !== 'CharacterChat') return
 
     setIsPlaying(true);
     try {
@@ -39,10 +53,12 @@ const AudioPlayerProvider: React.FC<AudioPlayerProviderProps> = ({ children }) =
       } else {
         console.error('Text-to-speech error:', response.info().status);
         setIsPlaying(false);
+        handleError()
       }
     } catch (error) {
       console.error('Text-to-speech error:', error);
       setIsPlaying(false);
+      handleError()
     }
   };
 
@@ -56,6 +72,7 @@ const AudioPlayerProvider: React.FC<AudioPlayerProviderProps> = ({ children }) =
         if (error) {
           console.error('Error loading sound:', error);
           setIsPlaying(false);
+          handleError()
           return;
         }
         setCurrentSound(sound);
@@ -71,6 +88,7 @@ const AudioPlayerProvider: React.FC<AudioPlayerProviderProps> = ({ children }) =
       });
     } catch (error) {
       setIsPlaying(false);
+      handleError()
       console.error('Error playing audio:', error);
     }
   };
@@ -106,7 +124,7 @@ const AudioPlayerProvider: React.FC<AudioPlayerProviderProps> = ({ children }) =
   }, [navigation, currentSound]);
 
   return (
-    <AudioPlayerContext.Provider value={{ isPlaying, speakText, stopAudio }}>
+    <AudioPlayerContext.Provider value={{ isPlaying, speakText, stopAudio,setIsPlaying }}>
       {children}
     </AudioPlayerContext.Provider>
   );

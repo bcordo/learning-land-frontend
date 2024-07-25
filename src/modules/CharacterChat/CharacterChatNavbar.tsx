@@ -25,14 +25,14 @@ const CharacterChatNavbar: React.FC<CharacterChatNavbarProps> = ({
   
   useEffect(() => {
     if (!user_mission) return;
-    const goals = [...user_mission?.goals];
-    const user_goals = [...user_mission?.user_goals];
+    const goals:any = [...user_mission?.goals];
+    const user_goals:any = [...user_mission?.user_goals];
 
     if (!goals?.length && !user_goals?.length) return;
     const goalsWithStatus: any = [];
-    goals?.forEach((goal) => {
+    goals?.forEach((goal:any) => {
       const filterUserGoal = user_goals?.find(
-        (item) => item?.goal_id === goal?.id
+        (item:any) => item?.goal_id === goal?.id
       );
       if (filterUserGoal) {
         goalsWithStatus.push({

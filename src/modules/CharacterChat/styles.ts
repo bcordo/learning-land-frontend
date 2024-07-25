@@ -52,7 +52,6 @@ export const styles = StyleSheet.create({
 
   dropdownTxtContainer: {
     flexDirection: "row",
-    gap: 6,
     justifyContent: "center",
     width: 265,
   },
@@ -71,6 +70,7 @@ export const styles = StyleSheet.create({
     color: "#F58C39",
     fontSize: 12,
     marginBottom: 2,
+    marginRight:6
   },
   missionTxtContainer: {
     alignItems: "center",

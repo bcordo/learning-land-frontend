@@ -7,7 +7,8 @@ import {
   ScrollView,
   Text,
   View,
-  Image
+  Image,
+  KeyboardAvoidingView,
 } from "react-native";
 import CharacterResponseContainer from "../../components/CharacterResponseContainer/CharacterResponseContainer";
 import FadedDividerText from "../../components/FadedDividerText/FadedDividerText";
@@ -23,6 +24,7 @@ import {
   ORANGE_FADED_COLOR,
   UserMissionState,
   WEBSOCKET_URL,
+  permission,
 } from "../../assets/constant";
 import RNFS from "react-native-fs";
 import AudioRecorderPlayer, {
@@ -53,13 +55,19 @@ import ProfileContainer from "../../components/ProfileContainer/ProfileContainer
 import { updatePauseTimmer } from "../../../redux/slices/timmerSlice";
 import Toast from "react-native-toast-message";
 import { AudioPlayerContext } from "../../customHooks/AudioPlayerContext";
+import usePermission from "../../customHooks/UsePermissionHook";
+import { RESULTS } from "react-native-permissions";
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 audioRecorderPlayer.setSubscriptionDuration(0.09);
-
+const initialSpeakStatus = "Connecting...";
 const CharacterChat: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
+  const { checkAndRequestPermission, permissionStatus } = usePermission(
+    permission.microphone
+  );
+
   const audioPlayerContext = useContext(AudioPlayerContext);
   const [inputText, setInputText] = useState<StringInterface>("");
   const [loader, setLoader] = useState<BooleanInterface>(false);
@@ -70,8 +78,9 @@ const CharacterChat: React.FC<NavigationInterface> = ({
   const [socketConnected, setSocketConnected] =
     useState<BooleanInterface>(false);
   const [sendingAudio, isSendingAudio] = useState<BooleanInterface>(false);
-  const [speakStatus, setSpeakStatus] =
-    useState<StringInterface>("Start speaking");
+  const [speakStatus, setSpeakStatus] = useState<StringInterface>(
+    initialSpeakStatus || "Start speaking"
+  );
   const [duration, setDuration] = useState(0);
   const [invalidRecord, setInvalidRecord] = useState<BooleanInterface>(false);
   const [startSpeaking, setStartSpeaking] = useState<BooleanInterface>(false);
@@ -177,13 +186,13 @@ const CharacterChat: React.FC<NavigationInterface> = ({
   }, [isRecording]);
   const handleError = () => {
     try {
-      throw new Error('Simulated error');
+      throw new Error("Simulated error");
     } catch (error) {
       Toast.show({
-        type: 'error',
-        text1: 'Something went wrong!',
-        text2: 'Please try again later.',
-        position: 'top',
+        type: "error",
+        text1: "Something went wrong!",
+        text2: "Please try again later.",
+        position: "top",
       });
     }
   };
@@ -199,8 +208,13 @@ const CharacterChat: React.FC<NavigationInterface> = ({
     newWS.onmessage = (event) => {
       console.log("Message Arrived");
       isSendingAudio(false);
-      setSpeakStatus("Start speaking");
+      setSpeakStatus(initialSpeakStatus || "Start speaking");
       handleServerMessage(event.data);
+      if (
+        chatMessages?.[chatMessages?.length - 2]?.type ===
+        InteractionType?.CHARACTER_UTTERANCE
+      )
+        return;
       setLoader(false);
     };
 
@@ -216,7 +230,6 @@ const CharacterChat: React.FC<NavigationInterface> = ({
   const handleServerMessage = async (message: StringInterface) => {
     try {
       const parsedMessage = JSON.parse(message);
-
       switch (parsedMessage.interaction_type) {
         case InteractionType.USER_UTTERANCE:
           handleUserUtteranceMessage(parsedMessage);
@@ -371,9 +384,9 @@ const CharacterChat: React.FC<NavigationInterface> = ({
           missionStatusData?.user_mission_state === UserMissionState.COMPLETED
         ) {
           setChatState("completed");
-          setChatMessages([
-            { type: "state", text: "Mission completed successfully!" },
-          ]);
+          // setChatMessages([
+          //   { type: "state", text: "Mission completed successfully!" },
+          // ]);
           setChatMessages((messages) => [
             ...messages,
             { type: "state", text: "Refresh page to retry" },
@@ -412,10 +425,30 @@ const CharacterChat: React.FC<NavigationInterface> = ({
         return (
           <>
             <UserResponseContainer message={message.text} />
-            {index === chatMessages?.length-1 ? (
-              <ProfileContainer isTyping={loader} />
+            {index === chatMessages?.length - 1 ? (
+              <>
+                {loader ? (
+                  <View style={[styles.aiTyping]}>
+                    <View style={[styles.profileIconContainer]}>
+                      <Image
+                        source={require("../../assets/icons/profileAvatar.png")}
+                        style={styles.profileIcon}
+                      />
+
+                      <Text
+                        style={[styles.defaultFontFamily, styles.estherText]}
+                      >
+                        Esther
+                      </Text>
+                    </View>
+                  </View>
+                ) : (
+                  null
+                )}
+                <ProfileContainer isTyping={loader} />
+              </>
             ) : (
-              ""
+              null
             )}
           </>
         );
@@ -444,30 +477,28 @@ const CharacterChat: React.FC<NavigationInterface> = ({
             </View>
             {index === chatMessages?.length - 1 ? (
               <>
-             {loader? <View
-               style={[
-                styles.aiTyping,
-                     ]}
-            >
-             <View 
-              style={[styles.profileIconContainer]}
-               >
-          <Image
-            source={require("../../assets/icons/profileAvatar.png")}
-            style={styles.profileIcon}
-          />
+                {loader ? (
+                  <View style={[styles.aiTyping]}>
+                    <View style={[styles.profileIconContainer]}>
+                      <Image
+                        source={require("../../assets/icons/profileAvatar.png")}
+                        style={styles.profileIcon}
+                      />
 
-             <Text 
-                 style={[styles.defaultFontFamily, styles.estherText]}
-               >
-            Esther
-          </Text>
-        </View>
-      </View>:''}
-              <ProfileContainer isTyping={loader} />
+                      <Text
+                        style={[styles.defaultFontFamily, styles.estherText]}
+                      >
+                        Esther
+                      </Text>
+                    </View>
+                  </View>
+                ) : (
+                  null
+                )}
+                <ProfileContainer isTyping={loader} />
               </>
             ) : (
-              ""
+              null
             )}
           </>
         );
@@ -534,9 +565,11 @@ const CharacterChat: React.FC<NavigationInterface> = ({
       return;
     });
   };
-  const handleStartRecord = () => {
+  const handleStartRecord = async () => {
+    const hasPermission = await checkAndRequestPermission();
+    if (permissionStatus !== RESULTS.GRANTED) return false;
     setStartSpeaking(true);
-    setSpeakStatus("Start speaking");
+    setSpeakStatus(initialSpeakStatus || "Start speaking");
     setIsRecording(true);
     setTimeout(() => {
       setStartSpeaking(false);
@@ -544,14 +577,20 @@ const CharacterChat: React.FC<NavigationInterface> = ({
     }, 1000);
   };
 
-  const onStopRecord = async (sendAudioViaSocket: BooleanInterface) => {
+  const onStopRecord = async (
+    sendAudioViaSocket: BooleanInterface,
+    cancelAudio: BooleanInterface
+  ) => {
     const result = await audioRecorderPlayer.stopRecorder();
 
     if (duration <= 1) {
       setIsRecording(false);
+      if (cancelAudio) return setInvalidRecord(false);
       return setInvalidRecord(true);
     } else if (sendAudioViaSocket) {
       setIsRecording(false);
+      setLoader(true);
+
       sendAudio(result);
     }
   };
@@ -621,25 +660,30 @@ const CharacterChat: React.FC<NavigationInterface> = ({
         "WebSocket is not connected. Cannot send message:",
         message
       );
-      handleError()
+      handleError();
       setLoader(false);
     }
   };
   const handleInputEnter = () => {
-    if (inputText !== "") {
-      setChatMessages((messages) => [
-        ...messages,
-        {
-          type: "user",
-          text: inputText,
-        },
-      ]);
-      sendMessage({
-        content_type: ContentType.TEXT,
-        data: inputText,
-        interaction_type: InteractionType.USER_UTTERANCE,
-        message_type: MessageType.FULL,
-      });
+    if (!WS) {
+      handleError();
+    } else {
+      if (inputText !== "") {
+        setChatMessages((messages) => [
+          ...messages,
+          {
+            type: "user",
+            text: inputText,
+          },
+        ]);
+        sendMessage({
+          content_type: ContentType.TEXT,
+          data: inputText,
+          interaction_type: InteractionType.USER_UTTERANCE,
+          message_type: MessageType.FULL,
+        });
+      }
+
       setInputText("");
     }
   };
@@ -651,7 +695,10 @@ const CharacterChat: React.FC<NavigationInterface> = ({
         InteractionType?.CHARACTER_UTTERANCE
     ) {
       console.log("hello adio");
-      audioPlayerContext?.speakText(chatMessages?.[chatMessages?.length - 2]?.text||'');
+      audioPlayerContext?.speakText(
+        chatMessages?.[chatMessages?.length - 2]?.text || "",
+        true
+      );
     }
   }, [chatMessages]);
   return (
@@ -664,6 +711,8 @@ const CharacterChat: React.FC<NavigationInterface> = ({
           closeDrawer={closeDrawer}
           sendMessage={sendMessage}
           setChatMessages={setChatMessages}
+          handleError={handleError}
+          websocketCheck={WS}
         />
       }
       closedDrawerOffset={-3}
@@ -672,56 +721,87 @@ const CharacterChat: React.FC<NavigationInterface> = ({
       })}
     >
       <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
-      <SafeAreaView style={[styles.mainContainer]}>
-        <View style={styles.characterChatContainer}>
-          <View>
-            <CharacterChatNavbar
-              userSettings={{ ...userSettings }}
-              navigation={navigation}
-            />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : ""}
+        style={{ flex: 1 }}
+      >
+        <SafeAreaView style={[styles.mainContainer]}>
+          <View style={styles.characterChatContainer}>
+            <View>
+              <CharacterChatNavbar
+                userSettings={{ ...userSettings }}
+                navigation={navigation}
+              />
+            </View>
           </View>
-        </View>
-        <ScrollView
-          ref={scrollViewRef}
-          style={[
-            styles.characterChatContainerHeight,
-            {
-              maxHeight: screenHeight,
-            },
-          ]}
-        >
-          <View style={styles.missionTxtContainer}>
-            <Text style={[styles.defaultFontFamilyBold, styles.coffeeShopTxt]}>
-              {user_mission?.title}
-            </Text>
-            <Text style={[styles.defaultFontFamily, styles.missionTxt]}>
-              World {user_mission?.index}, Mission {user_mission?.mission_index}
-            </Text>
-          </View>
-          <View>
-            {chatMessages.map((message, index) => (
-              <View key={index}>{renderChatMessage(message, index)}</View>
-            ))}
-          </View>
-        </ScrollView>
-        <CharacterChatFooter
-          enableRecording={enableRecording}
-          isRecording={isRecording}
-          speakStatus={speakStatus}
-          invalidRecord={invalidRecord}
-          setInvalidRecord={setInvalidRecord}
-          sendingAudio={sendingAudio}
-          startSpeaking={startSpeaking}
-          setEnableRecording={setEnableRecording}
-          onStopRecord={onStopRecord}
-          setIsRecording={setIsRecording}
-          handleStartRecord={handleStartRecord}
-          setInputText={setInputText}
-          handleInputEnter={handleInputEnter}
-          inputText={inputText}
-          openDrawer={openDrawer}
-        />
-      </SafeAreaView>
+          <ScrollView
+            ref={scrollViewRef}
+            style={[
+              styles.characterChatContainerHeight,
+              {
+                maxHeight: screenHeight,
+              },
+            ]}
+          >
+            <View style={styles.missionTxtContainer}>
+              <Text
+                style={[styles.defaultFontFamilyBold, styles.coffeeShopTxt]}
+              >
+                {user_mission?.title}
+              </Text>
+              <Text style={[styles.defaultFontFamily, styles.missionTxt]}>
+                World {user_mission?.index}, Mission{" "}
+                {user_mission?.mission_index}
+              </Text>
+            </View>
+            <View>
+              {chatMessages.map((message, index) => (
+                <View key={index}>{renderChatMessage(message, index)}</View>
+              ))}
+              {sendingAudio ? (
+                <>
+                  <View style={[styles.aiTyping]}>
+                    <View style={[styles.profileIconContainer]}>
+                      <Image
+                        source={require("../../assets/icons/profileAvatar.png")}
+                        style={styles.profileIcon}
+                      />
+
+                      <Text
+                        style={[styles.defaultFontFamily, styles.estherText]}
+                      >
+                        Esther
+                      </Text>
+                    </View>
+                  </View>
+                  <ProfileContainer isTyping={loader} />
+                </>
+              ) : (
+                null
+              )}
+            </View>
+          </ScrollView>
+          <CharacterChatFooter
+            enableRecording={enableRecording}
+            isRecording={isRecording}
+            speakStatus={speakStatus}
+            invalidRecord={invalidRecord}
+            setInvalidRecord={setInvalidRecord}
+            sendingAudio={sendingAudio}
+            startSpeaking={startSpeaking}
+            setEnableRecording={setEnableRecording}
+            onStopRecord={onStopRecord}
+            setIsRecording={setIsRecording}
+            handleStartRecord={handleStartRecord}
+            setInputText={setInputText}
+            handleInputEnter={handleInputEnter}
+            inputText={inputText}
+            openDrawer={openDrawer}
+            websocketCheck={WS}
+            handleError={handleError}
+          />
+        </SafeAreaView>
+      </KeyboardAvoidingView>
     </Drawer>
   );
 };

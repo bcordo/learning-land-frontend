@@ -46,15 +46,18 @@ const CustomMissionHomeTabComponent: React.FC<ContainerProps> = ({
     if (!world_id) return;
     fetchMissionsByMissionIds({ missionsIds });
   }, [world_id]);
-  useEffect(()=>{
+
+  const apiFetching=()=>{
+    if((missionsdata?.length===0 ||!missionsdata) && !isLoading){
     const missionsIds: number[] = [];
     missions?.map((e) => missionsIds.push(e?.id));
-    if(missionsdata?.length===0){
       fetchMissionsByMissionIds({ missionsIds });
     }
-  },[missionsdata,isLoading])
+  }
+
   useEffect(() => {
     dispatch(updateLoader({isLoading,index}));
+    apiFetching();
   }, [isLoading]);
   const bounceValue = useRef(new Animated.Value(0)).current;
 

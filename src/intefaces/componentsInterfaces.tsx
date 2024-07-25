@@ -19,6 +19,8 @@ export interface AddActionProps {
   closeDrawer: FunctionInterface;
   sendMessage: FunctionInterface;
   setChatMessages: FunctionInterface;
+  handleError:()=>void;
+  websocketCheck?:any;
 }
 export interface AssistantCorrectionProps {
   text: StringInterface;
@@ -39,6 +41,8 @@ export interface CharacterChatFooterProps {
   handleInputEnter: FunctionInterface;
   openDrawer: FunctionInterface;
   inputText: StringInterface;
+  websocketCheck:any;
+  handleError:()=>void;
 }
 export interface CharacterResponseContainerProps {
   quoteText?: StringInterface;
