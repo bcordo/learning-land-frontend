@@ -136,9 +136,12 @@ const MissionStart: React.FC<NavigationInterface> = ({
       <SafeAreaView>
         <View style={styles.container}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={() => {navigation.goBack()
-              audioContext?.stopAudio();
-            }}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.goBack();
+                audioContext?.stopAudio();
+              }}
+            >
               <CustomSvgImageComponent
                 width={20}
                 height={20}
@@ -230,8 +233,9 @@ const MissionStart: React.FC<NavigationInterface> = ({
                     Helpful Phrases
                   </Text>
                   <TouchableOpacity
-                    onPress={() => {navigation.navigate("HelpfulPharases")
-                    audioContext?.stopAudio()
+                    onPress={() => {
+                      navigation.navigate("HelpfulPharases");
+                      audioContext?.stopAudio();
                     }}
                   >
                     <Text

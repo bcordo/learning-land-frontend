@@ -80,9 +80,9 @@ const HomeTab: React.FC<NavigationInterface> = ({
   const colors = [
     { backgroundColor: '#FFD6B6',titleColor:'#DD6100',descriptionColor:'#F58C39' },
     { backgroundColor: '#7DDFDE',titleColor:'#00A4A2',descriptionColor:'#00A09E' },
-    { backgroundColor: '#FF8B67',titleColor:'#a12802',descriptionColor:'#b8401d' },
-    { backgroundColor: '#1077C2',titleColor:'#013f72',descriptionColor:'#005699' },
-    { backgroundColor: '#FFC171',titleColor:'#bc6d0c',descriptionColor:'#c88228' }
+    { backgroundColor: '#FF8B67',titleColor:'#A42700',descriptionColor:'#AA2F09' },
+    { backgroundColor: '#1077C2',titleColor:'#003E6B',descriptionColor:'#004D86' },
+    { backgroundColor: '#FFC171',titleColor:'#BF6C00',descriptionColor:'#CF7400' }
   ]
  let headerColors= colors[currentItemIndex?currentItemIndex % colors?.length:0];
   return (

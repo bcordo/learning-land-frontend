@@ -8,6 +8,7 @@ const CustomSwitch: React.FC<CustomSwitchProps> = ({
   style,
   value,
   onValueChange,
+  disabled,
 }): React.JSX.Element => {
   return (
     <Switch
@@ -17,6 +18,7 @@ const CustomSwitch: React.FC<CustomSwitchProps> = ({
       value={value}
       style={style}
       ios_backgroundColor={trackColor.false}
+      disabled={disabled}
     />
   );
 };

@@ -46,7 +46,7 @@ const TimerPaused: React.FC<NavigationInterface> = ({
   const userSettings = useSelector(
     (state: { userSettingsSlice: {} }) => state.userSettingsSlice
   );
-  const [updateUserSettingsAPI] = useUpdateUserSettingsMutation();
+  const [updateUserSettingsAPI,{isLoading:settingsLoader}] = useUpdateUserSettingsMutation();
 
   const optionsList: ListItem[] = [
     { icon: SettingsIcon, title: "Settings", name: "" },
@@ -122,7 +122,7 @@ const TimerPaused: React.FC<NavigationInterface> = ({
   };
   const renderItem = ({ item }: { item: ListItem }) => {
     return (
-      <View style={styles.optionContainer}>
+      <View style={styles.optionContainer} key={item?.title}>
         <View style={styles.optionBox}>
           <CustomSvgImageComponent
             width={20}
@@ -158,6 +158,7 @@ const TimerPaused: React.FC<NavigationInterface> = ({
             value={userSettings ? userSettings[item.name] : false}
             style={{ transform: [{ scaleX: 1 }, { scaleY: 1 }] }}
             name={item.name}
+            disabled={settingsLoader}
             onValueChange={async () => {
               try {
                 dispatch(
@@ -187,6 +188,7 @@ const TimerPaused: React.FC<NavigationInterface> = ({
         ) : null}
         {item.type === "select" ? (
           <CustomDropdown
+          disabled={settingsLoader}
             onSelect={async (selectedItem: { title: string }) => {
               try {
                 dispatch(

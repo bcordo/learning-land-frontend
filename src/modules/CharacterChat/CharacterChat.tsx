@@ -111,6 +111,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
   const scrollViewRef = useRef<ScrollView | NullInterface>(null);
 
   const openDrawer = () => {
+    audioPlayerContext?.stopAudio();
     drawerRef.current.open();
     dispatch(updatePauseTimmer(true));
   };
@@ -190,7 +191,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
     } catch (error) {
       Toast.show({
         type: "error",
-        text1: "Something went wrong!",
+        text1: "Socket disconnected!",
         text2: "Please try again later.",
         position: "top",
       });
@@ -442,14 +443,10 @@ const CharacterChat: React.FC<NavigationInterface> = ({
                       </Text>
                     </View>
                   </View>
-                ) : (
-                  null
-                )}
+                ) : null}
                 <ProfileContainer isTyping={loader} />
               </>
-            ) : (
-              null
-            )}
+            ) : null}
           </>
         );
       case InteractionType.CHARACTER_UTTERANCE:
@@ -492,14 +489,10 @@ const CharacterChat: React.FC<NavigationInterface> = ({
                       </Text>
                     </View>
                   </View>
-                ) : (
-                  null
-                )}
+                ) : null}
                 <ProfileContainer isTyping={loader} />
               </>
-            ) : (
-              null
-            )}
+            ) : null}
           </>
         );
       case InteractionType.CHARACTER_ACTION:
@@ -566,6 +559,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
     });
   };
   const handleStartRecord = async () => {
+    audioPlayerContext?.stopAudio();
     const hasPermission = await checkAndRequestPermission();
     if (permissionStatus !== RESULTS.GRANTED) return false;
     setStartSpeaking(true);
@@ -713,6 +707,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
           setChatMessages={setChatMessages}
           handleError={handleError}
           websocketCheck={WS}
+          navigation={navigation}
         />
       }
       closedDrawerOffset={-3}
@@ -776,9 +771,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
                   </View>
                   <ProfileContainer isTyping={loader} />
                 </>
-              ) : (
-                null
-              )}
+              ) : null}
             </View>
           </ScrollView>
           <CharacterChatFooter
@@ -799,6 +792,8 @@ const CharacterChat: React.FC<NavigationInterface> = ({
             openDrawer={openDrawer}
             websocketCheck={WS}
             handleError={handleError}
+            navigation={navigation}
+            chatMessages={chatMessages}
           />
         </SafeAreaView>
       </KeyboardAvoidingView>
