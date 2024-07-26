@@ -9,6 +9,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
   dropdownStyle,
   onSelect,
   dropdownOverlayColor,
+  disabled
 }): React.JSX.Element => {
   return (
     <SelectDropdown
@@ -19,6 +20,7 @@ const CustomDropdown: React.FC<CustomDropdownProps> = ({
       renderItem={renderItem}
       showsVerticalScrollIndicator={false}
       dropdownStyle={{ ...dropdownStyle }}
+      disabled={disabled}
     />
   );
 };

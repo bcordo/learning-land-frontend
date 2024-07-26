@@ -1,6 +1,12 @@
 import LottieView from "lottie-react-native";
-import React from "react";
-import { TouchableOpacity, View, Text, TextInput, Keyboard } from "react-native";
+import React, { useContext } from "react";
+import {
+  TouchableOpacity,
+  View,
+  Text,
+  TextInput,
+  Keyboard,
+} from "react-native";
 import CustomSvgImageComponent from "../CustomComponents/Image";
 import Microphonesvg from "../../assets/icons/SvgMicrophone.svg";
 import PlusSvg from "../../assets/icons/plus.svg";
@@ -12,6 +18,7 @@ import XBlack from "../../assets/icons/blackX.svg";
 import { styles } from "./styles";
 import { CharacterChatFooterProps } from "../../intefaces/componentsInterfaces";
 import Spinner from "../../assets/animations/Spinner";
+import { AudioPlayerContext } from "../../customHooks/AudioPlayerContext";
 
 const CharacterChatFooter: React.FC<CharacterChatFooterProps> = ({
   enableRecording,
@@ -31,7 +38,10 @@ const CharacterChatFooter: React.FC<CharacterChatFooterProps> = ({
   openDrawer,
   websocketCheck,
   handleError,
+  chatMessages
 }): React.JSX.Element => {
+  const audioPlayerContext = useContext(AudioPlayerContext);
+    const firstMessageCheck=chatMessages?.length < 3;
   return (
     <>
       {enableRecording ? (
@@ -99,13 +109,14 @@ const CharacterChatFooter: React.FC<CharacterChatFooterProps> = ({
                   ? () => {
                       onStopRecord(false, true);
                       setIsRecording(false);
-                      Keyboard.dismiss()
+                      Keyboard.dismiss();
                     }
                   : () => {
                       openDrawer();
-                      Keyboard.dismiss()
+                      Keyboard.dismiss();
                     }
               }
+              disabled={firstMessageCheck}
             >
               {isRecording ? (
                 <CustomSvgImageComponent
@@ -123,10 +134,10 @@ const CharacterChatFooter: React.FC<CharacterChatFooterProps> = ({
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.startRecordButton}
-              disabled={sendingAudio || (isRecording && startSpeaking)}
+              disabled={sendingAudio || (isRecording && startSpeaking)|| firstMessageCheck}
               onPress={
                 !websocketCheck
-                  ? ()=>handleError()
+                  ? () => handleError()
                   : isRecording
                   ? () => onStopRecord(true)
                   : () => handleStartRecord()
@@ -174,9 +185,11 @@ const CharacterChatFooter: React.FC<CharacterChatFooterProps> = ({
         <View style={styles.typeMessageContainer}>
           <TouchableOpacity
             style={styles.plusButton}
-            onPress={() => {openDrawer()
-          Keyboard.dismiss()
+            onPress={() => {
+              openDrawer();
+              Keyboard.dismiss();
             }}
+            disabled={firstMessageCheck}
           >
             <PlusSvg width={25} height={25} />
           </TouchableOpacity>
@@ -191,9 +204,11 @@ const CharacterChatFooter: React.FC<CharacterChatFooterProps> = ({
           />
           <TouchableOpacity
             style={[styles.plusButton, styles.recordeButton]}
-            onPress={() =>
-              inputText ? handleInputEnter() : setEnableRecording(true)
-            }
+            onPress={() => {
+              inputText ? handleInputEnter() : setEnableRecording(true);
+              audioPlayerContext?.stopAudio();
+            }}
+            disabled={firstMessageCheck}
           >
             {inputText ? (
               <CustomSvgImageComponent
