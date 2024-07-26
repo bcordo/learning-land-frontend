@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 import {
   FlatList,
-<<<<<<< HEAD
-=======
   Keyboard,
   KeyboardAvoidingView,
->>>>>>> learning-land-for-bitbucket
   Platform,
   Text,
   TextInput,
@@ -102,10 +99,7 @@ const AddAction: React.FC<AddActionProps> = ({
                 Component={ArrowUp}
               />
             </TouchableOpacity> */}
-<<<<<<< HEAD
-=======
             </TouchableWithoutFeedback>
->>>>>>> learning-land-for-bitbucket
           </View>
         ) : null}
       </View>
@@ -113,21 +107,6 @@ const AddAction: React.FC<AddActionProps> = ({
   };
 
   const handleSendAction = () => {
-<<<<<<< HEAD
-    sendMessage({
-      message_type: MessageType.FULL,
-      interaction_type: InteractionType.USER_ACTION,
-      content_type: ContentType.TEXT,
-      data: inputCheck ? inputText : selectedAction,
-    });
-    setChatMessages((messages: any) => [
-      ...messages,
-      {
-        type: InteractionType.USER_ACTION,
-        text: inputCheck ? inputText : selectedAction,
-      },
-    ]);
-=======
     Keyboard.dismiss()
     if(websocketCheck){
       sendMessage({
@@ -147,76 +126,12 @@ const AddAction: React.FC<AddActionProps> = ({
       handleError();
     }
    
->>>>>>> learning-land-for-bitbucket
     setSelectedAction("");
     setInputText("");
     closeDrawer();
   };
   return (
     <>
-<<<<<<< HEAD
-      <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
-      <View style={styles.container}>
-        <View
-          style={[
-            styles.drawerHeader,
-            {
-              paddingTop: Platform.OS === "ios" ? 10 : 0,
-              paddingRight: Platform.OS === "ios" ? 10 : 10,
-            },
-          ]}
-        >
-          <TouchableOpacity
-            onPress={() => {
-              closeDrawer();
-              setSelectedAction("");
-              setInputText("");
-            }}
-          >
-            <CustomSvgImageComponent
-              width={20}
-              height={20}
-              Component={CrossIcon}
-            />
-          </TouchableOpacity>
-        </View>
-        <View>
-          <View style={styles.addActionContainer}>
-            <CustomSvgImageComponent
-              width={20}
-              height={20}
-              Component={RunIcon}
-            />
-            <Text style={[styles.defaultFontFamilyBold, styles.addActionTxt]}>
-              Add Action
-            </Text>
-          </View>
-          <View>
-            <FlatList data={actionsList} renderItem={renderActionList} />
-          </View>
-
-          <View style={styles.addActionButtonContainer}>
-            <TouchableOpacity
-              style={[
-                styles.addActionButton,
-                { backgroundColor: canAddAction ? "#F58C39" : "#E5E5E5" },
-              ]}
-              onPress={() => {
-                handleSendAction();
-              }}
-              disabled={!canAddAction}
-            >
-              <Text
-                style={[
-                  styles.addActionButtonTxt,
-                  styles.defaultFontFamilyBold,
-                ]}
-              >
-                ADD ACTION
-              </Text>
-            </TouchableOpacity>
-          </View>
-=======
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : ""}
       >
@@ -283,7 +198,6 @@ const AddAction: React.FC<AddActionProps> = ({
               </TouchableOpacity>
             </View>
           </View>
->>>>>>> learning-land-for-bitbucket
         </View>
       </KeyboardAvoidingView>
     </>
