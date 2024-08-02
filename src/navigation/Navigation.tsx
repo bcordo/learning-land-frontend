@@ -10,16 +10,22 @@ import HelpfulPharasesListContainer from "../components/HelpfulPharasesListConta
 import MissionEnd from "../modules/MissionEnd/MissionEnd";
 import HomeTab from "../modules/HomeTab/HomeTab";
 import MissionHistory from "../modules/MissionHistory/MissionHistory";
+import StartNavigation from "../modules/StartNavigation/StartNavigation";
 
 const Stack = createNativeStackNavigator();
 
 const Navigation = (): React.JSX.Element => {
   return (
     // <NavigationContainer>
-      <Stack.Navigator initialRouteName="Landing">
+      <Stack.Navigator initialRouteName="StartNavigation">
         <Stack.Screen
           name="Splash"
           component={SplashScreen}
+          options={{ headerShown: false }}
+        />
+         <Stack.Screen
+          name="StartNavigation"
+          component={StartNavigation}
           options={{ headerShown: false }}
         />
         <Stack.Screen

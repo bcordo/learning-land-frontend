@@ -7,7 +7,7 @@ const userSettingsApi = createApi({
   reducerPath: 'userSettingsApi',
   baseQuery: fetchBaseQuery({ baseUrl: BASE_URL,
     prepareHeaders: async(headers) => {
-      const token = await AsyncStorage.getItem("token");
+      const token = await AsyncStorage.getItem("access_token");
       if (token) {
         headers.set('Authorization', `Bearer ${token}`);
       }

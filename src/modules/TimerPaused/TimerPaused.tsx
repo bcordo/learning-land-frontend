@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   Modal,
   ScrollView,
@@ -35,12 +36,14 @@ import { NavigationInterface } from "../../intefaces/componentsInterfaces";
 import { ListItem } from "../../intefaces/variablesInterfaces";
 import DownArrowIcon from "../../assets/icons/MySvgComponents/DownArrowIcon";
 import { AudioPlayerContext } from "../../customHooks/AudioPlayerContext";
+import { useWebSocket } from "../../customHooks/WebSocketContext";
 
 const TimerPaused: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
   const dispatch = useDispatch();
   const audioPlayerContext = useContext(AudioPlayerContext);
+  const {disconnectWebSocket}=useWebSocket();
   const [modalVisible, setModalVisible] = useState(false);
 
   const userSettings = useSelector(
@@ -158,7 +161,7 @@ const TimerPaused: React.FC<NavigationInterface> = ({
             value={userSettings ? userSettings[item.name] : false}
             style={{ transform: [{ scaleX: 1 }, { scaleY: 1 }] }}
             name={item.name}
-            disabled={settingsLoader}
+            // disabled={settingsLoader}
             onValueChange={async () => {
               try {
                 dispatch(
@@ -188,7 +191,7 @@ const TimerPaused: React.FC<NavigationInterface> = ({
         ) : null}
         {item.type === "select" ? (
           <CustomDropdown
-          disabled={settingsLoader}
+          // disabled={settingsLoader}
             onSelect={async (selectedItem: { title: string }) => {
               try {
                 dispatch(
@@ -247,7 +250,31 @@ const TimerPaused: React.FC<NavigationInterface> = ({
   return (
     <>
       <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
+     {settingsLoader? <View
+       style={{
+                  display:'flex',
+                  height:'100%',
+                  width:'100%',
+                  justifyContent: "center",
+                  alignItems: "center",
+                  position:'absolute',
+                  backgroundColor:'#ffffff69',
+                  zIndex:10000
+                }}
+              >
+                <ActivityIndicator
+                  size="large"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent:'center',
+                    // height: 600,
+                  }}
+                  color={"#F58C39"}
+                />
+              </View>:null}
       <SafeAreaView style={styles.container}>
+     
         <View style={styles.timerContainer}>
           <CustomSvgImageComponent width={76} height={76} Component={Pause} />
           <View style={styles.timerPausedTxtContainer}>
@@ -298,6 +325,7 @@ const TimerPaused: React.FC<NavigationInterface> = ({
                           onPress={() => {
                             navigation.navigate("MissionEnd");
                             setModalVisible(false);
+                            disconnectWebSocket()
                           }}
                           style={styles.modalConfirmButton}
                         >
