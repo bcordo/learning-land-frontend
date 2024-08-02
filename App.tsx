@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import SplashScreen from "react-native-splash-screen";
 import { AudioPlayerProvider } from "./src/customHooks/AudioPlayerContext.tsx";
 import CustomToast from "./src/components/CustomToast/CustomToast.tsx";
+import { WebSocketProvider } from "./src/customHooks/WebSocketContext.tsx";
 LogBox.ignoreLogs(["new NativeEventEmitter"]);
 LogBox.ignoreAllLogs();
 
@@ -16,12 +17,13 @@ function App(): React.JSX.Element {
   }, []);
   return (
     <Provider store={store}>
-          <NavigationContainer>
-
-      <AudioPlayerProvider>
-        <Navigation />
-        <CustomToast />
-      </AudioPlayerProvider>
+      <NavigationContainer>
+        <WebSocketProvider>
+          <AudioPlayerProvider>
+            <Navigation />
+            <CustomToast />
+          </AudioPlayerProvider>
+        </WebSocketProvider>
       </NavigationContainer>
     </Provider>
   );

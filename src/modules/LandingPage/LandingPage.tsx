@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Image, SafeAreaView, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Image, SafeAreaView, Text, View } from "react-native";
 import { styles } from "./styles";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 import CustomButtom from "../../components/CustomButtom/CustomButtom";
@@ -7,12 +7,17 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import uuid from "react-native-uuid";
 import { useSignUpUserMutation } from "../../../redux/services/signupApi";
 import { NavigationInterface } from "../../intefaces/componentsInterfaces";
+import usePermission from "../../customHooks/UsePermissionHook";
+import { permission } from "../../assets/constant";
+import { RESULTS } from "react-native-permissions";
 
 const LandingPage: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
   const [signUpApi] = useSignUpUserMutation();
-
+  const { checkAndRequestPermission, permissionStatus } = usePermission(
+    permission.microphone
+  );
   const generateEmailAndPassword = () => {
     const email = `user_${uuid.v4()}@example.com`;
     const password = uuid.v4();
@@ -20,7 +25,7 @@ const LandingPage: React.FC<NavigationInterface> = ({
   };
   useEffect(() => {
     const authenticate = async () => {
-      const token = await AsyncStorage.getItem("token");
+      const token = await AsyncStorage.getItem("access_token");
       if (!token) {
         const { email, password } = generateEmailAndPassword();
         const details = {
@@ -41,17 +46,20 @@ const LandingPage: React.FC<NavigationInterface> = ({
           hashed_password: password,
         };
         try {
+
           const response = await signUpApi({ body: details });
           if (response?.data) {
-            const { access_token } = response?.data;
-            await AsyncStorage.setItem("token", access_token);
-            await AsyncStorage.setItem("email", details?.email);
-            await AsyncStorage.setItem("password", details?.password);
+            console.log("response", response);
+            const { access_token,refresh_token } = response?.data;
+            await AsyncStorage.setItem("access_token", access_token);
+            await AsyncStorage.setItem("refresh_token",refresh_token );
+            // await AsyncStorage.setItem("password", details?.password);
           }
         } catch (error) {
           console.error("ERROR" + error.response.data);
         }
       }
+      checkAndRequestPermission(false);
     };
 
     authenticate();

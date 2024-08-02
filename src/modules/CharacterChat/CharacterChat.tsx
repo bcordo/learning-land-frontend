@@ -22,8 +22,6 @@ import {
   LIGHT_BLACK_FADED_COLOR,
   MessageType,
   ORANGE_FADED_COLOR,
-  UserMissionState,
-  WEBSOCKET_URL,
   permission,
 } from "../../assets/constant";
 import RNFS from "react-native-fs";
@@ -42,61 +40,54 @@ import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 import { useDispatch, useSelector } from "react-redux";
 import { useLazyGetUserSettingsQuery } from "../../../redux/services/user_settings";
 import { updateUserSettingsByType } from "../../../redux/slices/userSetingsSlice";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationInterface } from "../../intefaces/componentsInterfaces";
 import {
   BooleanInterface,
   NullInterface,
   NumberInterface,
   StringInterface,
-  chatMessagesInterface,
 } from "../../intefaces/variablesInterfaces";
 import ProfileContainer from "../../components/ProfileContainer/ProfileContainer";
 import { updatePauseTimmer } from "../../../redux/slices/timmerSlice";
-import Toast from "react-native-toast-message";
 import { AudioPlayerContext } from "../../customHooks/AudioPlayerContext";
 import usePermission from "../../customHooks/UsePermissionHook";
 import { RESULTS } from "react-native-permissions";
+import { useWebSocket } from "../../customHooks/WebSocketContext";
 
 const audioRecorderPlayer = new AudioRecorderPlayer();
 audioRecorderPlayer.setSubscriptionDuration(0.09);
-const initialSpeakStatus = "Connecting...";
+const initialSpeakStatus = "";
 const CharacterChat: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
   const { checkAndRequestPermission, permissionStatus } = usePermission(
     permission.microphone
   );
-
+  const {
+    handleError,
+    connectWebSocket,
+    WS,
+    socketConnected,
+    loader,
+    setLoader,
+    speakStatus,
+    setSpeakStatus,
+    chatMessages,
+    setChatMessages,
+    sendingAudio,
+    isSendingAudio,
+  } = useWebSocket();
   const audioPlayerContext = useContext(AudioPlayerContext);
   const [inputText, setInputText] = useState<StringInterface>("");
-  const [loader, setLoader] = useState<BooleanInterface>(false);
-
   const [enableRecording, setEnableRecording] =
     useState<BooleanInterface>(false);
   const [isRecording, setIsRecording] = useState<BooleanInterface>(false);
-  const [socketConnected, setSocketConnected] =
-    useState<BooleanInterface>(false);
-  const [sendingAudio, isSendingAudio] = useState<BooleanInterface>(false);
-  const [speakStatus, setSpeakStatus] = useState<StringInterface>(
-    initialSpeakStatus || "Start speaking"
-  );
   const [duration, setDuration] = useState(0);
   const [invalidRecord, setInvalidRecord] = useState<BooleanInterface>(false);
   const [startSpeaking, setStartSpeaking] = useState<BooleanInterface>(false);
-  const [WS, setWS] = React.useState<WebSocket | NullInterface>(null);
-  const [chatState, setChatState] = React.useState("inactive");
   const [screenHeight, setScreenHeight] = useState<NumberInterface>(
     Dimensions.get("window").height
   );
-  const [missionState, setMissionState] = React.useState(
-    UserMissionState.INACTIVE
-  );
-  const [goals, setGoals] = React.useState([]);
-
-  const [chatMessages, setChatMessages] = React.useState<
-    chatMessagesInterface[]
-  >([]);
   const user_mission = useSelector((state) => state?.missionSlice?.mission);
   const [getUserSettings, { data: userSettings, isLoading }] =
     useLazyGetUserSettingsQuery();
@@ -121,8 +112,9 @@ const CharacterChat: React.FC<NavigationInterface> = ({
   };
 
   useEffect(() => {
-    setChatMessages((messages) => [
-      ...messages,
+    setChatMessages(
+      (messages: any) => [
+      // ...messages,
       {
         type: InteractionType.CHARACTER_UTTERANCE,
         isTyping: true,
@@ -185,238 +177,6 @@ const CharacterChat: React.FC<NavigationInterface> = ({
 
     return () => clearInterval(timer);
   }, [isRecording]);
-  const handleError = () => {
-    try {
-      throw new Error("Simulated error");
-    } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Socket disconnected!",
-        text2: "Please try again later.",
-        position: "top",
-      });
-    }
-  };
-  const connectWebSocket = async () => {
-    const token = await AsyncStorage.getItem("token");
-    const websocketUrlWithToken = `${WEBSOCKET_URL}?token=${token}`;
-    const newWS = new WebSocket(websocketUrlWithToken);
-    setWS(newWS);
-    newWS.onopen = () => {
-      setSocketConnected(true);
-      console.log("WebSocket connected");
-    };
-    newWS.onmessage = (event) => {
-      console.log("Message Arrived");
-      isSendingAudio(false);
-      setSpeakStatus(initialSpeakStatus || "Start speaking");
-      handleServerMessage(event.data);
-      if (
-        chatMessages?.[chatMessages?.length - 2]?.type ===
-        InteractionType?.CHARACTER_UTTERANCE
-      )
-        return;
-      setLoader(false);
-    };
-
-    newWS.onclose = () => {
-      isSendingAudio(false);
-      console.log("WebSocket disconnected");
-      setWS(null);
-      setLoader(false);
-      handleError();
-    };
-  };
-
-  const handleServerMessage = async (message: StringInterface) => {
-    try {
-      const parsedMessage = JSON.parse(message);
-      switch (parsedMessage.interaction_type) {
-        case InteractionType.USER_UTTERANCE:
-          handleUserUtteranceMessage(parsedMessage);
-          break;
-        case InteractionType.CHARACTER_UTTERANCE:
-        case InteractionType.CHARACTER_ACTION:
-        case InteractionType.CHARACTER_NARRATION:
-        case InteractionType.CHARACTER_EMOTION:
-        case InteractionType.CHARACTER_THOUGHT:
-        case InteractionType.CHARACTER_UPDATED_LOCATION:
-        case InteractionType.CHARACTER_UPDATED_TIME:
-        case InteractionType.COMMAND:
-          handleCharacterResponseMessage(parsedMessage);
-
-          break;
-
-        case InteractionType.ASSISTANT_HINT:
-          handleHintMessage(parsedMessage);
-
-          break;
-        case InteractionType.ASSISTANT_CORRECTION:
-          handleCorrectionMessage(parsedMessage);
-
-          break;
-        case InteractionType.MISSION_STATUS:
-          handleMissionStatusMessage(parsedMessage);
-
-          break;
-        default:
-          console.log(
-            "Unknown interaction type:",
-            parsedMessage.interaction_type
-          );
-      }
-    } catch (error) {
-      console.error("Error parsing server message:", error);
-    }
-  };
-
-  const handleUserUtteranceMessage = (message: any) => {
-    if (message.content_type === ContentType.TEXT) {
-      setChatMessages((prevMessages) => {
-        const updatedMessages = prevMessages.filter((message) => {
-          return true;
-        });
-
-        updatedMessages.push({
-          type: "user",
-          text: message.data,
-        });
-        return updatedMessages;
-      });
-    }
-  };
-
-  const handleCharacterResponseMessage = (message: any) => {
-    if (message.message_type === MessageType.CHUNK) {
-      if (message.content_type === ContentType.TEXT) {
-        const interactionTypes = [
-          InteractionType.CHARACTER_UTTERANCE,
-          InteractionType.CHARACTER_ACTION,
-          InteractionType.CHARACTER_NARRATION,
-          InteractionType.CHARACTER_EMOTION,
-          InteractionType.CHARACTER_THOUGHT,
-          InteractionType.CHARACTER_UPDATED_LOCATION,
-          InteractionType.CHARACTER_UPDATED_TIME,
-        ];
-
-        if (interactionTypes.includes(message.interaction_type)) {
-          setChatMessages((messages) => {
-            const updatedMessages = messages.filter(
-              (message) => !message?.isTyping
-            );
-            const lastMessage = updatedMessages[updatedMessages.length - 1];
-            if (lastMessage && lastMessage.type === message.interaction_type) {
-              return [
-                ...updatedMessages.slice(0, -1),
-                {
-                  ...lastMessage,
-                  text: lastMessage.text + message.data,
-                },
-              ];
-            } else {
-              return [
-                ...updatedMessages,
-                {
-                  type: message.interaction_type,
-                  text: message.data,
-                },
-              ];
-            }
-          });
-        }
-      }
-    } else if (message.message_type === MessageType.FULL) {
-      if (message.content_type === ContentType.TEXT) {
-        setChatMessages((messages) => [
-          ...messages,
-          {
-            type: "character-utterance",
-            text: message.data,
-          },
-        ]);
-      } else if (message.content_type === ContentType.AUDIO) {
-        console.log("Received full audio message:", message.data);
-      }
-    }
-  };
-
-  const handleHintMessage = (message: any) => {
-    try {
-      const hint = JSON.parse(message.data);
-      setChatMessages((messages) => [
-        ...messages,
-        {
-          type: "assistant-hint",
-          text: hint?.phrase?.text,
-        },
-      ]);
-    } catch (error) {
-      console.error("Error parsing assistant hint:", error);
-    }
-  };
-
-  const handleCorrectionMessage = (message: any) => {
-    try {
-      const correction = JSON.parse(message.data);
-      setChatMessages((messages) => [
-        ...messages,
-        {
-          type: "assistant-correction",
-          text: correction?.phrase?.text,
-        },
-      ]);
-    } catch (error) {
-      console.error("Error parsing assistant correction:", error);
-    }
-  };
-
-  const handleMissionStatusMessage = (message: any) => {
-    if (
-      message.content_type === ContentType.JSON ||
-      message.content_type === ContentType.TEXT
-    ) {
-      try {
-        const missionStatusData = JSON.parse(message.data);
-
-        setMissionState(missionStatusData?.user_mission_state);
-        setGoals(missionStatusData?.user_goals || []);
-
-        if (
-          missionStatusData?.user_mission_state === UserMissionState.COMPLETED
-        ) {
-          setChatState("completed");
-          // setChatMessages([
-          //   { type: "state", text: "Mission completed successfully!" },
-          // ]);
-          setChatMessages((messages) => [
-            ...messages,
-            { type: "state", text: "Refresh page to retry" },
-          ]);
-          // setChatMessages((messages) => [...messages, { type: 'state', text: 'Mission completed successfully!!' }]);
-        } else if (
-          missionStatusData?.user_mission_state === UserMissionState.FAILED
-        ) {
-          setChatState("failed");
-          setChatMessages([{ type: "state", text: "Mission failed" }]);
-          setChatMessages((messages) => [
-            ...messages,
-            { type: "state", text: "Refresh page to retry" },
-          ]);
-          // setChatMessages((messages) => [...messages, { type: 'state', text: 'Mission failed' }]);
-        } else if (
-          missionStatusData?.user_mission_state === UserMissionState.ACTIVE
-        ) {
-          setChatState("active");
-        } else if (
-          missionStatusData?.user_mission_state === UserMissionState.PAUSED
-        ) {
-          setChatState("paused");
-        }
-      } catch (error) {
-        console.error("Error parsing mission status:", error);
-      }
-    }
-  };
 
   const renderChatMessage = (message: any, index: NumberInterface) => {
     switch (message.type) {
@@ -563,7 +323,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
     const hasPermission = await checkAndRequestPermission();
     if (permissionStatus !== RESULTS.GRANTED) return false;
     setStartSpeaking(true);
-    setSpeakStatus(initialSpeakStatus || "Start speaking");
+    setSpeakStatus(initialSpeakStatus);
     setIsRecording(true);
     setTimeout(() => {
       setStartSpeaking(false);
@@ -626,8 +386,8 @@ const CharacterChat: React.FC<NavigationInterface> = ({
             ...message,
             metadata: {
               ...metadata,
-              user_mission_id: 1,
-              user_id: 1,
+              user_mission_id: user_mission?.mission_id,
+              user_id: user_mission?.user_id,
               file_extension: "m4a",
             },
           };
@@ -636,8 +396,8 @@ const CharacterChat: React.FC<NavigationInterface> = ({
             ...message,
             metadata: {
               ...metadata,
-              user_mission_id: 1,
-              user_id: 1,
+              user_mission_id: user_mission?.mission_id,
+              user_id:  user_mission?.user_id,
             },
           };
         }
@@ -663,7 +423,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
       handleError();
     } else {
       if (inputText !== "") {
-        setChatMessages((messages) => [
+        setChatMessages((messages: any) => [
           ...messages,
           {
             type: "user",

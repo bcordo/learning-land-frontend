@@ -102,7 +102,7 @@ const CustomMissionHomeTabComponent: React.FC<ContainerProps> = ({
   }, [bounceValue, currentItemIndex]);
   return (
     <>
-      <FadedDividerMiddleText text={`WORLD ${index + 1}`} />
+      {missionsdata?.length>0?<FadedDividerMiddleText text={`WORLD ${index + 1}`} />:null}
       {isLoading || isFetching || loaderSate?.[index] ? (
         <>
          <MissionsLoader/>

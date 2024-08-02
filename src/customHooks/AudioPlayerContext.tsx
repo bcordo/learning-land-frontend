@@ -7,7 +7,7 @@ import Toast from 'react-native-toast-message';
 
 interface AudioPlayerContextProps {
   isPlaying: boolean;
-  speakText: (text: string) => Promise<void>;
+  speakText: (text?: string,websokectCheck?:boolean|any) => Promise<void>;
   stopAudio: () => void;
   setIsPlaying:()=>void;
 }
@@ -30,11 +30,11 @@ interface AudioPlayerProviderProps {
 }
 
 const AudioPlayerProvider: React.FC<AudioPlayerProviderProps> = ({ children }) => {
-  const navigation = useNavigation();
+  const navigation:any = useNavigation();
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentSound, setCurrentSound] = useState<Sound | null>(null);
 
-  const speakText = async (text: string,websokectCheck:boolean): Promise<void> => {
+  const speakText = async (text: string,websokectCheck:boolean|any): Promise<void> => {
     if (isPlaying) return;
     if(websokectCheck&& navigation?.getCurrentRoute()?.name !== 'CharacterChat') return
 
@@ -109,11 +109,9 @@ const AudioPlayerProvider: React.FC<AudioPlayerProviderProps> = ({ children }) =
 
   useEffect(() => {
     const unsubscribeFocus = navigation.addListener('focus', () => {
-      // Do something when the screen is focused
     });
 
     const unsubscribeBlur = navigation.addListener('blur', () => {
-      // Stop and release audio when the screen is unfocused
       stopAndReleaseAudio();
     });
 

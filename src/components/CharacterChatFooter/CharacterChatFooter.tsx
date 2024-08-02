@@ -201,6 +201,7 @@ const CharacterChatFooter: React.FC<CharacterChatFooterProps> = ({
             onChangeText={(text) => setInputText(text)}
             onSubmitEditing={() => handleInputEnter()}
             value={inputText}
+            editable={!firstMessageCheck}
           />
           <TouchableOpacity
             style={[styles.plusButton, styles.recordeButton]}
