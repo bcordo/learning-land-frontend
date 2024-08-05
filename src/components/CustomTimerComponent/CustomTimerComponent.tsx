@@ -10,6 +10,7 @@ import { AudioPlayerContext } from "../../customHooks/AudioPlayerContext";
 
 const CustomTimerComponent: React.FC<NavigationInterface> = ({
   navigation,
+  handleGoEndScreen,
 }) => {
   const audioPlayerContext = useContext(AudioPlayerContext);
   const { initialTotalSeconds, totalSeconds, minutes, seconds, pauseTimmer } =
@@ -23,6 +24,7 @@ const CustomTimerComponent: React.FC<NavigationInterface> = ({
       if (totalSeconds <= 0) {
         navigation.navigate("MissionEnd");
         audioPlayerContext?.stopAudio();
+        handleGoEndScreen();
       }
       if (totalSeconds >= 0) {
         dispatch(

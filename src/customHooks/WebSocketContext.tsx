@@ -36,6 +36,7 @@ interface WebSocketContextProps {
   handleHintMessage: (message: string) => void;
   handleCorrectionMessage: (message: string) => void;
   handleMissionStatusMessage: (message: string) => void;
+  handleGoEndScreen:()=>void;
 }
 
 const WebSocketContext = createContext<WebSocketContextProps | undefined>(
@@ -64,7 +65,12 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   );
   const [goals, setGoals] = React.useState([]);
   const [chatState, setChatState] = React.useState("inactive");
-
+const handleGoEndScreen=()=>{
+  disconnectWebSocket();
+  setTimeout(()=>{
+    navigation.navigate('MissionEnd');
+  },100)
+}
   const handleError = () => {
     if(['CharacterChat'].includes(navigation?.getCurrentRoute()?.name)){
             try {
@@ -83,8 +89,11 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
    
   };
   const handleNavigate=()=>{
-    // navigation.navigate('MissionStart');
-    // disconnectWebSocket()
+    if(['CharacterChat'].includes(navigation?.getCurrentRoute()?.name)){
+        setTimeout(()=>{
+          navigation.navigate('MissionStart');
+        },100)
+      }
   }
   const handleServerMessage = async (message: string) => {
     try {
@@ -230,7 +239,6 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
     ) {
       try {
         const missionStatusData = JSON.parse(message.data);
-
         setMissionState(missionStatusData?.user_mission_state);
         setGoals(missionStatusData?.user_goals || []);
 
@@ -245,6 +253,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
             ...messages,
             { type: "state", text: "Refresh page to retry" },
           ]);
+          handleGoEndScreen()
           // setChatMessages((messages) => [...messages, { type: 'state', text: 'Mission completed successfully!!' }]);
         } else if (
           missionStatusData?.user_mission_state === UserMissionState.FAILED
@@ -255,6 +264,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
             ...messages,
             { type: "state", text: "Refresh page to retry" },
           ]);
+          handleGoEndScreen()
           // setChatMessages((messages) => [...messages, { type: 'state', text: 'Mission failed' }]);
         } else if (
           missionStatusData?.user_mission_state === UserMissionState.ACTIVE
@@ -337,6 +347,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
         handleHintMessage,
         handleCorrectionMessage,
         handleMissionStatusMessage,
+        handleGoEndScreen,
       }}
     >
       {children}

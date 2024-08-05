@@ -15,6 +15,7 @@ import { AudioPlayerContext } from "../../customHooks/AudioPlayerContext";
 const CharacterChatNavbar: React.FC<CharacterChatNavbarProps> = ({
   navigation,
   userSettings,
+  handleGoEndScreen
 }): React.JSX.Element => {
   const audioPlayerContext = useContext(AudioPlayerContext);
   const [completedGoals, setCompletedGoals] = useState(0);
@@ -25,14 +26,14 @@ const CharacterChatNavbar: React.FC<CharacterChatNavbarProps> = ({
   
   useEffect(() => {
     if (!user_mission) return;
-    const goals:any = [...user_mission?.goals];
-    const user_goals:any = [...user_mission?.user_goals];
+    const goals: any = [...user_mission?.goals];
+    const user_goals: any = [...user_mission?.user_goals];
 
     if (!goals?.length && !user_goals?.length) return;
     const goalsWithStatus: any = [];
-    goals?.forEach((goal:any) => {
+    goals?.forEach((goal: any) => {
       const filterUserGoal = user_goals?.find(
-        (item:any) => item?.goal_id === goal?.id
+        (item: any) => item?.goal_id === goal?.id
       );
       if (filterUserGoal) {
         goalsWithStatus.push({
@@ -182,7 +183,7 @@ const CharacterChatNavbar: React.FC<CharacterChatNavbarProps> = ({
           ))}
         </View>
       </View>
-      <CustomTimerComponent navigation={navigation} />
+      <CustomTimerComponent navigation={navigation} handleGoEndScreen={handleGoEndScreen}/>
     </View>
   );
 };

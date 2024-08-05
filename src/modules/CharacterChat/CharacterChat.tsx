@@ -76,6 +76,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
     setChatMessages,
     sendingAudio,
     isSendingAudio,
+    handleGoEndScreen
   } = useWebSocket();
   const audioPlayerContext = useContext(AudioPlayerContext);
   const [inputText, setInputText] = useState<StringInterface>("");
@@ -414,7 +415,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
         "WebSocket is not connected. Cannot send message:",
         message
       );
-      handleError();
+      // handleError();
       setLoader(false);
     }
   };
@@ -448,7 +449,6 @@ const CharacterChat: React.FC<NavigationInterface> = ({
       chatMessages?.[chatMessages?.length - 2]?.type ===
         InteractionType?.CHARACTER_UTTERANCE
     ) {
-      console.log("hello adio");
       audioPlayerContext?.speakText(
         chatMessages?.[chatMessages?.length - 2]?.text || "",
         true
@@ -486,6 +486,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
               <CharacterChatNavbar
                 userSettings={{ ...userSettings }}
                 navigation={navigation}
+                handleGoEndScreen={handleGoEndScreen}
               />
             </View>
           </View>
