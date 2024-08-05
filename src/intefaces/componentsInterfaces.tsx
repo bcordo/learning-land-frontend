@@ -10,10 +10,12 @@ import {
 
 export interface NavigationInterface {
   navigation: AnyInterface;
+  handleGoEndScreen?:()=>void;
 }
 export interface CharacterChatNavbarProps {
   navigation: AnyInterface;
   userSettings: AnyInterface;
+  handleGoEndScreen?:()=>void;
 }
 export interface AddActionProps {
   closeDrawer: FunctionInterface;
