@@ -387,7 +387,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
             ...message,
             metadata: {
               ...metadata,
-              user_mission_id: user_mission?.mission_id,
+              user_mission_id: user_mission?.id,
               user_id: user_mission?.user_id,
               file_extension: "m4a",
             },
@@ -397,7 +397,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
             ...message,
             metadata: {
               ...metadata,
-              user_mission_id: user_mission?.mission_id,
+              user_mission_id: user_mission?.id,
               user_id:  user_mission?.user_id,
             },
           };

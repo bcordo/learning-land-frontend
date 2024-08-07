@@ -53,7 +53,8 @@ const LandingPage: React.FC<NavigationInterface> = ({
             const { access_token,refresh_token } = response?.data;
             await AsyncStorage.setItem("access_token", access_token);
             await AsyncStorage.setItem("refresh_token",refresh_token );
-            // await AsyncStorage.setItem("password", details?.password);
+            await AsyncStorage.setItem("email", details?.email);
+            await AsyncStorage.setItem("password", details?.password);
           }
         } catch (error) {
           console.error("ERROR" + error.response.data);
