@@ -5,6 +5,7 @@ import {
   DimensionValue,
   View,
 } from "react-native";
+import { useIsFocused } from '@react-navigation/native';
 import FadedDividerMiddleText from "../FadedDividerMiddleText/FadedDividerMiddleText";
 import LockIcon from "../../assets/icons/lock-closed.svg";
 import GiftIcon from "../../assets/icons/gift.svg";
@@ -23,6 +24,7 @@ import { useDispatch } from "react-redux";
 import { updateLoader } from "../../../redux/slices/loaderSlice";
 import CustomSvgImageComponent from "../CustomComponents/Image";
 import MissionsLoader from "../MissionsLoader/MissionsLoader";
+import Toast from "react-native-toast-message";
 
 const CustomMissionHomeTabComponent: React.FC<ContainerProps> = ({
   navigation,
@@ -35,6 +37,7 @@ const CustomMissionHomeTabComponent: React.FC<ContainerProps> = ({
   loaderSate,
 }) => {
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
 
   const [
     fetchMissionsByMissionIds,
@@ -53,12 +56,27 @@ const CustomMissionHomeTabComponent: React.FC<ContainerProps> = ({
     missions?.map((e) => missionsIds.push(e?.id));
       fetchMissionsByMissionIds({ missionsIds });
     }
+   
   }
-
+const redirecting=()=>{
+  if(missionsdata?.length===0){
+    navigation.navigate("Landing");
+    Toast.show({
+      type: "error",
+      text1: "Network error!",
+      text2: "Please try again later.",
+      position: "top",
+    });
+  }
+}
+useEffect(()=>{
+  redirecting()
+},[missionsdata,navigation,isFocused])
   useEffect(() => {
     dispatch(updateLoader({isLoading,index}));
     apiFetching();
-  }, [isLoading]);
+
+  }, [isLoading,navigation,isFocused]);
   const bounceValue = useRef(new Animated.Value(0)).current;
 
   function generateData(length: NumberInterface) {
