@@ -10,6 +10,9 @@ const StartNavigation: React.FC<NavigationInterface> = ({
 }): React.JSX.Element => {
     const tokenCheck=async ()=>{
         const token = await AsyncStorage.getItem("access_token");
+        const email = await AsyncStorage.getItem("email");
+        const password = await AsyncStorage.getItem("password");
+        const refresh = await AsyncStorage.getItem("refresh_token");
         if(token){
             navigation.navigate("HomeTab");
         }else{

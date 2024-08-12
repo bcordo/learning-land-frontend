@@ -36,14 +36,14 @@ const HomeTab: React.FC<NavigationInterface> = ({
   const scrollViewRef = useRef<any>(null);
   const [componentHeights, setComponentHeights] =
     useState<ComponentHeightsObjInterface>({});
-  const loading = useSelector(
-    (state: { loaderSlice: any }) => state.loaderSlice
-  );
-  const [fetchWorlds, { data: allWorlds, isLoading: fetchingWorlds }] =
+    const loading = useSelector(
+      (state: { loaderSlice: any }) => state.loaderSlice
+    );
+    const [fetchWorlds, { data: allWorlds, isLoading: fetchingWorlds }] =
     useLazyGetAllWorldsQuery();
-  useEffect(() => {
-    fetchWorlds("");
-  }, []);
+    useEffect(() => {
+      fetchWorlds("");
+    }, []);
   const footerList = [
     { label: "Home", IconComponent: HomeFooter },
     { label: "Training", IconComponent: DumbelSvg },
