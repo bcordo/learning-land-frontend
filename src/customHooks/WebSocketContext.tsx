@@ -253,7 +253,6 @@ const handleGoEndScreen=()=>{
             ...messages,
             { type: "state", text: "Refresh page to retry" },
           ]);
-          handleGoEndScreen()
           // setChatMessages((messages) => [...messages, { type: 'state', text: 'Mission completed successfully!!' }]);
         } else if (
           missionStatusData?.user_mission_state === UserMissionState.FAILED
@@ -264,7 +263,6 @@ const handleGoEndScreen=()=>{
             ...messages,
             { type: "state", text: "Refresh page to retry" },
           ]);
-          handleGoEndScreen()
           // setChatMessages((messages) => [...messages, { type: 'state', text: 'Mission failed' }]);
         } else if (
           missionStatusData?.user_mission_state === UserMissionState.ACTIVE

@@ -76,7 +76,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
     setChatMessages,
     sendingAudio,
     isSendingAudio,
-    handleGoEndScreen
+    handleGoEndScreen,
   } = useWebSocket();
   const audioPlayerContext = useContext(AudioPlayerContext);
   const [inputText, setInputText] = useState<StringInterface>("");
@@ -113,8 +113,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
   };
 
   useEffect(() => {
-    setChatMessages(
-      (messages: any) => [
+    setChatMessages((messages: any) => [
       // ...messages,
       {
         type: InteractionType.CHARACTER_UTTERANCE,
@@ -398,7 +397,7 @@ const CharacterChat: React.FC<NavigationInterface> = ({
             metadata: {
               ...metadata,
               user_mission_id: user_mission?.id,
-              user_id:  user_mission?.user_id,
+              user_id: user_mission?.user_id,
             },
           };
         }
