@@ -71,8 +71,8 @@ const handleGoEndScreen=()=>{
     navigation.navigate('MissionEnd');
   },100)
 }
-  const handleError = () => {
-    if(['CharacterChat'].includes(navigation?.getCurrentRoute()?.name)){
+  const handleError = (check?:any) => {
+    if(['CharacterChat'].includes(navigation?.getCurrentRoute()?.name) || check){
             try {
               throw new Error("Simulated error");
             } catch (error) {

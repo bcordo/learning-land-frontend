@@ -109,7 +109,7 @@ const CharacterChatNavbar: React.FC<CharacterChatNavbarProps> = ({
       <View style={styles.pauseIconContainer}>
         <TouchableOpacity
           onPress={() => {
-            dispatch(updateUserSettings(userSettings));
+            // dispatch(updateUserSettings(userSettings));
             navigation.navigate("TimerPausedScreen");
             dispatch(updatePauseTimmer(true));
             audioPlayerContext?.stopAudio();
