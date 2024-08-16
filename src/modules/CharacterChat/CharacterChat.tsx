@@ -39,7 +39,7 @@ import AddAction from "../../components/AddAction/AddAction";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 import { useDispatch, useSelector } from "react-redux";
 import { useLazyGetUserSettingsQuery } from "../../../redux/services/user_settings";
-import { updateUserSettingsByType } from "../../../redux/slices/userSetingsSlice";
+import { updateUserSettings, updateUserSettingsByType } from "../../../redux/slices/userSetingsSlice";
 import { NavigationInterface } from "../../intefaces/componentsInterfaces";
 import {
   BooleanInterface,
@@ -111,7 +111,10 @@ const CharacterChat: React.FC<NavigationInterface> = ({
     drawerRef.current.close();
     dispatch(updatePauseTimmer(false));
   };
+useEffect(()=>{
+  dispatch(updateUserSettings(userSettings));
 
+},[userSettings])
   useEffect(() => {
     setChatMessages((messages: any) => [
       // ...messages,

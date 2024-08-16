@@ -43,14 +43,16 @@ const TimerPaused: React.FC<NavigationInterface> = ({
 }): React.JSX.Element => {
   const dispatch = useDispatch();
   const audioPlayerContext = useContext(AudioPlayerContext);
-  const {disconnectWebSocket}=useWebSocket();
+  const {disconnectWebSocket,WS,handleError}=useWebSocket();
   const [modalVisible, setModalVisible] = useState(false);
 
   const userSettings = useSelector(
     (state: { userSettingsSlice: {} }) => state.userSettingsSlice
   );
   const [updateUserSettingsAPI,{isLoading:settingsLoader}] = useUpdateUserSettingsMutation();
-
+const onCancelModal=()=>{
+  setModalVisible(false);
+}
   const optionsList: ListItem[] = [
     { icon: SettingsIcon, title: "Settings", name: "" },
     {
@@ -105,6 +107,16 @@ const TimerPaused: React.FC<NavigationInterface> = ({
       MEDIUM: {...styles.mediumOptionColor,svgColor:'#ec9046'},
       HARD: {...styles.hardOptionColor,svgColor:'#FF8B67'}
     };
+    const onHandleResume=()=>{
+      if(WS){
+        dispatch(updatePauseTimmer(false));
+        navigation.navigate("CharacterChat");
+      }else{
+        dispatch(updatePauseTimmer(false));
+        navigation.navigate('MissionStart');
+        handleError(true);
+      }
+    }
   const renderDropdownItem = (
     item: { title?: string },
     index: number | undefined,
@@ -339,7 +351,7 @@ const TimerPaused: React.FC<NavigationInterface> = ({
                           </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                          onPress={() => setModalVisible(false)}
+                          onPress={() => onCancelModal()}
                           style={styles.modalConfirmButtonCancel}
                         >
                           <Text
@@ -362,8 +374,7 @@ const TimerPaused: React.FC<NavigationInterface> = ({
               <TouchableOpacity
                 style={styles.buttonBox}
                 onPress={() => {
-                  dispatch(updatePauseTimmer(false));
-                  navigation.navigate("CharacterChat");
+                  onHandleResume();
                 }}
               >
                 <CustomSvgImageComponent
