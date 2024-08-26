@@ -5,7 +5,7 @@ import {
   DimensionValue,
   View,
 } from "react-native";
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from "@react-navigation/native";
 import FadedDividerMiddleText from "../FadedDividerMiddleText/FadedDividerMiddleText";
 import LockIcon from "../../assets/icons/lock-closed.svg";
 import GiftIcon from "../../assets/icons/gift.svg";
@@ -50,33 +50,31 @@ const CustomMissionHomeTabComponent: React.FC<ContainerProps> = ({
     fetchMissionsByMissionIds({ missionsIds });
   }, [world_id]);
 
-  const apiFetching=()=>{
-    if((missionsdata?.length===0 ||!missionsdata) && !isLoading){
-    const missionsIds: number[] = [];
-    missions?.map((e) => missionsIds.push(e?.id));
+  const apiFetching = () => {
+    if ((missionsdata?.length === 0 || !missionsdata) && !isLoading) {
+      const missionsIds: number[] = [];
+      missions?.map((e) => missionsIds.push(e?.id));
       fetchMissionsByMissionIds({ missionsIds });
     }
-   
-  }
-const redirecting=()=>{
-  if(missionsdata?.length===0){
-    navigation.navigate("Landing");
-    Toast.show({
-      type: "error",
-      text1: "Network error!",
-      text2: "Please try again later.",
-      position: "top",
-    });
-  }
-}
-useEffect(()=>{
-  redirecting()
-},[missionsdata,navigation,isFocused])
+  };
+  const redirecting = () => {
+    if (missionsdata?.length === 0) {
+      navigation.navigate("Landing");
+      Toast.show({
+        type: "error",
+        text1: "Network error!",
+        text2: "Please try again later.",
+        position: "top",
+      });
+    }
+  };
   useEffect(() => {
-    dispatch(updateLoader({isLoading,index}));
-    apiFetching();
-
-  }, [isLoading,navigation,isFocused]);
+    // redirecting();
+  }, [missionsdata, navigation, isFocused]);
+  useEffect(() => {
+    dispatch(updateLoader({ isLoading, index }));
+    // apiFetching();
+  }, [isLoading, navigation, isFocused]);
   const bounceValue = useRef(new Animated.Value(0)).current;
 
   function generateData(length: NumberInterface) {
@@ -120,14 +118,16 @@ useEffect(()=>{
   }, [bounceValue, currentItemIndex]);
   return (
     <>
-      {missionsdata?.length>0?<FadedDividerMiddleText text={`WORLD ${index + 1}`} />:null}
+      {missions?.length > 0 ? (
+        <FadedDividerMiddleText text={`WORLD ${index + 1}`} />
+      ) : null}
       {isLoading || isFetching || loaderSate?.[index] ? (
         <>
-         <MissionsLoader/>
+          <MissionsLoader />
         </>
       ) : (
         <View onLayout={handleLayout} style={{ paddingTop: 32 }}>
-          {generateData(missionsdata?.length).map(
+          {generateData(missions?.length).map(
             (item: MissionItemInterface, listIndex) => {
               return (
                 <CustomMissionCircleComponent
@@ -139,7 +139,7 @@ useEffect(()=>{
                   bounceValue={bounceValue}
                   missionData={{
                     ...missions[listIndex],
-                    ...missionsdata[listIndex],
+                    ...missionsdata?.[listIndex],
                   }}
                   extraData={extraData}
                 />
