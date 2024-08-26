@@ -32,7 +32,9 @@ const CustomMissionCircleComponent: React.FC<
   extraData,
 }) => {
   const dispatch = useDispatch();
-
+  let goalsCompleted =
+    (missionData?.number_of_goals_completed / missionData?.user_goals?.length) *
+    100;
   return (
     <>
       {["ACTIVE", "NOT_STARTED"].includes(missionData?.mission_state) &&
@@ -42,8 +44,9 @@ const CustomMissionCircleComponent: React.FC<
           <AnimatedCircularProgress
             size={95}
             width={4}
-            fill={0}
-            tintColor="#DD6100"
+            fill={goalsCompleted || 0}
+            // tintColor="#DD6100"
+            tintColor="#F58C39"
             backgroundColor="#d6e2ed"
             lineCap="round"
             rotation={0}

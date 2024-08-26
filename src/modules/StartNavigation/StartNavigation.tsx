@@ -8,21 +8,20 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const StartNavigation: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
-    const tokenCheck=async ()=>{
-        const token = await AsyncStorage.getItem("access_token");
-        const email = await AsyncStorage.getItem("email");
-        const password = await AsyncStorage.getItem("password");
-        const refresh = await AsyncStorage.getItem("refresh_token");
-        if(token){
-            navigation.navigate("HomeTab");
-        }else{
-            navigation.navigate("Landing");
-        }
+  const tokenCheck = async () => {
+    const token = await AsyncStorage.getItem("access_token");
+    const email = await AsyncStorage.getItem("email");
+    const password = await AsyncStorage.getItem("password");
+    const refresh = await AsyncStorage.getItem("refresh_token");
+    if (token) {
+      navigation.navigate("HomeTab");
+    } else {
+      navigation.navigate("Landing");
     }
-  useEffect(()=>{
-   tokenCheck()
-
-  },[])
+  };
+  useEffect(() => {
+    tokenCheck();
+  }, []);
   return (
     <>
       <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
