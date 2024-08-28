@@ -25,6 +25,8 @@ import { AudioPlayerContext } from "../../customHooks/AudioPlayerContext";
 const HelpfulPharasesListContainer: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
+  const state = navigation.getState();
+  const currentRoute = state.routes[state.index].name;
   const audioPlayerContext = useContext(AudioPlayerContext);
   const [inputText, setInputText] = useState<string>("");
   const [pharasesList, setPharasesList] = useState<pharsesInterface[]>([]);
@@ -41,6 +43,7 @@ const HelpfulPharasesListContainer: React.FC<NavigationInterface> = ({
       <HelphulPharasesComp
         title={item.text}
         text_language={item?.text_language}
+        currentRoute={currentRoute}
       />
     );
   };
@@ -60,8 +63,9 @@ const HelpfulPharasesListContainer: React.FC<NavigationInterface> = ({
         <View style={styles.container}>
           <TouchableOpacity
             style={styles.header}
-            onPress={() => {navigation.navigate("MissionStart")
-            audioPlayerContext?.stopAudio();
+            onPress={() => {
+              navigation.navigate("MissionStart");
+              audioPlayerContext?.stopAudio();
             }}
           >
             <CustomSvgImageComponent

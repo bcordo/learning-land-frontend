@@ -34,6 +34,8 @@ import { AudioPlayerContext } from "../../customHooks/AudioPlayerContext";
 const MissionStart: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
+  const state = navigation.getState();
+  const currentRoute = state.routes[state.index].name;
   const dispatch = useDispatch();
   const audioContext = useContext(AudioPlayerContext);
 
@@ -126,6 +128,7 @@ const MissionStart: React.FC<NavigationInterface> = ({
       <HelphulPharasesComp
         title={item.text}
         text_language={item?.text_language}
+        currentRoute={currentRoute}
       />
     ) : null;
   };

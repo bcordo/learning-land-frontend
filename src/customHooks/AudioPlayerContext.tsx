@@ -1,64 +1,87 @@
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import Sound from 'react-native-sound';
-import RNFetchBlob from 'rn-fetch-blob';
-import { BASE_URL } from '../assets/constant';
-import Toast from 'react-native-toast-message';
+import React, { createContext, useState, useEffect, ReactNode } from "react";
+import { useNavigation } from "@react-navigation/native";
+import Sound from "react-native-sound";
+import RNFetchBlob from "rn-fetch-blob";
+import { BASE_URL } from "../assets/constant";
+import Toast from "react-native-toast-message";
 
 interface AudioPlayerContextProps {
   isPlaying: boolean;
-  speakText: (text?: string,websokectCheck?:boolean|any) => Promise<void>;
+  speakText: (text?: string, websokectCheck?: boolean | any) => Promise<void>;
   stopAudio: () => void;
-  setIsPlaying:()=>void;
+  setIsPlaying: () => void;
 }
 const handleError = () => {
   try {
-    throw new Error('Simulated error');
+    throw new Error("Simulated error");
   } catch (error) {
     Toast.show({
-      type: 'error',
-      text1: 'Something went wrong!',
-      text2: 'Please try again later.',
-      position: 'top',
+      type: "error",
+      text1: "Something went wrong!",
+      text2: "Please try again later.",
+      position: "top",
     });
   }
 };
-const AudioPlayerContext = createContext<AudioPlayerContextProps | undefined>(undefined);
+const AudioPlayerContext = createContext<AudioPlayerContextProps | undefined>(
+  undefined
+);
 
 interface AudioPlayerProviderProps {
   children: ReactNode;
 }
 
-const AudioPlayerProvider: React.FC<AudioPlayerProviderProps> = ({ children }) => {
-  const navigation:any = useNavigation();
+const AudioPlayerProvider: React.FC<AudioPlayerProviderProps> = ({
+  children,
+}) => {
+  const navigation: any = useNavigation();
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [currentSound, setCurrentSound] = useState<Sound | null>(null);
 
-  const speakText = async (text: string,websokectCheck:boolean|any): Promise<void> => {
+  const speakText = async (
+    text: string,
+    previousRoute?: any,
+    websokectCheck?: boolean | any
+  ): Promise<void> => {
     if (isPlaying) return;
-    if(websokectCheck&& navigation?.getCurrentRoute()?.name !== 'CharacterChat') return
+    if (
+      websokectCheck &&
+      navigation?.getCurrentRoute()?.name !== "CharacterChat"
+    ) {
+      return;
+    }
 
     setIsPlaying(true);
     try {
       const response = await RNFetchBlob.fetch(
-        'POST',
-        `${BASE_URL}/api/v1/utils/text_to_speech/?text=${encodeURIComponent(text)}&voice=alloy`,
+        "POST",
+        `${BASE_URL}/api/v1/utils/text_to_speech/?text=${encodeURIComponent(
+          text
+        )}&voice=alloy`,
         {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
         }
       );
+      if (navigation?.getCurrentRoute()?.name != previousRoute) {
+        setIsPlaying(false);
+        return;
+      }
+      if (previousRoute == "TimerPausedScreen") {
+        setIsPlaying(false);
+        return;
+      }
       if (response.info().status === 200) {
         const base64Data = response.base64();
         await playAudioChunk(base64Data);
       } else {
-        console.error('Text-to-speech error:', response.info().status);
+        console.error("Text-to-speech error:", response.info().status);
         setIsPlaying(false);
-        handleError()
+        handleError();
       }
     } catch (error) {
-      console.error('Text-to-speech error:', error);
+      console.error("Text-to-speech error:", error);
       setIsPlaying(false);
-      handleError()
+      handleError();
     }
   };
 
@@ -66,30 +89,30 @@ const AudioPlayerProvider: React.FC<AudioPlayerProviderProps> = ({ children }) =
     const audioFilePath = `${RNFetchBlob.fs.dirs.CacheDir}/audio.mp3`;
 
     try {
-      await RNFetchBlob.fs.writeFile(audioFilePath, audioChunk, 'base64');
+      await RNFetchBlob.fs.writeFile(audioFilePath, audioChunk, "base64");
 
-      const sound = new Sound(audioFilePath, '', (error) => {
+      const sound = new Sound(audioFilePath, "", (error) => {
         if (error) {
-          console.error('Error loading sound:', error);
+          console.error("Error loading sound:", error);
           setIsPlaying(false);
-          handleError()
+          handleError();
           return;
         }
         setCurrentSound(sound);
         sound.play((success) => {
           setIsPlaying(false);
           if (success) {
-            console.log('Sound played successfully');
+            console.log("Sound played successfully");
           } else {
-            console.error('Error playing sound');
+            console.error("Error playing sound");
           }
           sound.release();
         });
       });
     } catch (error) {
       setIsPlaying(false);
-      handleError()
-      console.error('Error playing audio:', error);
+      handleError();
+      console.error("Error playing audio:", error);
     }
   };
 
@@ -108,10 +131,9 @@ const AudioPlayerProvider: React.FC<AudioPlayerProviderProps> = ({ children }) =
   };
 
   useEffect(() => {
-    const unsubscribeFocus = navigation.addListener('focus', () => {
-    });
+    const unsubscribeFocus = navigation.addListener("focus", () => {});
 
-    const unsubscribeBlur = navigation.addListener('blur', () => {
+    const unsubscribeBlur = navigation.addListener("blur", () => {
       stopAndReleaseAudio();
     });
 
@@ -122,7 +144,9 @@ const AudioPlayerProvider: React.FC<AudioPlayerProviderProps> = ({ children }) =
   }, [navigation, currentSound]);
 
   return (
-    <AudioPlayerContext.Provider value={{ isPlaying, speakText, stopAudio,setIsPlaying }}>
+    <AudioPlayerContext.Provider
+      value={{ isPlaying, speakText, stopAudio, setIsPlaying }}
+    >
       {children}
     </AudioPlayerContext.Provider>
   );

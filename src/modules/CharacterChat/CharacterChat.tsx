@@ -39,7 +39,10 @@ import AddAction from "../../components/AddAction/AddAction";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 import { useDispatch, useSelector } from "react-redux";
 import { useLazyGetUserSettingsQuery } from "../../../redux/services/user_settings";
-import { updateUserSettings, updateUserSettingsByType } from "../../../redux/slices/userSetingsSlice";
+import {
+  updateUserSettings,
+  updateUserSettingsByType,
+} from "../../../redux/slices/userSetingsSlice";
 import { NavigationInterface } from "../../intefaces/componentsInterfaces";
 import {
   BooleanInterface,
@@ -60,6 +63,8 @@ const initialSpeakStatus = "";
 const CharacterChat: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
+  const state = navigation.getState();
+  const currentRoute = state.routes[state.index].name;
   const { checkAndRequestPermission, permissionStatus } = usePermission(
     permission.microphone
   );
@@ -111,10 +116,9 @@ const CharacterChat: React.FC<NavigationInterface> = ({
     drawerRef.current.close();
     dispatch(updatePauseTimmer(false));
   };
-useEffect(()=>{
-  dispatch(updateUserSettings(userSettings));
-
-},[userSettings])
+  useEffect(() => {
+    dispatch(updateUserSettings(userSettings));
+  }, [userSettings]);
   useEffect(() => {
     setChatMessages((messages: any) => [
       // ...messages,
@@ -218,6 +222,7 @@ useEffect(()=>{
             <CharacterResponseContainer
               isTyping={message?.isTyping}
               message={message.text}
+              currentRoute={currentRoute}
             />
           </>
         );
@@ -325,13 +330,13 @@ useEffect(()=>{
     audioPlayerContext?.stopAudio();
     const hasPermission = await checkAndRequestPermission();
     if (permissionStatus !== RESULTS.GRANTED) return false;
-    setStartSpeaking(true);
-    setSpeakStatus(initialSpeakStatus);
+    // setStartSpeaking(true);
+    // setSpeakStatus(initialSpeakStatus);
     setIsRecording(true);
-    setTimeout(() => {
-      setStartSpeaking(false);
-      onStartRecord();
-    }, 1000);
+    // setTimeout(() => {
+    setStartSpeaking(false);
+    onStartRecord();
+    // }, 0);
   };
 
   const onStopRecord = async (
@@ -453,6 +458,7 @@ useEffect(()=>{
     ) {
       audioPlayerContext?.speakText(
         chatMessages?.[chatMessages?.length - 2]?.text || "",
+        currentRoute,
         true
       );
     }
@@ -516,7 +522,7 @@ useEffect(()=>{
               {chatMessages.map((message, index) => (
                 <View key={index}>{renderChatMessage(message, index)}</View>
               ))}
-              {sendingAudio ? (
+              {/* {sendingAudio ? (
                 <>
                   <View style={[styles.aiTyping]}>
                     <View style={[styles.profileIconContainer]}>
@@ -534,7 +540,7 @@ useEffect(()=>{
                   </View>
                   <ProfileContainer isTyping={loader} />
                 </>
-              ) : null}
+              ) : null} */}
             </View>
           </ScrollView>
           <CharacterChatFooter

@@ -26,7 +26,10 @@ import Right from "../../assets/icons/Right.svg";
 import TranslateIcon from "../../assets/icons/translate-black.svg";
 import CustomSwitch from "../../components/CustomSwitch/CustomSwitch";
 import CustomDropdown from "../../components/CustomDropdown/CustomDropdown";
-import { useUpdateUserSettingsMutation } from "../../../redux/services/user_settings";
+import {
+  useLazyGetUserSettingsQuery,
+  useUpdateUserSettingsMutation,
+} from "../../../redux/services/user_settings";
 import {
   updateUserSettings,
   updateUserSettingsByType,
@@ -37,22 +40,32 @@ import { ListItem } from "../../intefaces/variablesInterfaces";
 import DownArrowIcon from "../../assets/icons/MySvgComponents/DownArrowIcon";
 import { AudioPlayerContext } from "../../customHooks/AudioPlayerContext";
 import { useWebSocket } from "../../customHooks/WebSocketContext";
+import Toast from "react-native-toast-message";
 
 const TimerPaused: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
   const dispatch = useDispatch();
   const audioPlayerContext = useContext(AudioPlayerContext);
-  const {disconnectWebSocket,WS,handleError}=useWebSocket();
+  const { disconnectWebSocket, WS, handleError } = useWebSocket();
   const [modalVisible, setModalVisible] = useState(false);
-
-  const userSettings = useSelector(
+  const [getUserSettings, { data: userSettingsData }] =
+    useLazyGetUserSettingsQuery();
+  const user_mission = useSelector((state) => state?.missionSlice?.mission);
+  const userSettings: any = useSelector(
     (state: { userSettingsSlice: {} }) => state.userSettingsSlice
   );
-  const [updateUserSettingsAPI,{isLoading:settingsLoader}] = useUpdateUserSettingsMutation();
-const onCancelModal=()=>{
-  setModalVisible(false);
-}
+  const [updateUserSettingsAPI, { isLoading: settingsLoader }] =
+    useUpdateUserSettingsMutation();
+  const onCancelModal = () => {
+    setModalVisible(false);
+  };
+  useEffect(() => {
+    if (userSettingsData) {
+      dispatch(updateUserSettings(userSettingsData));
+    }
+  }, [userSettingsData]);
+
   const optionsList: ListItem[] = [
     { icon: SettingsIcon, title: "Settings", name: "" },
     {
@@ -103,20 +116,85 @@ const onCancelModal=()=>{
     { title: "MEDIUM", value: "medium" },
     { title: "HARD", value: "hard" },
   ];
-  const colorMap = {EASY:{ ...styles.easyOptionColor,svgColor:'#7DDFDE'},
-      MEDIUM: {...styles.mediumOptionColor,svgColor:'#ec9046'},
-      HARD: {...styles.hardOptionColor,svgColor:'#FF8B67'}
-    };
-    const onHandleResume=()=>{
-      if(WS){
-        dispatch(updatePauseTimmer(false));
-        navigation.navigate("CharacterChat");
-      }else{
-        dispatch(updatePauseTimmer(false));
-        navigation.navigate('MissionStart');
-        handleError(true);
-      }
+  const colorMap: any = {
+    EASY: { ...styles.easyOptionColor, svgColor: "#7DDFDE" },
+    MEDIUM: { ...styles.mediumOptionColor, svgColor: "#ec9046" },
+    HARD: { ...styles.hardOptionColor, svgColor: "#FF8B67" },
+  };
+  const onHandleResume = () => {
+    if (WS) {
+      dispatch(updatePauseTimmer(false));
+      navigation.navigate("CharacterChat");
+    } else {
+      dispatch(updatePauseTimmer(false));
+      navigation.navigate("MissionStart");
+      handleError(true);
     }
+  };
+  const handleSettingError = () => {
+    try {
+      throw new Error("Simulated error");
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Setting not updated.",
+        text2: "Please try again later.",
+        position: "top",
+      });
+    }
+  };
+  const onHandleSwitchChange = async (item?: any) => {
+    try {
+      dispatch(
+        updateUserSettingsByType({
+          type: item.name,
+          value: !userSettings?.[item.name],
+        })
+      );
+      const res = await updateUserSettingsAPI({
+        user_id: userSettings.user_id,
+        body: {
+          ...userSettings,
+          [item.name]: !userSettings[item.name],
+        },
+      });
+      if (!res?.data) {
+        handleSettingError();
+        getUserSettings({ user_id: user_mission?.user_id });
+        // dispatch(updateUserSettings(res?.data));
+        // dispatch(updateUserSettingsByType({type:item.name,value:res?.data?.[item.name]}))
+      }
+    } catch (err) {
+      console.log("getting error from onValueChange CustomSwitch " + err);
+    }
+  };
+  const onHandleSelectChange = async (selectedItem?: any, item?: any) => {
+    try {
+      dispatch(
+        updateUserSettingsByType({
+          type: item.name,
+          value: selectedItem?.title,
+        })
+      );
+      if (userSettings?.mission_difficulty !== selectedItem?.title) {
+        const res = await updateUserSettingsAPI({
+          user_id: userSettings?.user_id,
+          body: {
+            ...userSettings,
+            [item.name]: selectedItem?.title,
+          },
+        });
+        if (!res?.data) {
+          handleSettingError();
+          getUserSettings({ user_id: user_mission?.user_id });
+          // dispatch(updateUserSettings(res?.data));
+          // dispatch(updateUserSettingsByType({type:item.name,value:res?.data?.[item.name]}))
+        }
+      }
+    } catch (err) {
+      console.log("getting error from onValueChange CustomSwitch " + err);
+    }
+  };
   const renderDropdownItem = (
     item: { title?: string },
     index: number | undefined,
@@ -174,72 +252,28 @@ const onCancelModal=()=>{
             style={{ transform: [{ scaleX: 1 }, { scaleY: 1 }] }}
             name={item.name}
             // disabled={settingsLoader}
-            onValueChange={async () => {
-              try {
-                dispatch(
-                  updateUserSettingsByType({
-                    type: item.name,
-                    value: !userSettings[item.name],
-                  })
-                );
-                const res = await updateUserSettingsAPI({
-                  user_id: userSettings.user_id,
-                  body: {
-                    ...userSettings,
-                    [item.name]: !userSettings[item.name],
-                  },
-                });
-                if (res?.data) {
-                  // dispatch(updateUserSettings(res?.data));
-                  dispatch(updateUserSettingsByType({type:item.name,value:res?.data?.[item.name]}))
-                }
-              } catch (err) {
-                console.log(
-                  "getting error from onValueChange CustomSwitch " + err
-                );
-              }
+            onValueChange={() => {
+              onHandleSwitchChange(item);
             }}
           />
         ) : null}
         {item.type === "select" ? (
           <CustomDropdown
-          // disabled={settingsLoader}
+            // disabled={settingsLoader}
             onSelect={async (selectedItem: { title: string }) => {
-              try {
-                dispatch(
-                  updateUserSettingsByType({
-                    type: item.name,
-                    value: selectedItem?.title,
-                  })
-                );
-                if(userSettings?.mission_difficulty !== selectedItem?.title){
-                  
-                
-                const res = await updateUserSettingsAPI({
-                  user_id: userSettings?.user_id,
-                  body: {
-                    ...userSettings,
-                    [item.name]: selectedItem?.title,
-                  },
-                });
-                if (res?.data) {
-                  // dispatch(updateUserSettings(res?.data));
-                  dispatch(updateUserSettingsByType({type:item.name,value:res?.data?.[item.name]}))
-
-                }
-              }
-              } catch (err) {
-                console.log(
-                  "getting error from onValueChange CustomSwitch " + err
-                );
-              }
+              onHandleSelectChange(selectedItem, item);
             }}
             list={dropdownList}
             renderButton={(selectedItem, isOpened) => {
               return (
                 <View style={[styles.dropdownButtonStyle]}>
-                  <View style={[styles.dropdownButtonStyle2,colorMap[userSettings[item.name]]]}>
-                    <Text style={[ colorMap[userSettings[item.name]]]}>
+                  <View
+                    style={[
+                      styles.dropdownButtonStyle2,
+                      colorMap?.[userSettings[item.name]],
+                    ]}
+                  >
+                    <Text style={[colorMap[userSettings[item.name]]]}>
                       {userSettings ? userSettings[item.name] : "Select"}
                     </Text>
                   </View>
@@ -248,7 +282,9 @@ const onCancelModal=()=>{
                     height={16}
                     Component={Right}
                   /> */}
-                  <DownArrowIcon color={colorMap?.[userSettings?.[item?.name]]?.svgColor}/>
+                  <DownArrowIcon
+                    color={colorMap?.[userSettings?.[item?.name]]?.svgColor}
+                  />
                 </View>
               );
             }}
@@ -262,31 +298,32 @@ const onCancelModal=()=>{
   return (
     <>
       <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
-     {settingsLoader? <View
-       style={{
-                  display:'flex',
-                  height:'100%',
-                  width:'100%',
-                  justifyContent: "center",
-                  alignItems: "center",
-                  position:'absolute',
-                  backgroundColor:'#ffffff69',
-                  zIndex:10000
-                }}
-              >
-                <ActivityIndicator
-                  size="large"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent:'center',
-                    // height: 600,
-                  }}
-                  color={"#F58C39"}
-                />
-              </View>:null}
+      {/* {settingsLoader ? (
+        <View
+          style={{
+            display: "flex",
+            height: "100%",
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute",
+            backgroundColor: "#ffffff69",
+            zIndex: 10000,
+          }}
+        >
+          <ActivityIndicator
+            size="large"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              // height: 600,
+            }}
+            color={"#F58C39"}
+          />
+        </View>
+      ) : null} */}
       <SafeAreaView style={styles.container}>
-     
         <View style={styles.timerContainer}>
           <CustomSvgImageComponent width={76} height={76} Component={Pause} />
           <View style={styles.timerPausedTxtContainer}>
@@ -337,7 +374,7 @@ const onCancelModal=()=>{
                           onPress={() => {
                             navigation.navigate("MissionEnd");
                             setModalVisible(false);
-                            disconnectWebSocket()
+                            disconnectWebSocket();
                           }}
                           style={styles.modalConfirmButton}
                         >

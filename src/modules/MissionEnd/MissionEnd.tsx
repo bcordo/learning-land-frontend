@@ -39,6 +39,8 @@ import { useLazyGetGoalsByMissionIdQuery } from "../../../redux/services/user_go
 const MissionEnd: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
+  const state = navigation.getState();
+  const currentRoute = state.routes[state.index].name;
   const [reviewBoxList, setReviewBoxList] = useState<ReviewBoxListInterface[]>(
     []
   );
@@ -52,23 +54,20 @@ const MissionEnd: React.FC<NavigationInterface> = ({
     getUserGoals,
     { data: userGoalsDetails, isLoading: loadingUserGoals },
   ] = useLazyGetGoalsByMissionIdQuery();
-  
- 
-const goalsReviewArray = (
-) => {
 
-  let finalArray:[] = [];
+  const goalsReviewArray = () => {
+    let finalArray: [] = [];
 
-  userGoalsDetails?.forEach((item:any) => {
-    let object:any = missionDetails?.user_goals?.find(
-      (ele:any) => ele?.goal_id === item?.id
-    );
-    finalArray.push({ ...item, ...object });
-  });
+    userGoalsDetails?.forEach((item: any) => {
+      let object: any = missionDetails?.user_goals?.find(
+        (ele: any) => ele?.goal_id === item?.id
+      );
+      finalArray.push({ ...item, ...object });
+    });
 
-  return finalArray || [];
-};
-  
+    return finalArray || [];
+  };
+
   useEffect(() => {
     if (!missionDetails) return;
     setReviewBoxList([
@@ -124,13 +123,13 @@ const goalsReviewArray = (
     item: {
       title: string;
       description: string;
-      state?:string;
+      state?: string;
       icon?: any;
     };
   }) => {
     return (
       <CustomGoalListComponent
-        icon={item?.state === "COMPLETED" ? Tick:XSvg}
+        icon={item?.state === "COMPLETED" ? Tick : XSvg}
         title={item.title}
         description={item.description}
       />
@@ -149,10 +148,10 @@ const goalsReviewArray = (
       interaction_type?: string;
       showDescriptionIcons?: boolean;
       utterance: StringInterface;
-      user_phrase?:any;
+      user_phrase?: any;
       thought?: StringInterface;
       action?: StringInterface;
-      phrase?:any;
+      phrase?: any;
     };
     index: number;
   }) => {
@@ -160,13 +159,19 @@ const goalsReviewArray = (
       <>
         {index <= howManyShowTranscript ? (
           <HelphulPharasesComp
-            title={item.native_text || item?.utterance || item?.action|| item?.phrase?.text }
+            title={
+              item.native_text ||
+              item?.utterance ||
+              item?.action ||
+              item?.phrase?.text
+            }
             description={item?.translated_text || item?.thought}
             text_language={item?.native_text_language}
             interaction_type={item?.interaction_type}
             showDescriptionIcons={item?.showDescriptionIcons}
             isPlaying={isPlaying}
             setIsPlaying={setIsPlaying}
+            currentRoute={currentRoute}
           />
         ) : null}
       </>
@@ -223,7 +228,9 @@ const goalsReviewArray = (
                   ]}
                 >
                   Scenario{" "}
-                  {missionDetails?.user_goals?.every((item:any)=>item?.state==="COMPLETED")
+                  {missionDetails?.user_goals?.every(
+                    (item: any) => item?.state === "COMPLETED"
+                  )
                     ? "Complete!"
                     : "Failed"}
                 </Text>
@@ -448,13 +455,12 @@ const goalsReviewArray = (
                   }
                 />
               ) : null}
-
-             
             </>
           )}
         </ScrollView>
-       {!fetchingMission? <View style={styles.buttonContainer}>
-                {/* <CustomButtom
+        {!fetchingMission ? (
+          <View style={styles.buttonContainer}>
+            {/* <CustomButtom
                   textStyle={[
                     styles.alreadyHaveAccountButtonText,
                     styles.defaultFontFamilySemiBold,
@@ -465,18 +471,19 @@ const goalsReviewArray = (
                   icon={DumbleIcon}
                 /> */}
 
-                <CustomButtom
-                  textStyle={[
-                    styles.getStartedButtonText,
-                    styles.defaultFontFamilySemiBold,
-                  ]}
-                  buttonStyle={styles.getStarted}
-                  onPress={() => {
-                    navigation.navigate("HomeTab");
-                  }}
-                  buttonTxt={"CONTINUE"}
-                />
-              </View>:null}
+            <CustomButtom
+              textStyle={[
+                styles.getStartedButtonText,
+                styles.defaultFontFamilySemiBold,
+              ]}
+              buttonStyle={styles.getStarted}
+              onPress={() => {
+                navigation.navigate("HomeTab");
+              }}
+              buttonTxt={"CONTINUE"}
+            />
+          </View>
+        ) : null}
       </SafeAreaView>
     </>
   );

@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Image, SafeAreaView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  SafeAreaView,
+  Text,
+  View,
+} from "react-native";
 import { styles } from "./styles";
 import StatusBarComp from "../../components/StatusBarComp/StatusBarComp";
 import CustomButtom from "../../components/CustomButtom/CustomButtom";
@@ -14,7 +20,7 @@ import { RESULTS } from "react-native-permissions";
 const LandingPage: React.FC<NavigationInterface> = ({
   navigation,
 }): React.JSX.Element => {
-  const [signUpApi] = useSignUpUserMutation();
+  const [signUpApi, { isLoading }] = useSignUpUserMutation();
   const { checkAndRequestPermission, permissionStatus } = usePermission(
     permission.microphone
   );
@@ -46,13 +52,12 @@ const LandingPage: React.FC<NavigationInterface> = ({
           hashed_password: password,
         };
         try {
-
           const response = await signUpApi({ body: details });
           if (response?.data) {
             console.log("response", response);
-            const { access_token,refresh_token } = response?.data;
+            const { access_token, refresh_token } = response?.data;
             await AsyncStorage.setItem("access_token", access_token);
-            await AsyncStorage.setItem("refresh_token",refresh_token );
+            await AsyncStorage.setItem("refresh_token", refresh_token);
             await AsyncStorage.setItem("email", details?.email);
             await AsyncStorage.setItem("password", details?.password);
           }
@@ -68,6 +73,31 @@ const LandingPage: React.FC<NavigationInterface> = ({
   return (
     <>
       <StatusBarComp backgroundColor={"#F1F5F9"} barStyle={"dark-content"} />
+      {isLoading ? (
+        <View
+          style={{
+            display: "flex",
+            height: "100%",
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute",
+            backgroundColor: "#ffffff69",
+            zIndex: 10000,
+          }}
+        >
+          <ActivityIndicator
+            size="large"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              // height: 600,
+            }}
+            color={"#F58C39"}
+          />
+        </View>
+      ) : null}
       <SafeAreaView>
         <View style={styles.container}>
           <View style={styles.textContainer}>
