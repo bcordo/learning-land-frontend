@@ -18,12 +18,12 @@ function App(): React.JSX.Element {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <WebSocketProvider>
-          <AudioPlayerProvider>
+        <AudioPlayerProvider>
+          <WebSocketProvider>
             <Navigation />
             <CustomToast />
-          </AudioPlayerProvider>
-        </WebSocketProvider>
+          </WebSocketProvider>
+        </AudioPlayerProvider>
       </NavigationContainer>
     </Provider>
   );

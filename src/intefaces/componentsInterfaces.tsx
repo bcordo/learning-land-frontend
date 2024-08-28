@@ -10,20 +10,21 @@ import {
 
 export interface NavigationInterface {
   navigation: AnyInterface;
-  handleGoEndScreen?:()=>void;
+  handleGoEndScreen?: () => void;
+  route?: any;
 }
 export interface CharacterChatNavbarProps {
   navigation: AnyInterface;
   userSettings: AnyInterface;
-  handleGoEndScreen?:()=>void;
+  handleGoEndScreen?: () => void;
 }
 export interface AddActionProps {
   closeDrawer: FunctionInterface;
   sendMessage: FunctionInterface;
   setChatMessages: FunctionInterface;
-  handleError:(currentPath?:any)=>void;
-  websocketCheck?:any;
-  navigation?:any;
+  handleError: (currentPath?: any) => void;
+  websocketCheck?: any;
+  navigation?: any;
 }
 export interface AssistantCorrectionProps {
   text: StringInterface;
@@ -44,17 +45,18 @@ export interface CharacterChatFooterProps {
   handleInputEnter: FunctionInterface;
   openDrawer: FunctionInterface;
   inputText: StringInterface;
-  websocketCheck:any;
-  handleError:(currentPath?:any)=>void;
-  navigation?:any;
-  chatMessages?:any;
+  websocketCheck: any;
+  handleError: (currentPath?: any) => void;
+  navigation?: any;
+  chatMessages?: any;
 }
 export interface CharacterResponseContainerProps {
   quoteText?: StringInterface;
   isTyping?: BooleanInterface;
   profileIconContainerStyle?: {};
   message?: StringInterface;
-  loader?:BooleanInterface;
+  loader?: BooleanInterface;
+  currentRoute?: any;
 }
 export interface CustomButtomProps {
   buttonStyle: {};
@@ -78,7 +80,7 @@ export interface CustomDropdownProps {
   dropdownStyle: {};
   onSelect?: FunctionInterface;
   dropdownOverlayColor?: StringInterface;
-  disabled?:BooleanInterface;
+  disabled?: BooleanInterface;
 }
 export interface CustomGoalListComponentProps {
   icon: AnyInterface;
@@ -119,7 +121,7 @@ export interface CustomSwitchProps {
   style: {
     transform: [{ scaleX: NumberInterface }, { scaleY: NumberInterface }];
   };
-  disabled?:BooleanInterface;
+  disabled?: BooleanInterface;
 }
 export interface FadedDividerProps {
   style?: object;
@@ -169,6 +171,7 @@ export interface HelphulPharasesCompProps {
   isFetching?: BooleanInterface;
   isPlaying?: BooleanInterface;
   setIsPlaying?: (isPlaying: BooleanInterface) => void;
+  currentRoute?: any;
 }
 export interface HomeTabHeaderProps {}
 export interface ProfileContainerProps {

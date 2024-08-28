@@ -1,9 +1,4 @@
-import React, {
-  createContext,
-  useState,
-  useContext,
-  ReactNode,
-} from "react";
+import React, { createContext, useState, useContext, ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   ContentType,
@@ -36,7 +31,7 @@ interface WebSocketContextProps {
   handleHintMessage: (message: string) => void;
   handleCorrectionMessage: (message: string) => void;
   handleMissionStatusMessage: (message: string) => void;
-  handleGoEndScreen:()=>void;
+  handleGoEndScreen: () => void;
 }
 
 const WebSocketContext = createContext<WebSocketContextProps | undefined>(
@@ -51,13 +46,11 @@ const initialSpeakStatus = "";
 export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   children,
 }) => {
-    const navigation:any = useNavigation();
+  const navigation: any = useNavigation();
   const [WS, setWS] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState<boolean>(false);
   const [loader, setLoader] = useState<boolean>(false);
-  const [speakStatus, setSpeakStatus] = useState<string>(
-    initialSpeakStatus
-  );
+  const [speakStatus, setSpeakStatus] = useState<string>(initialSpeakStatus);
   const [chatMessages, setChatMessages] = useState<chatMessagesInterface[]>([]);
   const [sendingAudio, isSendingAudio] = useState<boolean>(false);
   const [missionState, setMissionState] = React.useState(
@@ -65,36 +58,36 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   );
   const [goals, setGoals] = React.useState([]);
   const [chatState, setChatState] = React.useState("inactive");
-const handleGoEndScreen=()=>{
-  disconnectWebSocket();
-  setTimeout(()=>{
-    navigation.navigate('MissionEnd');
-  },100)
-}
-  const handleError = (check?:any) => {
-    if(['CharacterChat'].includes(navigation?.getCurrentRoute()?.name) || check){
-            try {
-              throw new Error("Simulated error");
-            } catch (error) {
-            Toast.show({
-                type: "error",
-                text1: "Server disconnected.",
-                text2: "Please try again later.",
-                position: "top",
-              });
-      
-            }
-          
-    }
-   
+  const handleGoEndScreen = () => {
+    disconnectWebSocket();
+    setTimeout(() => {
+      navigation.navigate("MissionEnd");
+    }, 100);
   };
-  const handleNavigate=()=>{
-    if(['CharacterChat'].includes(navigation?.getCurrentRoute()?.name)){
-        setTimeout(()=>{
-          navigation.navigate('MissionStart');
-        },100)
+  const handleError = (check?: any) => {
+    if (
+      ["CharacterChat"].includes(navigation?.getCurrentRoute()?.name) ||
+      check
+    ) {
+      try {
+        throw new Error("Simulated error");
+      } catch (error) {
+        Toast.show({
+          type: "error",
+          text1: "Server disconnected.",
+          text2: "Please try again later.",
+          position: "top",
+        });
       }
-  }
+    }
+  };
+  const handleNavigate = () => {
+    if (["CharacterChat"].includes(navigation?.getCurrentRoute()?.name)) {
+      setTimeout(() => {
+        navigation.navigate("MissionStart");
+      }, 100);
+    }
+  };
   const handleServerMessage = async (message: string) => {
     try {
       const parsedMessage = JSON.parse(message);
@@ -303,11 +296,12 @@ const handleGoEndScreen=()=>{
 
     newWS.onclose = () => {
       isSendingAudio(false);
+      setSocketConnected(false);
       console.log("WebSocket disconnected");
       setWS(null);
       setLoader(false);
       handleError();
-      handleNavigate()
+      handleNavigate();
     };
   };
 
@@ -319,7 +313,7 @@ const handleGoEndScreen=()=>{
       setWS(null);
       setLoader(false);
       isSendingAudio(false);
-      setChatMessages([])
+      setChatMessages([]);
     }
   };
 

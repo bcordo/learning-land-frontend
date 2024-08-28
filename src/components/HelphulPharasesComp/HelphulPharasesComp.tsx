@@ -12,7 +12,6 @@ import { HelphulPharasesCompProps } from "../../intefaces/componentsInterfaces";
 
 import { AudioPlayerContext } from "../../customHooks/AudioPlayerContext";
 
-
 const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({
   title,
   text_language,
@@ -23,8 +22,10 @@ const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({
   hideDescriptionText,
   showDescriptionIcons,
   isFetching,
+  currentRoute,
 }): React.JSX.Element => {
   const audioPlayerContext = useContext(AudioPlayerContext);
+
   const [translateText, { data: translatedText, isLoading }] =
     useLazyGetTranslatedTextQuery();
 
@@ -53,7 +54,7 @@ const HelphulPharasesComp: React.FC<HelphulPharasesCompProps> = ({
           onPress={() => {
             interaction_type === "user-response" && !isRight
               ? () => {}
-              : audioPlayerContext?.speakText(title||'')
+              : audioPlayerContext?.speakText(title || "", currentRoute);
           }}
           disabled={audioPlayerContext?.isPlaying}
         >

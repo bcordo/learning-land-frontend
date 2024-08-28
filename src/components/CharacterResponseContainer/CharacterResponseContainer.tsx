@@ -18,6 +18,7 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
   isTyping,
   profileIconContainerStyle,
   message,
+  currentRoute,
 }): React.JSX.Element => {
   const audioPlayerContext = useContext(AudioPlayerContext);
   const [isTranslateEnabled, setIsTranslateEnabled] = useState<boolean>(false);
@@ -43,7 +44,6 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
       value: "Bad response",
     },
   ];
-
 
   const handleTranslateClick = async (message: string) => {
     try {
@@ -121,7 +121,9 @@ const CharacterResponseContainer: React.FC<CharacterResponseContainerProps> = ({
           <View style={styles.translateContainer}>
             <View style={styles.translateRightContainer}>
               <TouchableOpacity
-                onPress={() => audioPlayerContext?.speakText(message)}
+                onPress={() =>
+                  audioPlayerContext?.speakText(message, currentRoute)
+                }
                 disabled={audioPlayerContext?.isPlaying}
               >
                 <CustomSvgImageComponent
