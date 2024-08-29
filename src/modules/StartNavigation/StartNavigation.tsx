@@ -13,6 +13,7 @@ const StartNavigation: React.FC<NavigationInterface> = ({
     const email = await AsyncStorage.getItem("email");
     const password = await AsyncStorage.getItem("password");
     const refresh = await AsyncStorage.getItem("refresh_token");
+    console.log(email, "email", password, "password");
     if (token) {
       navigation.navigate("HomeTab");
     } else {

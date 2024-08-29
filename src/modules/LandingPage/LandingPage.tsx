@@ -52,6 +52,10 @@ const LandingPage: React.FC<NavigationInterface> = ({
           hashed_password: password,
         };
         try {
+          console.log(
+            details,
+            "detailsdetailsdetailsdetailsdetailsdetailsdetailsdetails"
+          );
           const response = await signUpApi({ body: details });
           if (response?.data) {
             console.log("response", response);

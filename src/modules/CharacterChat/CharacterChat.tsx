@@ -450,19 +450,19 @@ const CharacterChat: React.FC<NavigationInterface> = ({
     }
   };
 
-  useEffect(() => {
-    if (
-      !audioPlayerContext?.isPlaying &&
-      chatMessages?.[chatMessages?.length - 2]?.type ===
-        InteractionType?.CHARACTER_UTTERANCE
-    ) {
-      audioPlayerContext?.speakText(
-        chatMessages?.[chatMessages?.length - 2]?.text || "",
-        currentRoute,
-        true
-      );
-    }
-  }, [chatMessages]);
+  // useEffect(() => {
+  // if (
+  //   !audioPlayerContext?.isPlaying &&
+  //   chatMessages?.[chatMessages?.length - 2]?.type ===
+  //     InteractionType?.CHARACTER_UTTERANCE
+  // ) {
+  //   audioPlayerContext?.speakText(
+  //     chatMessages?.[chatMessages?.length - 2]?.text || "",
+  //     currentRoute,
+  //     true
+  //   );
+  // }
+  // }, [chatMessages]);
   return (
     <Drawer
       ref={drawerRef}

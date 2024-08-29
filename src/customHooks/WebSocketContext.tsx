@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Buffer } from "buffer";
 import {
   ContentType,
   InteractionType,
@@ -10,6 +11,9 @@ import {
 import Toast from "react-native-toast-message";
 import { chatMessagesInterface } from "../intefaces/variablesInterfaces";
 import { useNavigation } from "@react-navigation/native";
+import Sound from "react-native-sound";
+import RNFS from "react-native-fs";
+import uuid from "react-native-uuid";
 
 interface WebSocketContextProps {
   WS: WebSocket | null;
@@ -88,9 +92,77 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
       }, 100);
     }
   };
+
+  Sound.setCategory("Playback");
+
+  let audioQueue: any = [];
+  let isPlaying = false;
+  const bufferSize = 3; // Number of chunks to buffer before starting playback
+  const playAudioChunk = async (audioChunk: any) => {
+    // Decode the base64 audio chunk to binary
+    const decodedAudioData = Buffer.from(audioChunk, "base64");
+
+    // Write the decoded data to a temporary file
+    const path = `${RNFS.DocumentDirectoryPath}/${uuid.v4()}.mp3`;
+    await RNFS.writeFile(path, decodedAudioData.toString("base64"), "base64");
+    const fileExists = await RNFS.exists(path);
+    console.log("File exists:", fileExists);
+
+    if (!fileExists) {
+      console.error("Audio file not found at:", path);
+      return;
+    }
+
+    // Create a new Sound object with the file path
+    const sound = new Sound(path, "", (error) => {
+      if (error) {
+        console.error("Failed to load the sound", error);
+        return;
+      }
+      audioQueue.push(sound);
+      if (!isPlaying && audioQueue.length >= bufferSize) {
+        playNextChunk();
+      }
+    });
+  };
+
+  const playNextChunk = async () => {
+    if (audioQueue.length === 0) {
+      isPlaying = false;
+      return;
+    }
+
+    const sound = await audioQueue.shift();
+    console.log("Playing audio buffer:", sound);
+
+    await sound.play(async (success: any) => {
+      if (success) {
+        console.log("Successfully finished playing");
+        if (audioQueue.length > 0) {
+          // setTimeout(() => {
+          await playNextChunk();
+          // }, 100);
+        } else {
+          isPlaying = false;
+        }
+      } else {
+        console.log("Playback failed");
+        isPlaying = false;
+      }
+    });
+
+    isPlaying = true;
+  };
+
   const handleServerMessage = async (message: string) => {
+    console.log(
+      message,
+      "hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello"
+    );
+
     try {
       const parsedMessage = JSON.parse(message);
+      console.log(parsedMessage, "messagemessagemessagemessagemessage");
       switch (parsedMessage.interaction_type) {
         case InteractionType.USER_UTTERANCE:
           handleUserUtteranceMessage(parsedMessage);
@@ -103,7 +175,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
         case InteractionType.CHARACTER_UPDATED_LOCATION:
         case InteractionType.CHARACTER_UPDATED_TIME:
         case InteractionType.COMMAND:
-          handleCharacterResponseMessage(parsedMessage);
+          await handleCharacterResponseMessage(parsedMessage);
 
           break;
 
@@ -144,7 +216,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
       });
     }
   };
-  const handleCharacterResponseMessage = (message: any) => {
+  const handleCharacterResponseMessage = async (message: any) => {
     if (message.message_type === MessageType.CHUNK) {
       if (message.content_type === ContentType.TEXT) {
         const interactionTypes = [
@@ -182,6 +254,11 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
             }
           });
         }
+      }
+      if (message.content_type === ContentType.AUDIO) {
+        console.log("Received audio chunk message:", message);
+        // console.log("Decoded audio chunk length:", atob(message.data).length);
+        playAudioChunk(message.data);
       }
     } else if (message.message_type === MessageType.FULL) {
       if (message.content_type === ContentType.TEXT) {
@@ -285,7 +362,14 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
       console.log("Message Arrived");
       isSendingAudio(false);
       setSpeakStatus(initialSpeakStatus);
-      handleServerMessage(event.data);
+      // await handleServerMessage(event.data);
+      (async () => {
+        try {
+          await handleServerMessage(event.data);
+        } catch (error) {
+          console.error("Failed to process WebSocket message:", error);
+        }
+      })();
       if (
         chatMessages?.[chatMessages?.length - 2]?.type ===
         InteractionType?.CHARACTER_UTTERANCE
